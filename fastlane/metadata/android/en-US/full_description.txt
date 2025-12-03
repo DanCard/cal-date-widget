@@ -1,0 +1,7 @@
+Cal Date Widget is a minimal and customizable home screen widget that displays the current date.
+
+Features:
+- Customizable text color, shadow color, and background color.
+- Adjustable date format.
+- Resizable widget (1x1 and larger).
+- Open source and privacy-friendly.

@@ -1,2 +1,0 @@
-ai.dcar.caldatewidget.test:style/WhiteBackgroundTheme = 0x7f010001
-ai.dcar.caldatewidget.test:style/WhiteBackgroundDialogTheme = 0x7f010000

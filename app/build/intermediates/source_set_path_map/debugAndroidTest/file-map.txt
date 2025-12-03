@@ -1,6 +1,0 @@
-ai.dcar.caldatewidget.test.app-annotation-experimental-1.3.0-0 /Users/dancar/.gradle/caches/transforms-3/22a96eae5082d58a2533480954d1581a/transformed/annotation-experimental-1.3.0/res
-ai.dcar.caldatewidget.test.app-core-1.5.0-1 /Users/dancar/.gradle/caches/transforms-3/cfa2762af24834c0a89373226beef5c4/transformed/core-1.5.0/res
-ai.dcar.caldatewidget.test.app-androidTest-2 /Users/dancar/github/cal-date-widget/app/build/generated/res/resValues/androidTest/debug
-ai.dcar.caldatewidget.test.app-mergeDebugAndroidTestResources-3 /Users/dancar/github/cal-date-widget/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
-ai.dcar.caldatewidget.test.app-mergeDebugAndroidTestResources-4 /Users/dancar/github/cal-date-widget/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
-ai.dcar.caldatewidget.test.app-merged_res-5 /Users/dancar/github/cal-date-widget/app/build/intermediates/merged_res/debugAndroidTest

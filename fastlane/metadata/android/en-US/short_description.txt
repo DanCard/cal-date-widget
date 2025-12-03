@@ -1,0 +1,1 @@
+A simple, customizable calendar date widget.

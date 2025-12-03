@@ -1,5 +1,0 @@
-12-02 17:59:30.810 13181 13194 I TestRunner: started: textFitsIn1x1Widget(ai.dcar.caldatewidget.WidgetLayoutTest)
-12-02 17:59:30.815 13181 13194 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
-12-02 17:59:30.825 13181 13194 I System.out: TextView size: 121x121
-12-02 17:59:30.825 13181 13194 I System.out: Text size: 51.0px
-12-02 17:59:30.825 13181 13194 I TestRunner: finished: textFitsIn1x1Widget(ai.dcar.caldatewidget.WidgetLayoutTest)
