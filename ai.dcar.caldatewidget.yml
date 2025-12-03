@@ -2,8 +2,8 @@ Categories:
   - System
   - Time
 License: MIT
-SourceCode: https://github.com/dancar/cal-date-widget
-IssueTracker: https://github.com/dancar/cal-date-widget/issues
+SourceCode: https://github.com/dancard/cal-date-widget
+IssueTracker: https://github.com/dancard/cal-date-widget/issues
 
 AutoName: Cal Date Widget
 Summary: A simple, customizable calendar date widget
@@ -17,7 +17,7 @@ Description: |
   - Open source and privacy-friendly.
 
 RepoType: git
-Repo: https://github.com/dancar/cal-date-widget
+Repo: https://github.com/dancard/cal-date-widget
 
 Builds:
   - versionName: '1.0'
