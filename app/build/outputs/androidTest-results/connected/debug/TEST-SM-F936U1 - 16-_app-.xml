@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="ai.dcar.caldatewidget.WidgetLayoutTest" tests="1" failures="0" errors="0" skipped="0" time="0.89" timestamp="2025-12-03T01:59:32" hostname="localhost">
+  <properties>
+    <property name="device" value="SM-F936U1 - 16" />
+    <property name="flavor" value="" />
+    <property name="project" value=":app" />
+  </properties>
+  <testcase name="textFitsIn1x1Widget" classname="ai.dcar.caldatewidget.WidgetLayoutTest" time="0.008" />
+</testsuite>

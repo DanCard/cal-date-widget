@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-merged_res-31:/layout_activity_config.xml.flat",
+        "source": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-main-33:/layout/activity_config.xml"
+    },
+    {
+        "merged": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-merged_res-31:/drawable_preview_bg_checkerboard.xml.flat",
+        "source": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-main-33:/drawable/preview_bg_checkerboard.xml"
+    },
+    {
+        "merged": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-merged_res-31:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-main-33:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-merged_res-31:/layout_dialog_color_picker.xml.flat",
+        "source": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-main-33:/layout/dialog_color_picker.xml"
+    },
+    {
+        "merged": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-merged_res-31:/xml_date_widget_info.xml.flat",
+        "source": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-main-33:/xml/date_widget_info.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-merged_res-31:/layout_widget_date.xml.flat",
+        "source": "ai.dcar.caldatewidget.app-main-33:/layout/widget_date.xml"
+    },
+    {
+        "merged": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-merged_res-31:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-main-33:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-merged_res-31:/layout_widget_date.xml.flat",
+        "source": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-main-33:/layout/widget_date.xml"
+    },
+    {
+        "merged": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-merged_res-31:/drawable_ic_settings.xml.flat",
+        "source": "/Users/dancar/.gradle/daemon/8.4/ai.dcar.caldatewidget.app-main-33:/drawable/ic_settings.xml"
+    }
+]

@@ -1,0 +1,6 @@
+{
+  "useSmartEdit": true,
+  "general": {
+    "enablePromptCompletion": true
+  }
+}

@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Date Widget</string>
+    <string name="config_title">Widget Settings</string>
+    
+    <string name="label_date_format">Date Format</string>
+    <string name="hint_custom_format">Custom Pattern (e.g. EEEE, MMM d)</string>
+    <string name="label_text_color">Text Color</string>
+    <string name="label_bg_color">Background Color</string>
+    <string name="label_shadow_color">Shadow Color</string>
+    <string name="label_text_size">Text Scale</string>
+    <string name="btn_undo">Undo</string>
+    <string name="desc_settings">Settings</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Custom</item>
+    </string-array>
+</resources>

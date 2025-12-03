@@ -1,0 +1,3 @@
+ai.dcar.caldatewidget.test
+style WhiteBackgroundDialogTheme
+style WhiteBackgroundTheme

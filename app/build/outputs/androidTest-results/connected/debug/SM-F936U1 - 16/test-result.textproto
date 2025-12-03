@@ -1,0 +1,68 @@
+# 2025-12-03T01:59:32.171Z:
+test_suite_meta_data {
+  scheduled_test_case_count: 1
+}
+test_status: PASSED
+test_result {
+  test_case {
+    test_class: "WidgetLayoutTest"
+    test_package: "ai.dcar.caldatewidget"
+    test_method: "textFitsIn1x1Widget"
+    start_time {
+      seconds: 1764727171
+      nanos: 220000000
+    }
+    end_time {
+      seconds: 1764727171
+      nanos: 243000000
+    }
+  }
+  test_status: PASSED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/Users/dancar/github/cal-date-widget/app/build/outputs/androidTest-results/connected/debug/SM-F936U1 - 16/logcat-ai.dcar.caldatewidget.WidgetLayoutTest-textFitsIn1x1Widget.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/Users/dancar/github/cal-date-widget/app/build/outputs/androidTest-results/connected/debug/SM-F936U1 - 16/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/Users/dancar/github/cal-date-widget/app/build/outputs/androidTest-results/connected/debug/SM-F936U1 - 16/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/Users/dancar/github/cal-date-widget/app/build/outputs/androidTest-results/connected/debug/SM-F936U1 - 16/cpuinfo"
+    }
+  }
+}
+output_artifact {
+  label {
+    label: "test-results.log"
+    namespace: "com.google.testing.platform.runtime.android.driver.AndroidInstrumentationDriver"
+  }
+  source_path {
+    path: "/Users/dancar/github/cal-date-widget/app/build/outputs/androidTest-results/connected/debug/SM-F936U1 - 16/testlog/test-results.log"
+  }
+  type: TEST_DATA
+  mime_type: "text/plain"
+}
