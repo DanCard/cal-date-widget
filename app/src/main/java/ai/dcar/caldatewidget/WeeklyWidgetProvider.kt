@@ -215,8 +215,9 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
 
                 var yPos = 110f
                 for (event in dayEvents) {
-                    if (yPos > height - 20) break // Clip
-                    
+                    // Allow events to render and be clipped naturally by canvas bounds
+                    // instead of hard-stopping when near the bottom
+
                     canvas.save()
                     canvas.clipRect(currentX, 110f, currentX + colWidth, height.toFloat())
                     
@@ -226,9 +227,9 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     textPaint.textSize = 48f * eventScale
                     
                     val lineHeight = textPaint.textSize * 1.2f
-                    val remainingHeight = height - yPos
-                    val dynamicMaxLines = (remainingHeight / lineHeight).toInt().coerceAtLeast(1)
-                    
+                    // Allow up to 10 lines per event - let canvas clipping handle overflow
+                    val dynamicMaxLines = 10
+
                     val textWidth = (colWidth - 10f).toInt()
                     if (textWidth > 0) {
                         // Check for null title specifically
@@ -257,7 +258,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                         } else {
                             safeTitle
                         }
-                        
+
                         try {
                             val builder = android.text.StaticLayout.Builder.obtain(
                                 finalText, 0, finalText.length, textPaint, textWidth
@@ -266,7 +267,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                             .setLineSpacing(0f, 1f)
                             .setIncludePad(false)
                             .setMaxLines(dynamicMaxLines)
-                            .setEllipsize(android.text.TextUtils.TruncateAt.END)
+                            // No ellipsize - let canvas clip the text ungracefully
                             
                             val layout = builder.build()
                             
