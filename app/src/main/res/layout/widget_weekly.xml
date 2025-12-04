@@ -12,13 +12,13 @@
 
     <ImageButton
         android:id="@+id/weekly_config_btn"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:src="@drawable/ic_settings"
         android:background="@android:color/transparent"
         android:padding="4dp"
-        android:alpha="0.5"
+        android:alpha="1.0"
         android:contentDescription="Settings" />
 </RelativeLayout>
