@@ -191,9 +191,6 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
                 val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
                 
-                val availableHeight = height - 110f
-                val heightPerEvent = if (dayEvents.isNotEmpty()) availableHeight / dayEvents.size else availableHeight
-                
                 var yPos = 110f 
                 for (event in dayEvents) {
                     if (yPos > height - 20) break // Clip
@@ -207,7 +204,8 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     textPaint.textSize = 48f * eventScale
                     
                     val lineHeight = textPaint.textSize * 1.2f
-                    val dynamicMaxLines = (heightPerEvent / lineHeight).toInt().coerceIn(2, 10)
+                    val remainingHeight = height - yPos
+                    val dynamicMaxLines = (remainingHeight / lineHeight).toInt().coerceAtLeast(1)
                     
                     val textWidth = (colWidth - 10f).toInt()
                     if (textWidth > 0) {
