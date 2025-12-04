@@ -20,7 +20,9 @@ class PrefsManager(context: Context) {
         val dateFormat: String = DEFAULT_DATE_FORMAT,
         val textColor: Int = DEFAULT_TEXT_COLOR,
         val shadowColor: Int = DEFAULT_SHADOW_COLOR,
-        val bgColor: Int = DEFAULT_BG_COLOR
+        val bgColor: Int = DEFAULT_BG_COLOR,
+        val weekStartDay: Int = 2, // Default Monday
+        val textSizeScale: Float = 1.0f // Default no scaling (base size)
     )
 
     fun saveSettings(widgetId: Int, settings: WidgetSettings) {
@@ -29,6 +31,8 @@ class PrefsManager(context: Context) {
             putInt("${KEY_PREFIX}${widgetId}_text_color", settings.textColor)
             putInt("${KEY_PREFIX}${widgetId}_shadow_color", settings.shadowColor)
             putInt("${KEY_PREFIX}${widgetId}_bg_color", settings.bgColor)
+            putInt("${KEY_PREFIX}${widgetId}_week_start", settings.weekStartDay)
+            putFloat("${KEY_PREFIX}${widgetId}_text_scale", settings.textSizeScale)
             apply()
         }
     }
@@ -38,8 +42,10 @@ class PrefsManager(context: Context) {
         val textColor = prefs.getInt("${KEY_PREFIX}${widgetId}_text_color", DEFAULT_TEXT_COLOR)
         val shadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_shadow_color", DEFAULT_SHADOW_COLOR)
         val bgColor = prefs.getInt("${KEY_PREFIX}${widgetId}_bg_color", DEFAULT_BG_COLOR)
+        val weekStart = prefs.getInt("${KEY_PREFIX}${widgetId}_week_start", 2)
+        val textScale = prefs.getFloat("${KEY_PREFIX}${widgetId}_text_scale", 1.5f)
         
-        return WidgetSettings(format, textColor, shadowColor, bgColor)
+        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, textScale)
     }
 
     fun deleteSettings(widgetId: Int) {
@@ -48,6 +54,8 @@ class PrefsManager(context: Context) {
             remove("${KEY_PREFIX}${widgetId}_text_color")
             remove("${KEY_PREFIX}${widgetId}_shadow_color")
             remove("${KEY_PREFIX}${widgetId}_bg_color")
+            remove("${KEY_PREFIX}${widgetId}_week_start")
+            remove("${KEY_PREFIX}${widgetId}_text_scale")
             apply()
         }
     }

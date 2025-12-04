@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'ai.dcar.caldatewidget'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "ai.dcar.caldatewidget"
         minSdk 26
-        targetSdk 34
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -30,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '21'
     }
     buildFeatures {
         viewBinding true
@@ -53,4 +53,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+kotlin {
+    jvmToolchain(21)
 }
