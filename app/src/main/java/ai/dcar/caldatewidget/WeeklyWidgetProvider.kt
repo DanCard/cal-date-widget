@@ -213,22 +213,79 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 val estimatedHeightPerEvent = estimatedLineHeight * 5.0f
                 val showStartTimes = (dayEvents.size * estimatedHeightPerEvent) <= availableHeight
 
+                // Calculate equitable line distribution
+                val currentTime = System.currentTimeMillis()
+
+                // For current day, separate past and current/future events
+                val (pastEventsOnToday, currentFutureEvents) = if (i == todayIndex) {
+                    dayEvents.partition { it.endTime < currentTime }
+                } else {
+                    Pair(emptyList(), dayEvents)
+                }
+
+                // Calculate if we're clipping
+                val isClipping = (dayEvents.size * estimatedHeightPerEvent) > availableHeight
+
+                // Debug logging
+                if (i == todayIndex) {
+                    Log.d("WeeklyWidget", "=== Current Day Debug ===")
+                    Log.d("WeeklyWidget", "Total events: ${dayEvents.size}, Past events: ${pastEventsOnToday.size}, Future events: ${currentFutureEvents.size}")
+                    Log.d("WeeklyWidget", "Available height: $availableHeight, Estimated per event: $estimatedHeightPerEvent")
+                    Log.d("WeeklyWidget", "Is clipping: $isClipping (${dayEvents.size * estimatedHeightPerEvent} > $availableHeight)")
+                    Log.d("WeeklyWidget", "Current time: ${SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(Date(currentTime))}")
+                }
+
+                // Calculate max lines per event
+                val getMaxLinesForEvent: (CalendarEvent) -> Int = { event ->
+                    val maxLines = when {
+                        !isClipping -> 10 // No clipping, allow generous lines
+                        i == todayIndex && event.endTime < currentTime -> 1 // Past events on current day: 1 row
+                        i == todayIndex -> {
+                            // Current/future events on current day: equitable distribution of remaining space
+                            val pastEventsHeight = pastEventsOnToday.size * estimatedLineHeight
+                            val remainingHeight = availableHeight - pastEventsHeight
+                            if (currentFutureEvents.isEmpty()) {
+                                1
+                            } else {
+                                val maxLinesForCurrentFuture = (remainingHeight / (currentFutureEvents.size * estimatedLineHeight)).toInt().coerceAtLeast(1)
+                                maxLinesForCurrentFuture
+                            }
+                        }
+                        else -> {
+                            // Past or future days: equitable distribution among all events
+                            val maxLines = (availableHeight / (dayEvents.size * estimatedLineHeight)).toInt().coerceAtLeast(1)
+                            maxLines
+                        }
+                    }
+
+                    // Debug logging for each event
+                    if (i == todayIndex) {
+                        val isPast = event.endTime < currentTime
+                        val eventTime = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(Date(event.startTime))
+                        val eventEndTime = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(Date(event.endTime))
+                        Log.d("WeeklyWidget", "Event: '${event.title}' | Start: $eventTime, End: $eventEndTime | Past: $isPast | MaxLines: $maxLines")
+                    }
+
+                    maxLines
+                }
+
+                // Debug log showStartTimes
+                if (i == todayIndex) {
+                    Log.d("WeeklyWidget", "showStartTimes: $showStartTimes")
+                }
+
                 var yPos = 110f
                 for (event in dayEvents) {
-                    // Allow events to render and be clipped naturally by canvas bounds
-                    // instead of hard-stopping when near the bottom
-
                     canvas.save()
                     canvas.clipRect(currentX, 110f, currentX + colWidth, height.toFloat())
-                    
+
                     textPaint.color = settings.textColor
-                    
+
                     val eventScale = if (i == todayIndex && event.endTime < System.currentTimeMillis()) 0.8f else columnScale
                     textPaint.textSize = 48f * eventScale
-                    
+
                     val lineHeight = textPaint.textSize * 1.2f
-                    // Allow up to 10 lines per event - let canvas clipping handle overflow
-                    val dynamicMaxLines = 10
+                    val dynamicMaxLines = getMaxLinesForEvent(event)
 
                     val textWidth = (colWidth - 10f).toInt()
                     if (textWidth > 0) {
@@ -267,14 +324,19 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                             .setLineSpacing(0f, 1f)
                             .setIncludePad(false)
                             .setMaxLines(dynamicMaxLines)
-                            // No ellipsize - let canvas clip the text ungracefully
-                            
+                            .setEllipsize(android.text.TextUtils.TruncateAt.END)
+
                             val layout = builder.build()
-                            
+
+                            // Debug logging for layout
+                            if (i == todayIndex) {
+                                Log.d("WeeklyWidget", "Layout for '${event.title}': text='$finalText', textWidth=$textWidth, maxLines=$dynamicMaxLines, actualLines=${layout.lineCount}, height=${layout.height}")
+                            }
+
                             canvas.translate(currentX + 5f, yPos)
                             layout.draw(canvas)
                             canvas.translate(-(currentX + 5f), -yPos)
-                            
+
                             yPos += layout.height + (textPaint.textSize * 0.2f)
                         } catch (e: Exception) {
                             Log.e("WeeklyWidget", "StaticLayout crash: title='$safeTitle', width=$textWidth", e)

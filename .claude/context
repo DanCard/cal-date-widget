@@ -2,14 +2,29 @@
 
 ## Recent Changes (2025-12-04)
 
-### Week Widget - Ungraceful Clipping for Last Event
-**Problem:** Last event on current day in week widget was not showing completely
-**Solution:** Modified `WeeklyWidgetProvider.kt` to allow ungraceful clipping
-- Removed hard break at line 218 that prevented events from rendering near bottom
-- Changed from dynamic line calculation to fixed 10-line limit per event
-- Removed ellipsize (no "..." truncation) to show more text
-- Canvas clipping now handles overflow with hard cut-off
-**Result:** More text visible from last event, even if partially clipped
+### Week Widget - Equitable Event Clipping Distribution
+**Problem:** Events were clipped inequitably - one event taking 4 rows, last event only 1.75 rows
+**Solution:** Implemented intelligent line distribution in `WeeklyWidgetProvider.kt` (lines 216-270)
+
+**Clipping Logic:**
+- **Current day with clipping:**
+  - Past events (already ended): Limited to 1 row max
+  - Current/future events: Equitable distribution of remaining space
+- **Past/future days with clipping:** All events share space equitably
+- **No clipping:** All events can use up to 10 rows
+
+**Critical Bug Fix (line 327):**
+- `StaticLayout.setMaxLines()` doesn't enforce limits without ellipsize
+- Added `.setEllipsize(TextUtils.TruncateAt.END)` to make maxLines work
+- Before fix: maxLines=1 but actualLines=2 (ignored)
+- After fix: maxLines=1 and actualLines=1 (respected)
+
+**Debug Logging Added (lines 229-267, 332-334):**
+- Tracks clipping detection, event counts, max lines per event
+- Logs actual vs requested line counts for verification
+- Use: `adb logcat -s WeeklyWidget:D`
+
+**Result:** More equitable space distribution, past events minimized on current day
 
 ## Architecture Notes
 
@@ -19,8 +34,14 @@
 - **Today's column:** Gets 2.0x width weight and larger text (textSizeScale, default 1.5)
 - **Past days:** 0.6x width, 1.0x text scale, dimmed if event ended
 - **Future days:** 1.5-0.7x width (declining), 1.10x text scale
-- **Event rendering:** Uses StaticLayout with max 10 lines, no ellipsize
-- **Canvas clipping:** Hard clips at widget boundaries for overflow text
+- **Event rendering:** Uses StaticLayout with dynamic maxLines based on clipping
+  - Clipping detected when: `(dayEvents.size * estimatedHeightPerEvent) > availableHeight`
+  - Current day past events: 1 line max when clipping
+  - Current day future events: Equitable distribution when clipping
+  - Other days: Equitable distribution across all events when clipping
+  - No clipping: Up to 10 lines per event
+- **Ellipsize:** TruncateAt.END (required for maxLines to work correctly)
+- **Canvas clipping:** Hard clips at widget boundaries for final overflow
 
 ### Start Time Display Logic
 - Start times are shown/hidden adaptively based on available space
@@ -45,5 +66,8 @@
 - Calendar data fetched via `CalendarRepository`
 
 ## Pending/Future Considerations
-- Consider making maxLines (currently 10) configurable via settings
-- Monitor if ungraceful clipping causes UX issues for users
+- Consider removing debug logging in production/release builds for performance
+- Could make "1 row for past events" threshold configurable in settings
+- Add unit tests for equitable line distribution logic
+- Consider making max lines (currently up to 10) configurable via settings
+- Monitor if ellipsize truncation UX is preferred vs ungraceful clipping
