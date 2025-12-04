@@ -1,0 +1,49 @@
+# Claude Code Context for cal-date-widget
+
+## Recent Changes (2025-12-04)
+
+### Week Widget - Ungraceful Clipping for Last Event
+**Problem:** Last event on current day in week widget was not showing completely
+**Solution:** Modified `WeeklyWidgetProvider.kt` to allow ungraceful clipping
+- Removed hard break at line 218 that prevented events from rendering near bottom
+- Changed from dynamic line calculation to fixed 10-line limit per event
+- Removed ellipsize (no "..." truncation) to show more text
+- Canvas clipping now handles overflow with hard cut-off
+**Result:** More text visible from last event, even if partially clipped
+
+## Architecture Notes
+
+### Week Widget Rendering (WeeklyWidgetProvider.kt)
+- Widget renders entire calendar as bitmap on Canvas
+- Each day is a column with dynamic width based on past/today/future
+- **Today's column:** Gets 2.0x width weight and larger text (textSizeScale, default 1.5)
+- **Past days:** 0.6x width, 1.0x text scale, dimmed if event ended
+- **Future days:** 1.5-0.7x width (declining), 1.10x text scale
+- **Event rendering:** Uses StaticLayout with max 10 lines, no ellipsize
+- **Canvas clipping:** Hard clips at widget boundaries for overflow text
+
+### Start Time Display Logic
+- Start times are shown/hidden adaptively based on available space
+- Calculation: `(dayEvents.size * estimatedHeightPerEvent) <= availableHeight`
+- When hidden, saves space to fit more events
+- Start times have custom color (settings.startTimeColor) and shadow
+
+### Event Deduplication
+- Events with identical title, start time, end time, and all-day status are deduplicated
+- See `CalendarRepository.kt` lines 94-96
+
+## Build & Test
+- Device: SM-F936U1 (Samsung Galaxy Z Fold4)
+- ADB path: `~/Library/Android/sdk/platform-tools/adb`
+- Build: `./gradlew assembleDebug`
+- Install: `./gradlew installDebug`
+- Screenshot: `adb shell screencap -p /sdcard/screenshot.png && adb pull /sdcard/screenshot.png /tmp/widget_screenshot.png`
+
+## Known Patterns
+- Settings managed via `PrefsManager`
+- Widget updates via `AppWidgetManager.updateAppWidget()`
+- Calendar data fetched via `CalendarRepository`
+
+## Pending/Future Considerations
+- Consider making maxLines (currently 10) configurable via settings
+- Monitor if ungraceful clipping causes UX issues for users

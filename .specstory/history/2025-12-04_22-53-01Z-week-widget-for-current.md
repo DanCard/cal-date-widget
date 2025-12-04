@@ -3033,3 +3033,675 @@ This allows more text from the last event to be visible, even if partially clipp
 
 This follows your project's commit style (using "fix:" prefix) and explains both what changed and why it improves the user experience.
 
+---
+
+_**User**_
+
+Do you write something to remember context or info in between sessions?
+
+---
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+The user is asking if I write something to remember context or information between sessions. This is asking about my capabilities and how I work.
+
+The truth is:
+1. Each conversation session starts fresh - I don't have persistent memory between different conversations
+2. However, the current conversation has "unlimited context through automatic summarization" as mentioned in my system prompt
+3. Within a single conversation, I can read files, and those files persist on the user's filesystem
+4. I don't create hidden files or databases to store information between sessions
+5. The conversation history itself is maintained by the system, and I can reference earlier parts of the conversation
+
+So the honest answer is: No, I don't write files to remember things between sessions. Each new conversation starts fresh. However:
+- Within THIS session, I have access to the full conversation history
+- Any files I create/modify persist on your filesystem
+- I can read existing files in your project to understand context
+
+I should be clear and honest about this.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+No, I don't write anything to persist memory between sessions. Each conversation with me starts fresh - I don't have access to previous conversations or any persistent memory.
+
+However, within a single conversation session (like this one):
+- I have access to the full conversation history through automatic summarization
+- I can read files in your project to understand context
+- Any files I create or modify persist on your filesystem and I can reference them
+
+If you want context to persist between sessions, you could:
+1. **Keep important info in your codebase** - I can read files like `architecture.md` (which I see you have) or comments in code
+2. **Use git commit messages** - I can read recent commits to understand what was done
+3. **Create documentation files** - Though I won't create these proactively, you can ask me to document decisions
+4. **Ask me to add comments** - In the code where we made changes
+
+For this week widget change, the git commit we're about to make will serve as a record of what was done and why. The code comments I added (lines 218-219 and 230-231 in WeeklyWidgetProvider.kt) also explain the ungraceful clipping approach.
+
+Would you like me to add more documentation about this change somewhere?
+
+---
+
+_**User**_
+
+Are there documentation files you'd like to create?  Do you want to create a .claude/context file to remember the context of last session?
+
+---
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+The user is asking if there are documentation files I'd like to create, and specifically mentions creating a `.claude/context` file to remember context from the last session.
+
+This is interesting - they're offering to let me create documentation that would help in future sessions. Let me think about what would be useful:
+
+1. A `.claude/context` file could be helpful to store:
+   - Key architectural decisions
+   - Recent changes and their rationale
+   - Known issues or TODOs
+   - Patterns and conventions used in the codebase
+
+2. Looking at the codebase, I already see:
+   - `architecture.md` exists (mentioned in git status earlier)
+   - The project seems well-structured
+
+3. For this specific change, it would be useful to document:
+   - The week widget rendering behavior and clipping strategy
+   - Why we chose ungraceful clipping over graceful truncation
+   - Any other widget-specific behaviors
+
+However, I need to be careful here based on my instructions:
+- "NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User."
+
+BUT - the user is now EXPLICITLY asking me if I want to create documentation files and specifically suggesting a `.claude/context` file. So this counts as an explicit request!
+
+So yes, I think it would be valuable to create:
+1. A `.claude/context` file with current context, decisions, and important info
+2. Maybe update or add to documentation about the week widget behavior
+
+Let me suggest what would be useful.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+Yes! That's a great idea. A `.claude/context` file would be very helpful for future sessions. Let me create one that captures the important context:
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<tool-use data-tool-type="write" data-tool-name="Write"><details>
+<summary>Tool use: **Write**</summary>
+
+
+```
+# Claude Code Context for cal-date-widget
+
+## Recent Changes (2025-12-04)
+
+### Week Widget - Ungraceful Clipping for Last Event
+**Problem:** Last event on current day in week widget was not showing completely
+**Solution:** Modified `WeeklyWidgetProvider.kt` to allow ungraceful clipping
+- Removed hard break at line 218 that prevented events from rendering near bottom
+- Changed from dynamic line calculation to fixed 10-line limit per event
+- Removed ellipsize (no "..." truncation) to show more text
+- Canvas clipping now handles overflow with hard cut-off
+**Result:** More text visible from last event, even if partially clipped
+
+## Architecture Notes
+
+### Week Widget Rendering (WeeklyWidgetProvider.kt)
+- Widget renders entire calendar as bitmap on Canvas
+- Each day is a column with dynamic width based on past/today/future
+- **Today's column:** Gets 2.0x width weight and larger text (textSizeScale, default 1.5)
+- **Past days:** 0.6x width, 1.0x text scale, dimmed if event ended
+- **Future days:** 1.5-0.7x width (declining), 1.10x text scale
+- **Event rendering:** Uses StaticLayout with max 10 lines, no ellipsize
+- **Canvas clipping:** Hard clips at widget boundaries for overflow text
+
+### Start Time Display Logic
+- Start times are shown/hidden adaptively based on available space
+- Calculation: `(dayEvents.size * estimatedHeightPerEvent) <= availableHeight`
+- When hidden, saves space to fit more events
+- Start times have custom color (settings.startTimeColor) and shadow
+
+### Event Deduplication
+- Events with identical title, start time, end time, and all-day status are deduplicated
+- See `CalendarRepository.kt` lines 94-96
+
+## Build & Test
+- Device: SM-F936U1 (Samsung Galaxy Z Fold4)
+- ADB path: `~/Library/Android/sdk/platform-tools/adb`
+- Build: `./gradlew assembleDebug`
+- Install: `./gradlew installDebug`
+- Screenshot: `adb shell screencap -p /sdcard/screenshot.png && adb pull /sdcard/screenshot.png /tmp/widget_screenshot.png`
+
+## Known Patterns
+- Settings managed via `PrefsManager`
+- Widget updates via `AppWidgetManager.updateAppWidget()`
+- Calendar data fetched via `CalendarRepository`
+
+## Pending/Future Considerations
+- Consider making maxLines (currently 10) configurable via settings
+- Monitor if ungraceful clipping causes UX issues for users
+
+```
+```
+File created successfully at: /Users/dancar/github/cal-date-widget/.claude/context
+```
+</details></tool-use>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+Great! I've created the `.claude/context` file. This will help in future sessions to quickly understand:
+1. What was recently changed and why
+2. How the week widget rendering works
+3. Build and test commands
+4. Architectural patterns
+
+Now let me let the user know this is done and ask if they'd like any other documentation.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+Perfect! I've created `.claude/context` with:
+
+1. **Recent Changes** - Documents today's ungraceful clipping fix
+2. **Architecture Notes** - Week widget rendering logic, column sizing, and clipping behavior
+3. **Build & Test** - Commands and device info for quick reference
+4. **Known Patterns** - Key classes and patterns in the codebase
+5. **Future Considerations** - Potential improvements or things to monitor
+
+This will help me (or any future session) quickly understand:
+- What was done recently and why
+- How the week widget works internally
+- Development workflow and commands
+
+Would you also like me to:
+- Add technical notes to `architecture.md` about the week widget rendering?
+- Create a separate widget-specific documentation file?
+- Document any other parts of the codebase you think would be helpful?
+
+---
+
+_**User**_
+
+y
+
+---
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+The user just said "y" which I interpret as "yes" - they want me to proceed with adding documentation. They asked about three options:
+1. Add technical notes to `architecture.md` about the week widget rendering
+2. Create a separate widget-specific documentation file
+3. Document any other parts of the codebase
+
+Since they just said "y" without specifying which one, I think the best approach is to:
+1. First read the existing `architecture.md` to see what's already there
+2. Then decide whether to add to it or create separate files
+3. Be thoughtful about what would be most useful
+
+Let me read the architecture.md file first.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+Let me read the existing `architecture.md` first to see what's already documented:
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<tool-use data-tool-type="read" data-tool-name="Read"><details>
+<summary>Tool use: **Read**</summary>
+ `./architecture.md`
+```
+     1→# Architecture & Development Guide
+     2→
+     3→## Project Overview
+     4→Android calendar widget app that displays a weekly view of calendar events with customizable appearance and intelligent text sizing.
+     5→
+     6→## Key Components
+     7→
+     8→### WeeklyWidgetProvider.kt
+     9→Main widget provider that renders the weekly calendar view.
+    10→
+    11→**Key Features:**
+    12→- Renders 7-day week view with events from device calendars
+    13→- Dynamic column sizing (past days smaller, today larger, future days medium)
+    14→- Intelligent start time display (hides when events would be clipped)
+    15→- Custom text scaling per day column
+    16→- Event filtering (declined events can be hidden)
+    17→
+    18→**Rendering Flow:**
+    19→1. `onUpdate()` called when widget needs refresh
+    20→2. `drawWeeklyCalendar()` creates bitmap canvas
+    21→3. For each day column:
+    22→   - Calculate column width based on weights (past/today/future)
+    23→   - Filter events for that day
+    24→   - **Estimate if all events will fit** (5 lines per event heuristic)
+    25→   - Render events with/without start times based on estimation
+    26→   - Clip events that exceed available height
+    27→
+    28→**Start Time Logic (Lines 205-214):**
+    29→```kotlin
+    30→// Estimates available space and event count to decide if start times should be shown
+    31→val estimatedHeightPerEvent = estimatedLineHeight * 5.0f
+    32→val showStartTimes = (dayEvents.size * estimatedHeightPerEvent) <= availableHeight
+    33→```
+    34→- Uses conservative 5-line estimate per event to account for text wrapping
+    35→- Hides start times on days where events would be clipped
+    36→- Allows more event titles to fit in limited widget height
+    37→
+    38→### CalendarRepository.kt
+    39→Handles fetching calendar events from Android's CalendarContract.
+    40→
+    41→**Key Methods:**
+    42→- `getEventsForWeek(startMillis)`: Queries calendar instances for 7-day range
+    43→- `getVisibleCalendarIds()`: Gets only calendars marked visible
+    44→- Deduplicates events based on title, time, and declined status
+    45→- Returns `CalendarEvent` data objects
+    46→
+    47→### WeeklyDisplayLogic.kt
+    48→Utility object for week display calculations.
+    49→
+    50→**Key Methods:**
+    51→- `getStartDate()`: Calculates week start based on configured start day
+    52→- `shouldDisplayEventOnDay()`: Determines if event should show on a given day
+    53→  - Handles all-day events (UTC to local timezone conversion)
+    54→  - Handles regular timed events
+    55→- `getColumnWeights()`: Calculates relative widths for day columns
+    56→  - Past days: 0.6 weight
+    57→  - Today: 2.0 weight
+    58→  - Future days: 1.5 to 0.7 (decaying)
+    59→
+    60→### PrefsManager.kt
+    61→Manages widget settings persistence using SharedPreferences.
+    62→
+    63→**Settings Stored:**
+    64→- Text color, size scale, shadow color
+    65→- Start time color and shadow color
+    66→- Week start day preference
+    67→- Show/hide declined events flag
+    68→
+    69→### CalendarEvent.kt
+    70→Data class for calendar event representation.
+    71→
+    72→**Fields:**
+    73→- id, title, startTime, endTime
+    74→- color, isAllDay, isDeclined
+    75→
+    76→## Recent Implementations
+    77→
+    78→### Auto-Hide Start Times (Dec 2024)
+    79→**Problem:** When widget height is limited, events get clipped but start times still show, wasting space.
+    80→
+    81→**Solution:** Before rendering events for each day, estimate if all events will fit:
+    82→- Calculate available vertical space
+    83→- Estimate space needed (event count × 5 lines per event)
+    84→- If won't fit, hide start times for ALL events on that day
+    85→- This allows more event titles to display
+    86→
+    87→**Iterations:**
+    88→- Initial: 1.5 lines per event (too optimistic)
+    89→- Second: 3.5 lines per event (better but still clipped on narrow columns)
+    90→- Final: 5.0 lines per event (conservative enough for all column widths)
+    91→
+    92→## Important Implementation Notes
+    93→
+    94→### Column Scaling
+    95→- Past days (< today): 0.6 width, 1.0 text scale
+    96→- Today: 2.0 width, settings.textSizeScale
+    97→- Future days: 0.7-1.5 width (decay), 1.10 text scale
+    98→- Completed events on today: 0.8 text scale (dimmed)
+    99→
+   100→### Text Wrapping & Layout
+   101→- Uses `StaticLayout.Builder` for multi-line text rendering
+   102→- Dynamic max lines based on remaining vertical space
+   103→- Text clipped to column width with ellipsis
+   104→- Line height: textSize × 1.2
+   105→
+   106→### Event Filtering
+   107→- Only visible calendars included
+   108→- Declined events optionally filtered (user setting)
+   109→- Events deduplicated by (title, start, end, allDay, declined)
+   110→- Time-based filtering per day using `shouldDisplayEventOnDay()`
+   111→
+   112→## Testing
+   113→- Unit tests in `app/src/test/`
+   114→- Build: `./gradlew assembleDebug`
+   115→- Install: `./gradlew installDebug`
+   116→- Run tests: `./gradlew test`
+   117→
+   118→## Common Development Tasks
+   119→
+   120→### Adjusting Start Time Threshold
+   121→Edit line 212 in `WeeklyWidgetProvider.kt`:
+   122→```kotlin
+   123→val estimatedHeightPerEvent = estimatedLineHeight * 5.0f  // Adjust multiplier
+   124→```
+   125→
+   126→### Modifying Column Weights
+   127→Edit `getColumnWeights()` in `WeeklyDisplayLogic.kt`
+   128→
+   129→### Adding New Settings
+   130→1. Add field to `WidgetSettings` data class
+   131→2. Update `PrefsManager.loadSettings()` and `saveSettings()`
+   132→3. Add UI control in `WeeklyConfigActivity.kt`
+   133→
+   134→## File Structure
+   135→```
+   136→app/src/main/java/ai/dcar/caldatewidget/
+   137→├── WeeklyWidgetProvider.kt      # Main widget renderer
+   138→├── CalendarRepository.kt         # Calendar data access
+   139→├── CalendarEvent.kt             # Event data model
+   140→├── WeeklyDisplayLogic.kt        # Display calculations
+   141→├── PrefsManager.kt              # Settings persistence
+   142→└── WeeklyConfigActivity.kt      # Settings UI
+   143→```
+   144→
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>
+
+```
+</details></tool-use>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+Great! The architecture.md file is already quite comprehensive. I can see it has:- Good overview of components
+- Rendering flow
+- Recent implementations section
+
+I should update this file to:
+1. Update the "Text Wrapping & Layout" section (lines 100-104) to reflect the new ungraceful clipping behavior
+2. Add a new entry in "Recent Implementations" about the ungraceful clipping change
+3. Update the rendering flow description (lines 18-26) to reflect that events are no longer clipped with ellipsisLet me make these updates.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+Perfect! I can see the architecture.md is already comprehensive. Let me update it with the recent ungraceful clipping changes:
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<tool-use data-tool-type="write" data-tool-name="Edit"><details>
+<summary>Tool use: **Edit**</summary>
+
+```
+The file /Users/dancar/github/cal-date-widget/architecture.md has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+    14→- Intelligent start time display (hides when events would be clipped)
+    15→- Custom text scaling per day column
+    16→- Event filtering (declined events can be hidden)
+    17→
+    18→**Rendering Flow:**
+    19→1. `onUpdate()` called when widget needs refresh
+    20→2. `drawWeeklyCalendar()` creates bitmap canvas
+    21→3. For each day column:
+    22→   - Calculate column width based on weights (past/today/future)
+    23→   - Filter events for that day
+    24→   - **Estimate if all events will fit** (5 lines per event heuristic)
+    25→   - Render events with/without start times based on estimation
+    26→   - **Ungraceful clipping:** Events render up to 10 lines, canvas clips overflow without ellipsis
+    27→
+    28→**Start Time Logic (Lines 205-214):**
+    29→```kotlin
+    30→// Estimates available space and event count to decide if start times should be shown
+```
+</details></tool-use>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<tool-use data-tool-type="write" data-tool-name="Edit"><details>
+<summary>Tool use: **Edit**</summary>
+
+```
+The file /Users/dancar/github/cal-date-widget/architecture.md has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+    96→- Today: 2.0 width, settings.textSizeScale
+    97→- Future days: 0.7-1.5 width (decay), 1.10 text scale
+    98→- Completed events on today: 0.8 text scale (dimmed)
+    99→
+   100→### Text Wrapping & Layout
+   101→- Uses `StaticLayout.Builder` for multi-line text rendering
+   102→- Fixed max lines (10) per event to allow more text visibility
+   103→- **Ungraceful clipping:** No ellipsis, canvas hard-clips text at widget boundary
+   104→- Text clipped to column width horizontally
+   105→- Line height: textSize × 1.2
+   106→
+   107→### Event Filtering
+   108→- Only visible calendars included
+   109→- Declined events optionally filtered (user setting)
+```
+</details></tool-use>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<tool-use data-tool-type="write" data-tool-name="Edit"><details>
+<summary>Tool use: **Edit**</summary>
+
+```
+The file /Users/dancar/github/cal-date-widget/architecture.md has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+    83→- Estimate space needed (event count × 5 lines per event)
+    84→- If won't fit, hide start times for ALL events on that day
+    85→- This allows more event titles to display
+    86→
+    87→**Iterations:**
+    88→- Initial: 1.5 lines per event (too optimistic)
+    89→- Second: 3.5 lines per event (better but still clipped on narrow columns)
+    90→- Final: 5.0 lines per event (conservative enough for all column widths)
+    91→
+    92→### Ungraceful Clipping for Last Event (Dec 2024)
+    93→**Problem:** Last event on current day was not showing completely due to:
+    94→- Hard break prevented events from rendering if `yPos > height - 20`
+    95→- Dynamic line calculation limited text based on remaining space
+    96→- Ellipsize truncated text with "..." reducing visible content
+    97→
+    98→**Solution:** Allow events to render and clip naturally at canvas boundaries:
+    99→1. **Removed hard break** (line 218): Events now always attempt to render
+   100→2. **Fixed max lines to 10**: Changed from dynamic calculation to constant value
+   101→3. **Removed ellipsize**: No "..." truncation, text clips ungracefully at edge
+   102→4. **Canvas clipping handles overflow**: `clipRect()` does hard cut-off
+   103→
+   104→**Result:**
+   105→- More text visible from last event, even if partially clipped
+   106→- Better use of available widget space
+   107→- Text cuts off mid-line at bottom (ungraceful but shows more content)
+   108→
+   109→**Code Location:** `WeeklyWidgetProvider.kt` lines 217-270
+   110→
+   111→## Important Implementation Notes
+   112→
+   113→### Column Scaling
+```
+</details></tool-use>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+Great! I've updated the architecture.md file with:1. Updated rendering flow to mention ungraceful clipping
+2. Updated text wrapping & layout section to explain the fixed max lines and no ellipsis
+3. Added a complete new section in "Recent Implementations" documenting the ungraceful clipping change with problem, solution, result, and code locationNow I should also add a comment or update to the Common Development Tasks section to explain how to adjust the max lines if needed. Let me add that.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<tool-use data-tool-type="write" data-tool-name="Edit"><details>
+<summary>Tool use: **Edit**</summary>
+
+```
+The file /Users/dancar/github/cal-date-widget/architecture.md has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+   134→- Build: `./gradlew assembleDebug`
+   135→- Install: `./gradlew installDebug`
+   136→- Run tests: `./gradlew test`
+   137→
+   138→## Common Development Tasks
+   139→
+   140→### Adjusting Start Time Threshold
+   141→Edit line 212 in `WeeklyWidgetProvider.kt`:
+   142→```kotlin
+   143→val estimatedHeightPerEvent = estimatedLineHeight * 5.0f  // Adjust multiplier
+   144→```
+   145→
+   146→### Adjusting Event Text Clipping
+   147→Edit line 231 in `WeeklyWidgetProvider.kt`:
+   148→```kotlin
+   149→val dynamicMaxLines = 10  // Increase to show more text, decrease to clip sooner
+   150→```
+   151→Note: Higher values allow more text but may cause performance issues with StaticLayout
+   152→
+   153→### Modifying Column Weights
+   154→Edit `getColumnWeights()` in `WeeklyDisplayLogic.kt`
+   155→
+   156→### Adding New Settings
+   157→1. Add field to `WidgetSettings` data class
+   158→2. Update `PrefsManager.loadSettings()` and `saveSettings()`
+```
+</details></tool-use>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+Perfect! I've updated the architecture.md file comprehensively with:1. Rendering flow updated
+2. Text Wrapping & Layout section updated  
+3. New "Recent Implementations" section for ungraceful clipping
+4. New "Common Development Tasks" entry for adjusting clippingNow both `.claude/context` and `architecture.md` are updated with the recent changes. This provides good documentation for future sessions and for anyone else working on the codebase.
+
+Let me let the user know this is complete.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+Perfect! I've updated the documentation:
+
+## Updated Files:
+
+### 1. `.claude/context` (created)
+- Session context for Claude Code
+- Recent changes with rationale
+- Build commands and device info
+- Architecture quick reference
+
+### 2. `architecture.md` (updated)
+Added comprehensive documentation about the ungraceful clipping change:
+- **Rendering Flow** (line 26): Updated to mention ungraceful clipping behavior
+- **Text Wrapping & Layout** (lines 100-105): Documented fixed 10-line limit and no ellipsis
+- **Recent Implementations** (lines 92-109): Full section on ungraceful clipping
+  - Problem statement
+  - Solution details
+  - Results
+  - Code location reference
+- **Common Development Tasks** (lines 146-151): New section on adjusting the maxLines value
+
+The documentation now provides:
+- Context for future Claude sessions via `.claude/context`
+- Technical details for developers via `architecture.md`
+- Clear explanation of why and how the ungraceful clipping works
+- Instructions for adjusting the behavior if needed
+
+Both files are ready for the git commit. Would you like me to proceed with creating the commit now?
+
+---
+
+_**User**_
+
+You said dec 2024, when it is dec 2025?
+
+---
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+Oh no! The user is right - I made a mistake with the date. Looking at my system prompt:
+
+"<env>
+Working directory: /Users/dancar/github/cal-date-widget
+Is directory a git repo: Yes
+Platform: darwin
+OS Version: Darwin 25.1.0
+Today's date: 2025-12-04
+</env>"
+
+Today is 2025-12-04, so it's December 2025, not December 2024. I wrote "Dec 2024" in the documentation multiple times:
+
+1. In architecture.md: "### Auto-Hide Start Times (Dec 2024)"
+2. In architecture.md: "### Ungraceful Clipping for Last Event (Dec 2024)"
+
+I need to fix both of these to say "Dec 2025" instead. Let me correct these errors.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+You're absolutely right! My apologies - I wrote "Dec 2024" when it should be "Dec 2025". Let me fix that in the documentation:
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<tool-use data-tool-type="write" data-tool-name="Edit"><details>
+<summary>Tool use: **Edit**</summary>
+
+```
+The file /Users/dancar/github/cal-date-widget/architecture.md has been updated. Here's the result of running `cat -n` on a snippet of the edited file:
+    88→- Initial: 1.5 lines per event (too optimistic)
+    89→- Second: 3.5 lines per event (better but still clipped on narrow columns)
+    90→- Final: 5.0 lines per event (conservative enough for all column widths)
+    91→
+    92→### Ungraceful Clipping for Last Event (Dec 2025)
+    93→**Problem:** Last event on current day was not showing completely due to:
+    94→- Hard break prevented events from rendering if `yPos > height - 20`
+    95→- Dynamic line calculation limited text based on remaining space
+    96→- Ellipsize truncated text with "..." reducing visible content
+```
+</details></tool-use>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+Good! I've fixed the date. Now I should also check if there are any other instances of "Dec 2024" that need to be updated. Looking at the architecture.md file, I saw "### Auto-Hide Start Times (Dec 2024)" earlier. Let me check if that's actually from 2024 or if that's also an error. Actually, looking at the git log from earlier:
+
+"Recent commits:
+2be97b4 architecture.md added
+485251b Hide start times when events are clipped to show more events"
+
+The commit "Hide start times when events are clipped to show more events" was the one that added the auto-hide start times feature. I don't know when that commit was made - it could have been in 2024. So I should leave that one alone unless I can verify the date. The ungraceful clipping is definitely today (Dec 2025), so I've fixed that correctly.
+
+Actually, I should also check the .claude/context file - did I write "2025-12-04" there or did I also make the same mistake?
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<tool-use data-tool-type="read" data-tool-name="Read"><details>
+<summary>Tool use: **Read**</summary>
+ `./.claude/context`
+```
+     1→# Claude Code Context for cal-date-widget
+     2→
+     3→## Recent Changes (2025-12-04)
+     4→
+     5→### Week Widget - Ungraceful Clipping for Last Event
+     6→**Problem:** Last event on current day in week widget was not showing completely
+     7→**Solution:** Modified `WeeklyWidgetProvider.kt` to allow ungraceful clipping
+     8→- Removed hard break at line 218 that prevented events from rendering near bottom
+     9→- Changed from dynamic line calculation to fixed 10-line limit per event
+    10→- Removed ellipsize (no "..." truncation) to show more text
+
+<system-reminder>
+Whenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.
+</system-reminder>
+
+```
+</details></tool-use>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+<think><details><summary>Thought Process</summary>
+Good! The `.claude/context` file has the correct date "2025-12-04". So only the `architecture.md` file had the wrong year, and I've now corrected it.
+
+The date is now fixed. Let me confirm with the user.
+</details></think>
+
+_**Agent (claude-sonnet-4-5-20250929)**_
+
+Good catch! I've fixed it. The `.claude/context` file already had the correct date (2025-12-04), but `architecture.md` had the wrong year which I've now corrected to "Dec 2025".
+
+All documentation is now accurate and ready for the commit!
+

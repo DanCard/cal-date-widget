@@ -23,7 +23,7 @@ Main widget provider that renders the weekly calendar view.
    - Filter events for that day
    - **Estimate if all events will fit** (5 lines per event heuristic)
    - Render events with/without start times based on estimation
-   - Clip events that exceed available height
+   - **Ungraceful clipping:** Events render up to 10 lines, canvas clips overflow without ellipsis
 
 **Start Time Logic (Lines 205-214):**
 ```kotlin
@@ -89,6 +89,25 @@ Data class for calendar event representation.
 - Second: 3.5 lines per event (better but still clipped on narrow columns)
 - Final: 5.0 lines per event (conservative enough for all column widths)
 
+### Ungraceful Clipping for Last Event (Dec 2025)
+**Problem:** Last event on current day was not showing completely due to:
+- Hard break prevented events from rendering if `yPos > height - 20`
+- Dynamic line calculation limited text based on remaining space
+- Ellipsize truncated text with "..." reducing visible content
+
+**Solution:** Allow events to render and clip naturally at canvas boundaries:
+1. **Removed hard break** (line 218): Events now always attempt to render
+2. **Fixed max lines to 10**: Changed from dynamic calculation to constant value
+3. **Removed ellipsize**: No "..." truncation, text clips ungracefully at edge
+4. **Canvas clipping handles overflow**: `clipRect()` does hard cut-off
+
+**Result:**
+- More text visible from last event, even if partially clipped
+- Better use of available widget space
+- Text cuts off mid-line at bottom (ungraceful but shows more content)
+
+**Code Location:** `WeeklyWidgetProvider.kt` lines 217-270
+
 ## Important Implementation Notes
 
 ### Column Scaling
@@ -99,8 +118,9 @@ Data class for calendar event representation.
 
 ### Text Wrapping & Layout
 - Uses `StaticLayout.Builder` for multi-line text rendering
-- Dynamic max lines based on remaining vertical space
-- Text clipped to column width with ellipsis
+- Fixed max lines (10) per event to allow more text visibility
+- **Ungraceful clipping:** No ellipsis, canvas hard-clips text at widget boundary
+- Text clipped to column width horizontally
 - Line height: textSize × 1.2
 
 ### Event Filtering
@@ -122,6 +142,13 @@ Edit line 212 in `WeeklyWidgetProvider.kt`:
 ```kotlin
 val estimatedHeightPerEvent = estimatedLineHeight * 5.0f  // Adjust multiplier
 ```
+
+### Adjusting Event Text Clipping
+Edit line 231 in `WeeklyWidgetProvider.kt`:
+```kotlin
+val dynamicMaxLines = 10  // Increase to show more text, decrease to clip sooner
+```
+Note: Higher values allow more text but may cause performance issues with StaticLayout
 
 ### Modifying Column Weights
 Edit `getColumnWeights()` in `WeeklyDisplayLogic.kt`
