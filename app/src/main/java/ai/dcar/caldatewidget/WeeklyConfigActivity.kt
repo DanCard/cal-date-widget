@@ -57,6 +57,12 @@ class WeeklyConfigActivity : AppCompatActivity() {
         val btnPickText = findViewById<Button>(R.id.btn_pick_text_color)
         val previewShadow = findViewById<View>(R.id.preview_shadow_color)
         val btnPickShadow = findViewById<Button>(R.id.btn_pick_shadow_color)
+        
+        val previewStartColor = findViewById<View>(R.id.preview_start_time_color)
+        val btnPickStartColor = findViewById<Button>(R.id.btn_pick_start_time_color)
+        val previewStartShadow = findViewById<View>(R.id.preview_start_time_shadow)
+        val btnPickStartShadow = findViewById<Button>(R.id.btn_pick_start_time_shadow)
+        
         val seekSize = findViewById<SeekBar>(R.id.seekbar_text_size)
 
         // Setup Spinner
@@ -66,7 +72,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
         spinner.adapter = adapter
         
         // Set initial state
-        updateColorPreviews(previewText, previewShadow)
+        updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
         
         // Initial Progress: scale 1.0 -> progress 50 (if range is 0.5-2.5, 0->0.5, 100->1.5, 200->2.5)
         seekSize.progress = ((currentSettings.textSizeScale - 0.5f) * 100).toInt()
@@ -98,14 +104,28 @@ class WeeklyConfigActivity : AppCompatActivity() {
         btnPickText.setOnClickListener {
             showColorPicker("Text Color", currentSettings.textColor) { color ->
                 currentSettings = currentSettings.copy(textColor = color)
-                updateColorPreviews(previewText, previewShadow)
+                updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
             }
         }
         
         btnPickShadow.setOnClickListener {
              showColorPicker("Shadow Color", currentSettings.shadowColor) { color ->
                 currentSettings = currentSettings.copy(shadowColor = color)
-                updateColorPreviews(previewText, previewShadow)
+                updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
+            }
+        }
+
+        btnPickStartColor.setOnClickListener {
+             showColorPicker("Start Time Color", currentSettings.startTimeColor) { color ->
+                currentSettings = currentSettings.copy(startTimeColor = color)
+                updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
+            }
+        }
+
+        btnPickStartShadow.setOnClickListener {
+             showColorPicker("Start Time Shadow", currentSettings.startTimeShadowColor) { color ->
+                currentSettings = currentSettings.copy(startTimeShadowColor = color)
+                updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
             }
         }
 
@@ -139,9 +159,11 @@ class WeeklyConfigActivity : AppCompatActivity() {
         }
     }
     
-    private fun updateColorPreviews(text: View, shadow: View) {
+    private fun updateColorPreviews(text: View, shadow: View, startColor: View, startShadow: View) {
         text.setBackgroundColor(currentSettings.textColor)
         shadow.setBackgroundColor(currentSettings.shadowColor)
+        startColor.setBackgroundColor(currentSettings.startTimeColor)
+        startShadow.setBackgroundColor(currentSettings.startTimeShadowColor)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

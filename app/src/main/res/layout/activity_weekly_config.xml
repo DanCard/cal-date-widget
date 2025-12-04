@@ -96,6 +96,61 @@
                 android:text="Pick" />
         </LinearLayout>
 
+        <!-- Start Time Colors -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Time Color"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:id="@+id/preview_start_time_color"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@android:color/holo_blue_light"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btn_pick_start_time_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pick" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Time Shadow"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:id="@+id/preview_start_time_shadow"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@android:color/holo_orange_light"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btn_pick_start_time_shadow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pick" />
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

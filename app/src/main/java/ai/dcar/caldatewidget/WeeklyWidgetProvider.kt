@@ -22,6 +22,8 @@ import android.text.Spanned
 import android.text.style.StyleSpan
 import android.graphics.Typeface
 import java.util.Date
+import android.text.style.ForegroundColorSpan
+import android.text.style.CharacterStyle
 
 class WeeklyWidgetProvider : AppWidgetProvider() {
 
@@ -219,11 +221,24 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                         
                         // Add Start Time if not all day
                         val finalText: CharSequence = if (!event.isAllDay) {
-                             val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
-                             val timeString = timeFormat.format(Date(event.startTime))
-                             val spannable = SpannableString("$timeString $safeTitle")
-
-                             spannable
+                                                          val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+                                                          val timeString = timeFormat.format(Date(event.startTime))
+                                                          val spannable = SpannableString("$timeString $safeTitle")
+                                                          
+                                                          spannable.setSpan(
+                                                              ForegroundColorSpan(settings.startTimeColor),
+                                                              0,
+                                                              timeString.length,
+                                                              Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                                          )
+                                                          
+                                                          spannable.setSpan(object : CharacterStyle() {
+                                                              override fun updateDrawState(tp: android.text.TextPaint) {
+                                                                  tp.setShadowLayer(4f, 2f, 2f, settings.startTimeShadowColor)
+                                                              }
+                                                          }, 0, timeString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                                                          
+                                                          spannable
                         } else {
                             safeTitle
                         }

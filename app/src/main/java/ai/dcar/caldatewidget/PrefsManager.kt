@@ -22,7 +22,9 @@ class PrefsManager(context: Context) {
         val shadowColor: Int = DEFAULT_SHADOW_COLOR,
         val bgColor: Int = DEFAULT_BG_COLOR,
         val weekStartDay: Int = 2, // Default Monday
-        val textSizeScale: Float = 1.0f // Default no scaling (base size)
+        val textSizeScale: Float = 1.0f, // Default no scaling (base size)
+        val startTimeColor: Int = Color.BLUE,
+        val startTimeShadowColor: Int = Color.YELLOW
     )
 
     fun saveSettings(widgetId: Int, settings: WidgetSettings) {
@@ -33,6 +35,8 @@ class PrefsManager(context: Context) {
             putInt("${KEY_PREFIX}${widgetId}_bg_color", settings.bgColor)
             putInt("${KEY_PREFIX}${widgetId}_week_start", settings.weekStartDay)
             putFloat("${KEY_PREFIX}${widgetId}_text_scale", settings.textSizeScale)
+            putInt("${KEY_PREFIX}${widgetId}_start_time_color", settings.startTimeColor)
+            putInt("${KEY_PREFIX}${widgetId}_start_time_shadow", settings.startTimeShadowColor)
             apply()
         }
     }
@@ -44,8 +48,10 @@ class PrefsManager(context: Context) {
         val bgColor = prefs.getInt("${KEY_PREFIX}${widgetId}_bg_color", DEFAULT_BG_COLOR)
         val weekStart = prefs.getInt("${KEY_PREFIX}${widgetId}_week_start", 2)
         val textScale = prefs.getFloat("${KEY_PREFIX}${widgetId}_text_scale", 1.5f)
+        val startTimeColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_color", Color.BLUE)
+        val startTimeShadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_shadow", Color.YELLOW)
         
-        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, textScale)
+        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, textScale, startTimeColor, startTimeShadowColor)
     }
 
     fun deleteSettings(widgetId: Int) {
