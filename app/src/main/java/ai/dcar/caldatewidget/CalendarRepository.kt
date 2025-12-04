@@ -23,7 +23,8 @@ class CalendarRepository(private val context: Context) {
             CalendarContract.Instances.BEGIN,
             CalendarContract.Instances.END,
             CalendarContract.Instances.DISPLAY_COLOR,
-            CalendarContract.Instances.ALL_DAY
+            CalendarContract.Instances.ALL_DAY,
+            CalendarContract.Instances.SELF_ATTENDEE_STATUS
         )
 
         // Build selection for calendar IDs
@@ -65,9 +66,13 @@ class CalendarRepository(private val context: Context) {
                 val endIdx = it.getColumnIndex(CalendarContract.Instances.END)
                 val colorIdx = it.getColumnIndex(CalendarContract.Instances.DISPLAY_COLOR)
                 val allDayIdx = it.getColumnIndex(CalendarContract.Instances.ALL_DAY)
+                val selfStatusIdx = it.getColumnIndex(CalendarContract.Instances.SELF_ATTENDEE_STATUS)
 
                 while (it.moveToNext()) {
                     val allDay = if (allDayIdx >= 0) it.getInt(allDayIdx) == 1 else false
+                    val selfStatus = if (selfStatusIdx >= 0) it.getInt(selfStatusIdx) else 0
+                    val isDeclined = selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_DECLINED
+                    
                     events.add(
                         CalendarEvent(
                             it.getLong(idIdx),
@@ -75,7 +80,8 @@ class CalendarRepository(private val context: Context) {
                             it.getLong(beginIdx),
                             it.getLong(endIdx),
                             if (colorIdx >= 0) it.getInt(colorIdx) else 0xFF000000.toInt(),
-                            allDay
+                            allDay,
+                            isDeclined
                         )
                     )
                 }
@@ -86,7 +92,7 @@ class CalendarRepository(private val context: Context) {
         
         // Deduplicate events that have same title, start, end, and allDay status
         return events.distinctBy { 
-            listOf(it.title, it.startTime, it.endTime, it.isAllDay)
+            listOf(it.title, it.startTime, it.endTime, it.isAllDay, it.isDeclined)
         }
     }
 

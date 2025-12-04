@@ -41,6 +41,14 @@
             android:checked="true"
             android:layout_marginTop="16dp"/>
 
+        <CheckBox
+            android:id="@+id/cb_show_declined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Declined Events"
+            android:checked="false"
+            android:layout_marginTop="8dp"/>
+
         <!-- Colors -->
         <TextView
             android:layout_width="wrap_content"

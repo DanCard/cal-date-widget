@@ -39,7 +39,8 @@ class EventFilterTest {
                 startTime = eventStart,
                 endTime = eventEnd,
                 color = 0,
-                isAllDay = true
+                isAllDay = true,
+                isDeclined = false
             )
             
             // Test Saturday

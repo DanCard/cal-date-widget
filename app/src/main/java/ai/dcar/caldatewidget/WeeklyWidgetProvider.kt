@@ -140,7 +140,11 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
             
             // 2. Fetch Data
             val repo = CalendarRepository(context)
-            val events = repo.getEventsForWeek(startMillis)
+            var events = repo.getEventsForWeek(startMillis)
+            
+            if (!settings.showDeclinedEvents) {
+                events = events.filter { !it.isDeclined }
+            }
             
             // ... (Weights section) ...
             val diff = (todayMillis - startMillis) / (24 * 60 * 60 * 1000)
@@ -197,8 +201,19 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 // Events
                 val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
                 val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
-                
-                var yPos = 110f 
+
+                // Determine if we should show start times based on whether all events will fit
+                val availableHeight = height - 130f // yPos starts at 110f, clip at height - 20
+                val estimatedScale = if (i == todayIndex) settings.textSizeScale else columnScale
+                val estimatedTextSize = 48f * estimatedScale
+                val estimatedLineHeight = estimatedTextSize * 1.2f
+                // Events with start times take significantly more space due to text wrapping
+                // Use very conservative estimate: 5 lines per event to account for start time prefix
+                // and text wrapping, especially in narrow past-day columns
+                val estimatedHeightPerEvent = estimatedLineHeight * 5.0f
+                val showStartTimes = (dayEvents.size * estimatedHeightPerEvent) <= availableHeight
+
+                var yPos = 110f
                 for (event in dayEvents) {
                     if (yPos > height - 20) break // Clip
                     
@@ -218,26 +233,26 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     if (textWidth > 0) {
                         // Check for null title specifically
                         val safeTitle = event.title ?: "No Title"
-                        
-                        // Add Start Time if not all day
-                        val finalText: CharSequence = if (!event.isAllDay) {
+
+                        // Add Start Time if not all day and if we have room to show all events
+                        val finalText: CharSequence = if (showStartTimes && !event.isAllDay) {
                                                           val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
                                                           val timeString = timeFormat.format(Date(event.startTime))
                                                           val spannable = SpannableString("$timeString $safeTitle")
-                                                          
+
                                                           spannable.setSpan(
                                                               ForegroundColorSpan(settings.startTimeColor),
                                                               0,
                                                               timeString.length,
                                                               Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                                                           )
-                                                          
+
                                                           spannable.setSpan(object : CharacterStyle() {
                                                               override fun updateDrawState(tp: android.text.TextPaint) {
                                                                   tp.setShadowLayer(4f, 2f, 2f, settings.startTimeShadowColor)
                                                               }
                                                           }, 0, timeString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                                                          
+
                                                           spannable
                         } else {
                             safeTitle

@@ -71,6 +71,9 @@ class WeeklyConfigActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
         
+        val cbShowDeclined = findViewById<CheckBox>(R.id.cb_show_declined)
+        cbShowDeclined.isChecked = currentSettings.showDeclinedEvents
+        
         // Set initial state
         updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
         
@@ -143,7 +146,11 @@ class WeeklyConfigActivity : AppCompatActivity() {
             // Map seekbar to scale
             val scale = 0.5f + (seekSize.progress / 100f)
             
-            currentSettings = currentSettings.copy(weekStartDay = weekStart, textSizeScale = scale)
+            currentSettings = currentSettings.copy(
+                weekStartDay = weekStart, 
+                textSizeScale = scale,
+                showDeclinedEvents = cbShowDeclined.isChecked
+            )
             prefsManager.saveSettings(appWidgetId, currentSettings)
             
             val resultValue = Intent().apply {

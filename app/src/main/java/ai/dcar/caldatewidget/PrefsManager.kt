@@ -24,7 +24,8 @@ class PrefsManager(context: Context) {
         val weekStartDay: Int = 2, // Default Monday
         val textSizeScale: Float = 1.0f, // Default no scaling (base size)
         val startTimeColor: Int = Color.parseColor("#ddddff"),
-        val startTimeShadowColor: Int = Color.BLACK
+        val startTimeShadowColor: Int = Color.BLACK,
+        val showDeclinedEvents: Boolean = false
     )
 
     fun saveSettings(widgetId: Int, settings: WidgetSettings) {
@@ -37,6 +38,7 @@ class PrefsManager(context: Context) {
             putFloat("${KEY_PREFIX}${widgetId}_text_scale", settings.textSizeScale)
             putInt("${KEY_PREFIX}${widgetId}_start_time_color", settings.startTimeColor)
             putInt("${KEY_PREFIX}${widgetId}_start_time_shadow", settings.startTimeShadowColor)
+            putBoolean("${KEY_PREFIX}${widgetId}_show_declined", settings.showDeclinedEvents)
             apply()
         }
     }
@@ -50,7 +52,9 @@ class PrefsManager(context: Context) {
         val textScale = prefs.getFloat("${KEY_PREFIX}${widgetId}_text_scale", 1.5f)
         val startTimeColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_color", Color.parseColor("#ddddff"))
         val startTimeShadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_shadow", Color.BLACK)
-        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, textScale, startTimeColor, startTimeShadowColor)
+        val showDeclined = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_declined", false)
+        
+        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, textScale, startTimeColor, startTimeShadowColor, showDeclined)
     }
 
     fun deleteSettings(widgetId: Int) {
