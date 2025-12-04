@@ -83,7 +83,11 @@ class CalendarRepository(private val context: Context) {
         } catch (e: SecurityException) {
             // Permission not granted
         }
-        return events
+        
+        // Deduplicate events that have same title, start, end, and allDay status
+        return events.distinctBy { 
+            listOf(it.title, it.startTime, it.endTime, it.isAllDay)
+        }
     }
 
     private fun getVisibleCalendarIds(): List<Long> {

@@ -33,3 +33,4 @@ class CalendarRepositoryTest {
         // Our provider logic handles the fallback if (color == 0) -> White.
     }
 }
+}
