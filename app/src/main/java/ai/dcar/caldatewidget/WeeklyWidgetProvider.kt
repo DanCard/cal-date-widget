@@ -222,12 +222,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                              val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
                              val timeString = timeFormat.format(Date(event.startTime))
                              val spannable = SpannableString("$timeString $safeTitle")
-                             spannable.setSpan(
-                                 StyleSpan(Typeface.BOLD), 
-                                 0, 
-                                 timeString.length, 
-                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                             )
+
                              spannable
                         } else {
                             safeTitle
