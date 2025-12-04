@@ -17,6 +17,11 @@ import android.widget.RemoteViews
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.StyleSpan
+import android.graphics.Typeface
+import java.util.Date
 
 class WeeklyWidgetProvider : AppWidgetProvider() {
 
@@ -212,9 +217,25 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                         // Check for null title specifically
                         val safeTitle = event.title ?: "No Title"
                         
+                        // Add Start Time if not all day
+                        val finalText: CharSequence = if (!event.isAllDay) {
+                             val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+                             val timeString = timeFormat.format(Date(event.startTime))
+                             val spannable = SpannableString("$timeString $safeTitle")
+                             spannable.setSpan(
+                                 StyleSpan(Typeface.BOLD), 
+                                 0, 
+                                 timeString.length, 
+                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                             )
+                             spannable
+                        } else {
+                            safeTitle
+                        }
+                        
                         try {
                             val builder = android.text.StaticLayout.Builder.obtain(
-                                safeTitle, 0, safeTitle.length, textPaint, textWidth
+                                finalText, 0, finalText.length, textPaint, textWidth
                             )
                             .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
                             .setLineSpacing(0f, 1f)
