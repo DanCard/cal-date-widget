@@ -1,16 +1,27 @@
 package ai.dcar.caldatewidget
 
+import android.graphics.Color
+import io.mockk.every
+import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 
 class SettingsStateManagerTest {
 
     private val initialSettings = PrefsManager.WidgetSettings(
         dateFormat = "Initial",
-        textColor = 0xFFFFFF
+        textColor = 0xFFFFFF,
+        startTimeColor = 0xCCCCFF
     )
+
+    @Before
+    fun setup() {
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns 0xCCCCFF
+    }
 
     @Test
     fun `updateSettings pushes to undo stack when requested`() {

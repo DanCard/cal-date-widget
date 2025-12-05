@@ -2,9 +2,11 @@ package ai.dcar.caldatewidget
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Color
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -19,6 +21,9 @@ class PrefsManagerTest {
 
     @Before
     fun setup() {
+        mockkStatic(Color::class)
+        every { Color.parseColor(any()) } returns 0xCCCCFF
+
         context = mockk(relaxed = true)
         prefs = mockk(relaxed = true)
         editor = mockk(relaxed = true)

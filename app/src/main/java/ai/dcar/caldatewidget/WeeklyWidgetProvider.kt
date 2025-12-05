@@ -163,6 +163,10 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
             val dayFormatEEE = SimpleDateFormat("EEE", Locale.getDefault())
             val dayFormatEEEd = SimpleDateFormat("EEE d", Locale.getDefault())
             
+            val headerY = 85f
+            val contentTop = 80f
+            val bottomPadding = 0f
+
             for (i in validStart..validEnd) {
                 val colWidth = (width * (allWeights[i] / totalWeight))
                 
@@ -182,14 +186,14 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 if (i == todayIndex) {
                     dayHeaderPaint.color = Color.YELLOW 
                     dayHeaderPaint.isFakeBoldText = true
-                    dayHeaderPaint.textSize = 90f 
+                    dayHeaderPaint.textSize = 80f 
                 } else {
                     dayHeaderPaint.color = Color.LTGRAY
                     dayHeaderPaint.isFakeBoldText = false
-                    dayHeaderPaint.textSize = 45f
+                    dayHeaderPaint.textSize = 40f
                 }
                 
-                canvas.drawText(dayName, currentX + colWidth / 2, 100f, dayHeaderPaint)
+                canvas.drawText(dayName, currentX + colWidth / 2, headerY, dayHeaderPaint)
                 
                 // Column Scale
                 val columnScale = when {
@@ -202,16 +206,77 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
                 val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
 
-                // Determine if we should show start times based on whether events will be clipped
-                val availableHeight = height - 130f // yPos starts at 110f, clip at height - 20
+                // Determine text width for this column
+                val textWidth = (colWidth - 10f).toInt()
+
+                // Helper to build the display text with/without start times
+                val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+                val buildEventText: (CalendarEvent, Boolean) -> CharSequence = { event, includeStart ->
+                    val safeTitle = (event.title ?: "No Title")
+                        .replace("\u2026", "")
+                        .replace("...", "")
+                    if (includeStart && !event.isAllDay) {
+                        val timeString = timeFormat.format(Date(event.startTime))
+                        val spannable = SpannableString("$timeString $safeTitle")
+
+                        spannable.setSpan(
+                            ForegroundColorSpan(settings.startTimeColor),
+                            0,
+                            timeString.length,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+
+                        spannable.setSpan(object : CharacterStyle() {
+                            override fun updateDrawState(tp: android.text.TextPaint) {
+                                tp.setShadowLayer(4f, 2f, 2f, settings.startTimeShadowColor)
+                            }
+                        }, 0, timeString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                        spannable
+                    } else {
+                        safeTitle
+                    }
+                }
+
+                // Measure how tall the day would be with and without start times to avoid underfilling
+                val availableHeight = height - (contentTop + bottomPadding) // tighter padding to reclaim space
+                val measureTotalHeight: (Boolean) -> Float = { includeStartTimes ->
+                    if (textWidth <= 0) {
+                        0f
+                    } else {
+                        var totalHeight = 0f
+                        for (event in dayEvents) {
+                            val eventScale = if (i == todayIndex && event.endTime < System.currentTimeMillis()) 0.8f else columnScale
+                            val measurePaint = android.text.TextPaint(textPaint)
+                            measurePaint.textSize = 48f * eventScale
+
+                            val eventText = buildEventText(event, includeStartTimes)
+                            val layout = android.text.StaticLayout.Builder.obtain(
+                                eventText, 0, eventText.length, measurePaint, textWidth
+                            )
+                            .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
+                            .setLineSpacing(0f, 1f)
+                            .setIncludePad(false)
+                            .setMaxLines(10)
+                            .build()
+
+                            totalHeight += layout.height + (measurePaint.textSize * 0.2f)
+                        }
+                        totalHeight
+                    }
+                }
+
                 val estimatedScale = if (i == todayIndex) settings.textSizeScale else columnScale
-                val estimatedTextSize = 48f * estimatedScale
-                val estimatedLineHeight = estimatedTextSize * 1.2f
-                val showStartTimes = WeeklyDisplayLogic.shouldShowStartTimes(
-                    dayEvents.size,
-                    availableHeight,
-                    estimatedLineHeight
-                )
+                val estimatedLineHeight = (48f * estimatedScale) * 1.2f
+
+                val heightWithStartTimes = measureTotalHeight(true)
+                val heightWithoutStartTimes = measureTotalHeight(false)
+                val showStartTimes = textWidth > 0 && heightWithStartTimes <= availableHeight
+
+                // Use the measured height for the chosen style to determine clipping more accurately.
+                // Allow a small buffer to avoid underfilling when we're close to the limit.
+                val totalHeightForChosenText = if (showStartTimes) heightWithStartTimes else heightWithoutStartTimes
+                val isClipping = totalHeightForChosenText > (availableHeight * 0.98f)
 
                 // Calculate equitable line distribution
                 val currentTime = System.currentTimeMillis()
@@ -223,61 +288,24 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     Pair(emptyList(), dayEvents)
                 }
 
-                // Calculate if we're clipping (opposite of showStartTimes)
-                val isClipping = !showStartTimes
-
                 // Debug logging
                 if (i == todayIndex) {
                     Log.d("WeeklyWidget", "=== Current Day Debug ===")
                     Log.d("WeeklyWidget", "Total events: ${dayEvents.size}, Past events: ${pastEventsOnToday.size}, Future events: ${currentFutureEvents.size}")
-                    Log.d("WeeklyWidget", "Available height: $availableHeight, Line height: $estimatedLineHeight")
+                    Log.d("WeeklyWidget", "Available height: $availableHeight, Est line height: $estimatedLineHeight")
+                    Log.d("WeeklyWidget", "Measured height w/ times: $heightWithStartTimes, without: $heightWithoutStartTimes")
                     Log.d("WeeklyWidget", "Show start times: $showStartTimes, Is clipping: $isClipping")
                     Log.d("WeeklyWidget", "Current time: ${SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(Date(currentTime))}")
                 }
 
                 // Calculate max lines per event
-                val getMaxLinesForEvent: (CalendarEvent) -> Int = { event ->
-                    val maxLines = when {
-                        !isClipping -> 10 // No clipping, allow generous lines
-                        i == todayIndex && event.endTime < currentTime -> 1 // Past events on current day: 1 row
-                        i == todayIndex -> {
-                            // Current/future events on current day: equitable distribution of remaining space
-                            val pastEventsHeight = pastEventsOnToday.size * estimatedLineHeight
-                            val remainingHeight = availableHeight - pastEventsHeight
-                            if (currentFutureEvents.isEmpty()) {
-                                1
-                            } else {
-                                val maxLinesForCurrentFuture = (remainingHeight / (currentFutureEvents.size * estimatedLineHeight)).toInt().coerceAtLeast(1)
-                                maxLinesForCurrentFuture
-                            }
-                        }
-                        else -> {
-                            // Past or future days: equitable distribution among all events
-                            val maxLines = (availableHeight / (dayEvents.size * estimatedLineHeight)).toInt().coerceAtLeast(1)
-                            maxLines
-                        }
-                    }
+                // Track remaining height for current-day events; past events are fixed at 1 line and not part of sharing.
+                var remainingHeightForCurrentDay = availableHeight
 
-                    // Debug logging for each event
-                    if (i == todayIndex) {
-                        val isPast = event.endTime < currentTime
-                        val eventTime = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(Date(event.startTime))
-                        val eventEndTime = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(Date(event.endTime))
-                        Log.d("WeeklyWidget", "Event: '${event.title}' | Start: $eventTime, End: $eventEndTime | Past: $isPast | MaxLines: $maxLines")
-                    }
-
-                    maxLines
-                }
-
-                // Debug log showStartTimes
-                if (i == todayIndex) {
-                    Log.d("WeeklyWidget", "showStartTimes: $showStartTimes")
-                }
-
-                var yPos = 110f
-                for (event in dayEvents) {
+                var yPos = contentTop
+                for ((eventIndex, event) in dayEvents.withIndex()) {
                     canvas.save()
-                    canvas.clipRect(currentX, 110f, currentX + colWidth, height.toFloat())
+                    canvas.clipRect(currentX, contentTop, currentX + colWidth, height.toFloat())
 
                     textPaint.color = settings.textColor
 
@@ -285,36 +313,12 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     textPaint.textSize = 48f * eventScale
 
                     val lineHeight = textPaint.textSize * 1.2f
-                    val dynamicMaxLines = getMaxLinesForEvent(event)
+                    val isPastTodayEvent = i == todayIndex && event.endTime < currentTime
+                    val dynamicMaxLines = if (isPastTodayEvent) 1 else 0 // 0 means no explicit cap
 
-                    val textWidth = (colWidth - 10f).toInt()
                     if (textWidth > 0) {
-                        // Check for null title specifically
                         val safeTitle = event.title ?: "No Title"
-
-                        // Add Start Time if not all day and if we have room to show all events
-                        val finalText: CharSequence = if (showStartTimes && !event.isAllDay) {
-                                                          val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
-                                                          val timeString = timeFormat.format(Date(event.startTime))
-                                                          val spannable = SpannableString("$timeString $safeTitle")
-
-                                                          spannable.setSpan(
-                                                              ForegroundColorSpan(settings.startTimeColor),
-                                                              0,
-                                                              timeString.length,
-                                                              Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                                                          )
-
-                                                          spannable.setSpan(object : CharacterStyle() {
-                                                              override fun updateDrawState(tp: android.text.TextPaint) {
-                                                                  tp.setShadowLayer(4f, 2f, 2f, settings.startTimeShadowColor)
-                                                              }
-                                                          }, 0, timeString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-                                                          spannable
-                        } else {
-                            safeTitle
-                        }
+                        val finalText = buildEventText(event, showStartTimes)
 
                         try {
                             val builder = android.text.StaticLayout.Builder.obtain(
@@ -323,8 +327,12 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                             .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
                             .setLineSpacing(0f, 1f)
                             .setIncludePad(false)
-                            .setMaxLines(dynamicMaxLines)
-                            .setEllipsize(android.text.TextUtils.TruncateAt.END)
+                            .setEllipsize(null) // force no ellipses everywhere
+
+                            // Let text run; only cap past-today events to 1 line. No ellipsize anywhere; clipRect handles overflow.
+                            if (dynamicMaxLines > 0) {
+                                builder.setMaxLines(dynamicMaxLines)
+                            }
 
                             val layout = builder.build()
 
@@ -337,7 +345,19 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                             layout.draw(canvas)
                             canvas.translate(-(currentX + 5f), -yPos)
 
-                            yPos += layout.height + (textPaint.textSize * 0.2f)
+                            val spacing = if (i == todayIndex) textPaint.textSize * 0.1f else textPaint.textSize * 0.2f
+                            val consumedHeight = when {
+                                i != todayIndex -> layout.height + spacing
+                                isPastTodayEvent -> lineHeight + spacing // fixed 1-line past event
+                                else -> {
+                                    // Current/future events take full layout height; clipRect will truncate visually
+                                    layout.height.toFloat() + spacing
+                                }
+                            }
+                            yPos += consumedHeight
+                            if (i == todayIndex) {
+                                remainingHeightForCurrentDay -= consumedHeight
+                            }
                         } catch (e: Exception) {
                             Log.e("WeeklyWidget", "StaticLayout crash: title='$safeTitle', width=$textWidth", e)
                         }
