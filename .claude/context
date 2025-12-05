@@ -1,6 +1,55 @@
 # Claude Code Context for cal-date-widget
 
-## Recent Changes (2025-12-04)
+## Recent Changes (2025-12-04 - Session 2)
+
+### Start Time Display Logic with Accurate Clipping Detection
+
+**Problem:**
+1. Start times were not displayed on days with plenty of space (Sat/Sun with sparse events)
+2. Clipping detection was inaccurate - showing start times even when events were being clipped
+3. Past events on current day were not limited to 1 line when clipping occurred
+
+**Solution:** Implemented smart start time display logic with accurate clipping detection
+
+**Key Changes:**
+
+1. **WeeklyDisplayLogic.kt - shouldShowStartTimes() (lines 81-93)**
+   - Determines if start times should be shown based on available space
+   - Uses conservative estimate: 4 lines per event (accounts for start time text + wrapping)
+   - Formula: `(eventCount * lineHeight * 4.0f) <= availableHeight`
+   - Returns true only when ALL events will fit WITH start times
+
+2. **WeeklyDisplayLogic.kt - getMaxLinesForCurrentDayEvent() (lines 107-130)**
+   - Extracted testable function for max lines calculation on current day
+   - When NO clipping: Returns 10 (generous lines for all events)
+   - When clipping + past event: Returns 1 (minimize past events)
+   - When clipping + future event: Equitable distribution of remaining space
+   - Formula for future: `(availableHeight - pastEventsHeight) / (futureCount * lineHeight)`
+
+3. **WeeklyWidgetProvider.kt - Updated to use new functions (lines 210-214)**
+   - Calls `WeeklyDisplayLogic.shouldShowStartTimes()` for each day
+   - Uses result to show/hide start times in event text
+   - `isClipping = !showStartTimes` for consistent behavior
+
+**Test Coverage (WeeklyDisplayLogicTest.kt):**
+- 11 tests for shouldShowStartTimes() covering various scenarios
+- 5 tests for getMaxLinesForCurrentDayEvent() including realistic device scenarios
+- Tests verify: clipping detection, boundary conditions, current day behavior
+- Realistic test uses actual device metrics (761px height, 86.4px line height, 4 events)
+
+**Behavior:**
+- **Days with sparse events (Sat/Sun):** Start times shown, events have room to breathe
+- **Days with many events:** Start times hidden, past events limited to 1 line
+- **Estimate accuracy:** 4 lines per event provides reliable clipping detection
+- **From logs:** 4 events with estimate=1382.4px > available=761px → correctly detects clipping
+
+**Results:**
+- Start times now display on Sat/Sun when there's space ✓
+- Clipping accurately detected (showStartTimes: false when isClipping: true) ✓
+- Past events limited to 1 line when clipping (MaxLines: 1) ✓
+- Future events get equitable space distribution (MaxLines: 3) ✓
+
+## Recent Changes (2025-12-04 - Session 1)
 
 ### Week Widget - Equitable Event Clipping Distribution
 **Problem:** Events were clipped inequitably - one event taking 4 rows, last event only 1.75 rows
@@ -68,6 +117,6 @@
 ## Pending/Future Considerations
 - Consider removing debug logging in production/release builds for performance
 - Could make "1 row for past events" threshold configurable in settings
-- Add unit tests for equitable line distribution logic
 - Consider making max lines (currently up to 10) configurable via settings
 - Monitor if ellipsize truncation UX is preferred vs ungraceful clipping
+- Consider making the 4-line estimate per event configurable if different text sizes need different estimates
