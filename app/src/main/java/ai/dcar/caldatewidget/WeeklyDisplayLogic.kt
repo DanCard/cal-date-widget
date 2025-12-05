@@ -94,7 +94,7 @@ object WeeklyDisplayLogic {
 
     /**
      * Calculates the maximum number of lines for an event on the current day.
-     * When clipping occurs, past events are limited to 1 line to save space for current/future events.
+     * Past events are always limited to a single line so current/future events have room.
      *
      * @param isPastEvent True if the event has already ended
      * @param isClipping True if there's not enough space to show all events
@@ -113,8 +113,8 @@ object WeeklyDisplayLogic {
         lineHeight: Float
     ): Int {
         return when {
-            !isClipping -> 10 // No clipping, allow generous lines
-            isPastEvent -> 1 // Past events on current day when clipping: 1 line only
+            isPastEvent -> 1 // Past events on current day always limited to 1 line
+            !isClipping -> 10 // No clipping, allow generous lines for current/future
             else -> {
                 // Current/future events: equitable distribution of remaining space
                 val pastEventsHeight = pastEventCount * lineHeight

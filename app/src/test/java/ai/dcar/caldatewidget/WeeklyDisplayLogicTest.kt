@@ -243,7 +243,7 @@ class WeeklyDisplayLogicTest {
     }
 
     @Test
-    fun `getMaxLinesForCurrentDayEvent returns 10 lines for past events when no clipping`() {
+    fun `getMaxLinesForCurrentDayEvent returns 1 line for past events even when no clipping`() {
         // Given: Past event on current day with NO clipping
         val isPastEvent = true
         val isClipping = false
@@ -257,8 +257,8 @@ class WeeklyDisplayLogicTest {
             isPastEvent, isClipping, pastEventCount, currentFutureEventCount, availableHeight, lineHeight
         )
 
-        // Then: When no clipping, allow generous lines
-        assertEquals(10, maxLines)
+        // Then: Past events are capped to 1 line to save space for current/future
+        assertEquals(1, maxLines)
     }
 
     @Test

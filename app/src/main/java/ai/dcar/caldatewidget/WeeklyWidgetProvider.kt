@@ -429,16 +429,18 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 measurePaint.textSize = 48f * eventScale
 
                 val eventText = buildEventText(event, includeStartTimes)
+                val isPastTodayEvent = currentDayIndex == todayIndex && event.endTime < currentTimeMillis
                 val layout = android.text.StaticLayout.Builder.obtain(
                     eventText, 0, eventText.length, measurePaint, textWidth
                 )
                     .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
                     .setLineSpacing(0f, 1f)
                     .setIncludePad(false)
-                    .setMaxLines(10)
+                    .setMaxLines(if (isPastTodayEvent) 1 else 10)
                     .build()
 
-                totalHeight += layout.height + (measurePaint.textSize * 0.2f)
+                val spacing = if (currentDayIndex == todayIndex) measurePaint.textSize * 0.1f else measurePaint.textSize * 0.2f
+                totalHeight += layout.height + spacing
             }
             return totalHeight
         }
