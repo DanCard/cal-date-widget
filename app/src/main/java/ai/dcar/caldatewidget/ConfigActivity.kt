@@ -1,26 +1,22 @@
 package ai.dcar.caldatewidget
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ai.dcar.caldatewidget.databinding.ActivityConfigBinding
 import ai.dcar.caldatewidget.databinding.WidgetDateBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.Stack
 
 class ConfigActivity : AppCompatActivity() {
 
@@ -103,19 +99,9 @@ class ConfigActivity : AppCompatActivity() {
         // Custom Format Text
         binding.etCustomFormat.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                // We don't need to manually push here if we treat every text change as an edit? 
-                // The requirement was "snapshot whenever you tap". 
-                // We can manually push current state to stack without changing settings.
-                // But SettingsStateManager.updateSettings does both.
-                // We can expose a method to just push state? Or just rely on the "final" edit.
-                // Let's keep it simple: The text watcher updates the state. 
-                // To support "Undo whole typing session", we push to stack on Focus Gain.
-                // But SettingsStateManager.updateSettings(push=true) pushes the OLD state.
-                // So if we call updateSettings(..., push=false) during typing, we need to have pushed ONCE before typing.
-                // We can manually push to stack:
-                // stateManager.updateSettings(stateManager.currentSettings, pushToUndo=true) 
-                // This pushes current state as "undoable", and keeps current as current.
-                stateManager.updateSettings(stateManager.currentSettings, pushToUndo = true)
+                stateManager.beginChangeSession()
+            } else {
+                stateManager.endChangeSession()
             }
         }
 
@@ -126,8 +112,8 @@ class ConfigActivity : AppCompatActivity() {
                 if (isRestoring) return
                 val custom = s.toString()
                 val newSettings = stateManager.currentSettings.copy(dateFormat = custom)
-                // We don't push undo on every char, we pushed on focus.
-                updateSettings(newSettings, pushUndo = false)
+                stateManager.applySessionChange(newSettings)
+                saveAndBroadcast(addToUndo = false)
             }
         })
 
@@ -144,19 +130,19 @@ class ConfigActivity : AppCompatActivity() {
         }
 
         // Color Pickers
-        binding.btnPickTextColor.setOnClickListener { showColorPicker("Text Color", stateManager.currentSettings.textColor) { color -> 
+        binding.btnPickTextColor.setOnClickListener { ColorPickerDialog.show(this, "Text Color", stateManager.currentSettings.textColor) { color ->
             val newSettings = stateManager.currentSettings.copy(textColor = color)
             updateSettings(newSettings)
         }}
 
-        binding.btnPickBgColor.setOnClickListener { showColorPicker("Background Color", stateManager.currentSettings.bgColor) { color ->
+        binding.btnPickBgColor.setOnClickListener { ColorPickerDialog.show(this, "Background Color", stateManager.currentSettings.bgColor) { color ->
             val alpha = Color.alpha(stateManager.currentSettings.bgColor)
             val newColorWithOldAlpha = (color and 0x00FFFFFF) or (alpha shl 24)
             val newSettings = stateManager.currentSettings.copy(bgColor = newColorWithOldAlpha)
             updateSettings(newSettings)
         }}
 
-        binding.btnPickShadowColor.setOnClickListener { showColorPicker("Shadow Color", stateManager.currentSettings.shadowColor) { color ->
+        binding.btnPickShadowColor.setOnClickListener { ColorPickerDialog.show(this, "Shadow Color", stateManager.currentSettings.shadowColor) { color ->
             val newSettings = stateManager.currentSettings.copy(shadowColor = color)
             updateSettings(newSettings)
         }}
@@ -174,11 +160,11 @@ class ConfigActivity : AppCompatActivity() {
                 }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                // Push state before drag starts
-                stateManager.updateSettings(stateManager.currentSettings, pushToUndo = true)
+                stateManager.beginChangeSession()
             }
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 saveAndBroadcast(addToUndo = false)
+                stateManager.endChangeSession()
                 updateUndoButton()
             }
         })
@@ -253,44 +239,5 @@ class ConfigActivity : AppCompatActivity() {
         binding.previewTextColor.setBackgroundColor(settings.textColor)
         binding.previewBgColor.setBackgroundColor(settings.bgColor)
         binding.previewShadowColor.setBackgroundColor(settings.shadowColor)
-    }
-
-    private fun showColorPicker(title: String, initialColor: Int, onColorPicked: (Int) -> Unit) {
-        // Simple RGB slider dialog
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_color_picker, null)
-        val seekR = dialogView.findViewById<SeekBar>(R.id.seek_r)
-        val seekG = dialogView.findViewById<SeekBar>(R.id.seek_g)
-        val seekB = dialogView.findViewById<SeekBar>(R.id.seek_b)
-        val preview = dialogView.findViewById<View>(R.id.cp_preview)
-
-        seekR.max = 255; seekG.max = 255; seekB.max = 255
-        seekR.progress = Color.red(initialColor)
-        seekG.progress = Color.green(initialColor)
-        seekB.progress = Color.blue(initialColor)
-        preview.setBackgroundColor(initialColor or -0x1000000) // Force full alpha for preview
-
-        val updatePreview = {
-            val c = Color.rgb(seekR.progress, seekG.progress, seekB.progress)
-            preview.setBackgroundColor(c)
-        }
-        
-        val listener = object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(s: SeekBar?, p: Int, f: Boolean) { updatePreview() }
-            override fun onStartTrackingTouch(s: SeekBar?) {}
-            override fun onStopTrackingTouch(s: SeekBar?) {}
-        }
-        seekR.setOnSeekBarChangeListener(listener)
-        seekG.setOnSeekBarChangeListener(listener)
-        seekB.setOnSeekBarChangeListener(listener)
-
-        AlertDialog.Builder(this)
-            .setTitle(title)
-            .setView(dialogView)
-            .setPositiveButton("Select") { _, _ ->
-                val color = Color.rgb(seekR.progress, seekG.progress, seekB.progress)
-                onColorPicked(color)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
     }
 }

@@ -91,4 +91,34 @@ class SettingsStateManagerTest {
         assertFalse(manager.undo())
         assertEquals("Initial", manager.currentSettings.dateFormat)
     }
+
+    @Test
+    fun `beginChangeSession pushes a single snapshot for a session`() {
+        val manager = SettingsStateManager(initialSettings)
+
+        manager.beginChangeSession()
+        val firstEdit = initialSettings.copy(dateFormat = "During session")
+        manager.applySessionChange(firstEdit)
+        val secondEdit = firstEdit.copy(dateFormat = "During session 2")
+        manager.applySessionChange(secondEdit)
+
+        // Only one snapshot should be added
+        assertEquals(1, manager.getStackSize())
+        assertEquals(secondEdit.dateFormat, manager.currentSettings.dateFormat)
+
+        manager.endChangeSession()
+    }
+
+    @Test
+    fun `beginChangeSession resets after undo`() {
+        val manager = SettingsStateManager(initialSettings)
+        manager.beginChangeSession()
+        val edited = initialSettings.copy(dateFormat = "Edited")
+        manager.applySessionChange(edited)
+
+        // Undo should clear session state
+        manager.undo()
+        assertEquals(initialSettings.dateFormat, manager.currentSettings.dateFormat)
+        assertFalse(manager.canUndo())
+    }
 }

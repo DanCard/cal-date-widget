@@ -1,13 +1,10 @@
 package ai.dcar.caldatewidget
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -105,28 +102,28 @@ class WeeklyConfigActivity : AppCompatActivity() {
         }
         
         btnPickText.setOnClickListener {
-            showColorPicker("Text Color", currentSettings.textColor) { color ->
+            ColorPickerDialog.show(this, "Text Color", currentSettings.textColor) { color ->
                 currentSettings = currentSettings.copy(textColor = color)
                 updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
             }
         }
         
         btnPickShadow.setOnClickListener {
-             showColorPicker("Shadow Color", currentSettings.shadowColor) { color ->
+             ColorPickerDialog.show(this, "Shadow Color", currentSettings.shadowColor) { color ->
                 currentSettings = currentSettings.copy(shadowColor = color)
                 updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
             }
         }
 
         btnPickStartColor.setOnClickListener {
-             showColorPicker("Start Time Color", currentSettings.startTimeColor) { color ->
+             ColorPickerDialog.show(this, "Start Time Color", currentSettings.startTimeColor) { color ->
                 currentSettings = currentSettings.copy(startTimeColor = color)
                 updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
             }
         }
 
         btnPickStartShadow.setOnClickListener {
-             showColorPicker("Start Time Shadow", currentSettings.startTimeShadowColor) { color ->
+             ColorPickerDialog.show(this, "Start Time Shadow", currentSettings.startTimeShadowColor) { color ->
                 currentSettings = currentSettings.copy(startTimeShadowColor = color)
                 updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
             }
@@ -179,43 +176,5 @@ class WeeklyConfigActivity : AppCompatActivity() {
             findViewById<Button>(R.id.btn_grant_permission).visibility = View.GONE
             findViewById<Button>(R.id.btn_save).isEnabled = true
         }
-    }
-    
-    private fun showColorPicker(title: String, initialColor: Int, onColorPicked: (Int) -> Unit) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_color_picker, null)
-        val seekR = dialogView.findViewById<SeekBar>(R.id.seek_r)
-        val seekG = dialogView.findViewById<SeekBar>(R.id.seek_g)
-        val seekB = dialogView.findViewById<SeekBar>(R.id.seek_b)
-        val preview = dialogView.findViewById<View>(R.id.cp_preview)
-
-        seekR.max = 255; seekG.max = 255; seekB.max = 255
-        seekR.progress = Color.red(initialColor)
-        seekG.progress = Color.green(initialColor)
-        seekB.progress = Color.blue(initialColor)
-        preview.setBackgroundColor(initialColor or -0x1000000) 
-
-        val updatePreview = {
-            val c = Color.rgb(seekR.progress, seekG.progress, seekB.progress)
-            preview.setBackgroundColor(c)
-        }
-        
-        val listener = object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(s: SeekBar?, p: Int, f: Boolean) { updatePreview() }
-            override fun onStartTrackingTouch(s: SeekBar?) {}
-            override fun onStopTrackingTouch(s: SeekBar?) {}
-        }
-        seekR.setOnSeekBarChangeListener(listener)
-        seekG.setOnSeekBarChangeListener(listener)
-        seekB.setOnSeekBarChangeListener(listener)
-
-        AlertDialog.Builder(this)
-            .setTitle(title)
-            .setView(dialogView)
-            .setPositiveButton("Select") { _, _ ->
-                val color = Color.rgb(seekR.progress, seekG.progress, seekB.progress)
-                onColorPicked(color)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
     }
 }
