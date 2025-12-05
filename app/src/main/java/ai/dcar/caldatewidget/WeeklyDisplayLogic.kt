@@ -60,12 +60,72 @@ object WeeklyDisplayLogic {
                 val dist = i - todayIndex
                 // immediate future (dist=1) -> 1.5
                 // decay by 0.15
-                
+
                 var w = 1.5f - (dist - 1) * 0.15f
                 if (w < 0.7f) w = 0.7f
                 weights[i] = w
             }
         }
         return weights
+    }
+
+    /**
+     * Determines whether start times should be shown for events based on available space.
+     * Start times are shown only when there's enough room to display all events without clipping.
+     *
+     * @param eventCount Number of events to display
+     * @param availableHeight Available height in pixels
+     * @param lineHeight Height of a single line of text in pixels
+     * @return true if start times should be shown, false if they should be hidden due to space constraints
+     */
+    fun shouldShowStartTimes(
+        eventCount: Int,
+        availableHeight: Float,
+        lineHeight: Float
+    ): Boolean {
+        // Estimate height needed for events WITH start times
+        // Events with start times take more space due to text wrapping
+        // Use conservative estimate: 4 lines per event to account for start time prefix and wrapping
+        val estimatedHeightPerEventWithTime = lineHeight * 4.0f
+        val wouldClipWithStartTimes = (eventCount * estimatedHeightPerEventWithTime) > availableHeight
+        // Show start times only if all events can fit with start times
+        return !wouldClipWithStartTimes
+    }
+
+    /**
+     * Calculates the maximum number of lines for an event on the current day.
+     * When clipping occurs, past events are limited to 1 line to save space for current/future events.
+     *
+     * @param isPastEvent True if the event has already ended
+     * @param isClipping True if there's not enough space to show all events
+     * @param pastEventCount Number of past events on current day
+     * @param currentFutureEventCount Number of current/future events on current day
+     * @param availableHeight Available height in pixels
+     * @param lineHeight Height of a single line of text in pixels
+     * @return Maximum number of lines for this event
+     */
+    fun getMaxLinesForCurrentDayEvent(
+        isPastEvent: Boolean,
+        isClipping: Boolean,
+        pastEventCount: Int,
+        currentFutureEventCount: Int,
+        availableHeight: Float,
+        lineHeight: Float
+    ): Int {
+        return when {
+            !isClipping -> 10 // No clipping, allow generous lines
+            isPastEvent -> 1 // Past events on current day when clipping: 1 line only
+            else -> {
+                // Current/future events: equitable distribution of remaining space
+                val pastEventsHeight = pastEventCount * lineHeight
+                val remainingHeight = availableHeight - pastEventsHeight
+                if (currentFutureEventCount == 0) {
+                    1
+                } else {
+                    val maxLinesForCurrentFuture = (remainingHeight / (currentFutureEventCount * lineHeight)).toInt().coerceAtLeast(1)
+                    maxLinesForCurrentFuture
+                }
+            }
+        }
     }
 }

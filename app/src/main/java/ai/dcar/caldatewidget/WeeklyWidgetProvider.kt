@@ -202,16 +202,16 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
                 val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
 
-                // Determine if we should show start times based on whether all events will fit
+                // Determine if we should show start times based on whether events will be clipped
                 val availableHeight = height - 130f // yPos starts at 110f, clip at height - 20
                 val estimatedScale = if (i == todayIndex) settings.textSizeScale else columnScale
                 val estimatedTextSize = 48f * estimatedScale
                 val estimatedLineHeight = estimatedTextSize * 1.2f
-                // Events with start times take significantly more space due to text wrapping
-                // Use very conservative estimate: 5 lines per event to account for start time prefix
-                // and text wrapping, especially in narrow past-day columns
-                val estimatedHeightPerEvent = estimatedLineHeight * 5.0f
-                val showStartTimes = (dayEvents.size * estimatedHeightPerEvent) <= availableHeight
+                val showStartTimes = WeeklyDisplayLogic.shouldShowStartTimes(
+                    dayEvents.size,
+                    availableHeight,
+                    estimatedLineHeight
+                )
 
                 // Calculate equitable line distribution
                 val currentTime = System.currentTimeMillis()
@@ -223,15 +223,15 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     Pair(emptyList(), dayEvents)
                 }
 
-                // Calculate if we're clipping
-                val isClipping = (dayEvents.size * estimatedHeightPerEvent) > availableHeight
+                // Calculate if we're clipping (opposite of showStartTimes)
+                val isClipping = !showStartTimes
 
                 // Debug logging
                 if (i == todayIndex) {
                     Log.d("WeeklyWidget", "=== Current Day Debug ===")
                     Log.d("WeeklyWidget", "Total events: ${dayEvents.size}, Past events: ${pastEventsOnToday.size}, Future events: ${currentFutureEvents.size}")
-                    Log.d("WeeklyWidget", "Available height: $availableHeight, Estimated per event: $estimatedHeightPerEvent")
-                    Log.d("WeeklyWidget", "Is clipping: $isClipping (${dayEvents.size * estimatedHeightPerEvent} > $availableHeight)")
+                    Log.d("WeeklyWidget", "Available height: $availableHeight, Line height: $estimatedLineHeight")
+                    Log.d("WeeklyWidget", "Show start times: $showStartTimes, Is clipping: $isClipping")
                     Log.d("WeeklyWidget", "Current time: ${SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(Date(currentTime))}")
                 }
 
