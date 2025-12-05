@@ -11,8 +11,7 @@ class WeeklyDisplayLogicTest {
     fun `getStartDate returns today if today matches start day`() {
         val cal = Calendar.getInstance()
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-        val todayMillis = cal.timeInMillis // Today IS Monday (hypothetically)
-        
+
         // Mocking "Today" by passing a calendar set to Monday
         // If we ask for start day Monday, it should return same day
         val startMillis = WeeklyDisplayLogic.getStartDate(cal, Calendar.MONDAY)
@@ -301,6 +300,29 @@ class WeeklyDisplayLogicTest {
 
         // Then: Even with very limited space, ensure at least 1 line
         assertTrue(maxLines >= 1)
+    }
+
+    @Test
+    fun `getMaxLinesForCurrentDayEvent caps current future events when clipping`() {
+        // Given: Clipping scenario with two current/future events and no past events
+        // Available height allows only 2 lines per event (200 / (2 * 50) = 2)
+        val isPastEvent = false
+        val isClipping = true
+        val pastEventCount = 0
+        val currentFutureEventCount = 2
+        val availableHeight = 200.0f
+        val lineHeight = 50.0f
+
+        val maxLines = WeeklyDisplayLogic.getMaxLinesForCurrentDayEvent(
+            isPastEvent = isPastEvent,
+            isClipping = isClipping,
+            pastEventCount = pastEventCount,
+            currentFutureEventCount = currentFutureEventCount,
+            availableHeight = availableHeight,
+            lineHeight = lineHeight
+        )
+
+        assertEquals(2, maxLines)
     }
 
     @Test

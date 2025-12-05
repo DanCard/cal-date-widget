@@ -247,11 +247,20 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     paints.textPaint.textSize = 48f * eventScale
 
                     val lineHeight = paints.textPaint.textSize * 1.2f
-                    val dynamicMaxLines = maxLinesForEvent(
-                        isToday = i == todayIndex,
-                        eventEndTime = event.endTime,
-                        nowMillis = now
-                    )
+                    val isToday = i == todayIndex
+                    val isPastTodayEvent = isToday && event.endTime < now
+                    val dynamicMaxLines = if (isToday) {
+                        WeeklyDisplayLogic.getMaxLinesForCurrentDayEvent(
+                            isPastEvent = isPastTodayEvent,
+                            isClipping = isClipping,
+                            pastEventCount = pastEventsOnToday.size,
+                            currentFutureEventCount = currentFutureEvents.size,
+                            availableHeight = availableHeight,
+                            lineHeight = lineHeight
+                        )
+                    } else {
+                        0 // uncapped on non-today columns
+                    }
 
                     if (textWidth > 0) {
                         val finalText = buildEventText(event, showStartTimes)
@@ -282,7 +291,6 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                             canvas.translate(-(currentX + 5f), -yPos)
 
                             val spacing = if (i == todayIndex) paints.textPaint.textSize * 0.1f else paints.textPaint.textSize * 0.2f
-                            val isPastTodayEvent = i == todayIndex && event.endTime < now
                             val consumedHeight = when {
                                 i != todayIndex -> layout.height.toFloat() + spacing
                                 isPastTodayEvent -> lineHeight + spacing // fixed 1-line past event
