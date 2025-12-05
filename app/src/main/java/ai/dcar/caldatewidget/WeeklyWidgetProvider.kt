@@ -206,7 +206,11 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 // Use the measured height for the chosen style to determine clipping more accurately.
                 // Allow a small buffer to avoid underfilling when we're close to the limit.
                 val totalHeightForChosenText = if (showStartTimes) heightWithStartTimes else heightWithoutStartTimes
-                val isClipping = totalHeightForChosenText > (availableHeight * 0.98f)
+                var isClipping = totalHeightForChosenText > (availableHeight * 0.98f)
+                if (i == todayIndex && totalHeightForChosenText > availableHeight) {
+                    isClipping = true // Be strict for current day so all events share space
+                }
+                val useStartTimes = if (isClipping && i == todayIndex) false else showStartTimes
 
                 // For current day, separate past and current/future events
                 val (pastEventsOnToday, currentFutureEvents) = if (i == todayIndex) {
@@ -225,7 +229,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                         availableHeight,
                         heightWithStartTimes,
                         heightWithoutStartTimes,
-                        showStartTimes,
+                        useStartTimes,
                         isClipping,
                         now,
                         estimatedLineHeight
@@ -263,7 +267,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     }
 
                     if (textWidth > 0) {
-                        val finalText = buildEventText(event, showStartTimes)
+                        val finalText = buildEventText(event, useStartTimes)
 
                         try {
                             val builder = android.text.StaticLayout.Builder.obtain(
