@@ -276,11 +276,13 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                             .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
                             .setLineSpacing(0f, 1f)
                             .setIncludePad(false)
-                            .setEllipsize(null) // force no ellipses everywhere
 
-                            // Let text run; only cap past-today events to 1 line. No ellipsize anywhere; clipRect handles overflow.
+                            // Set ellipsize based on whether we're capping lines
                             if (dynamicMaxLines > 0) {
                                 builder.setMaxLines(dynamicMaxLines)
+                                builder.setEllipsize(android.text.TextUtils.TruncateAt.END)
+                            } else {
+                                builder.setEllipsize(null)
                             }
 
                             val layout = builder.build()
@@ -297,9 +299,8 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                             val spacing = if (i == todayIndex) paints.textPaint.textSize * 0.1f else paints.textPaint.textSize * 0.2f
                             val consumedHeight = when {
                                 i != todayIndex -> layout.height.toFloat() + spacing
-                                isPastTodayEvent -> lineHeight + spacing // fixed 1-line past event
+                                isPastTodayEvent -> layout.height.toFloat() + spacing
                                 else -> {
-                                    // Current/future events take full layout height; clipRect will truncate visually
                                     layout.height.toFloat() + spacing
                                 }
                             }
