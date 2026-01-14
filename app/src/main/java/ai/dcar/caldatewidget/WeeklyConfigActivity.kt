@@ -71,7 +71,14 @@ class WeeklyConfigActivity : AppCompatActivity() {
             currentSettings = currentSettings.copy(showDeclinedEvents = isChecked)
             saveSettings()
         }
-        
+
+        val cbShowAmPm = findViewById<CheckBox>(R.id.cb_show_ampm)
+        cbShowAmPm.isChecked = currentSettings.showAmPm
+        cbShowAmPm.setOnCheckedChangeListener { _, isChecked ->
+            currentSettings = currentSettings.copy(showAmPm = isChecked)
+            saveSettings()
+        }
+
         // Set initial state
         updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
         
@@ -177,6 +184,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
 
         val spinner = findViewById<Spinner>(R.id.spinner_start_day)
         val cbShowDeclined = findViewById<CheckBox>(R.id.cb_show_declined)
+        val cbShowAmPm = findViewById<CheckBox>(R.id.cb_show_ampm)
         val spinnerIndex = when(currentSettings.weekStartDay) {
             -1 -> 0
             Calendar.SUNDAY -> 1
@@ -186,6 +194,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
         }
         spinner.setSelection(spinnerIndex)
         cbShowDeclined.isChecked = currentSettings.showDeclinedEvents
+        cbShowAmPm.isChecked = currentSettings.showAmPm
 
         val previewText = findViewById<View>(R.id.preview_text_color)
         val previewShadow = findViewById<View>(R.id.preview_shadow_color)

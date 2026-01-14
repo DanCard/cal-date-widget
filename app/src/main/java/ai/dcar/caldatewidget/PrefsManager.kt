@@ -24,7 +24,8 @@ class PrefsManager(context: Context) {
         val weekStartDay: Int = 2, // Default Monday
         val startTimeColor: Int = Color.parseColor("#ccccff"),
         val startTimeShadowColor: Int = Color.BLACK,
-        val showDeclinedEvents: Boolean = false
+        val showDeclinedEvents: Boolean = false,
+        val showAmPm: Boolean = false
     )
 
     fun saveSettings(widgetId: Int, settings: WidgetSettings) {
@@ -37,6 +38,7 @@ class PrefsManager(context: Context) {
             putInt("${KEY_PREFIX}${widgetId}_start_time_color", settings.startTimeColor)
             putInt("${KEY_PREFIX}${widgetId}_start_time_shadow", settings.startTimeShadowColor)
             putBoolean("${KEY_PREFIX}${widgetId}_show_declined", settings.showDeclinedEvents)
+            putBoolean("${KEY_PREFIX}${widgetId}_show_ampm", settings.showAmPm)
             apply()
         }
     }
@@ -50,8 +52,9 @@ class PrefsManager(context: Context) {
         val startTimeColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_color", Color.parseColor("#ccccff"))
         val startTimeShadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_shadow", Color.BLACK)
         val showDeclined = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_declined", false)
-        
-        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, startTimeColor, startTimeShadowColor, showDeclined)
+        val showAmPm = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_ampm", false)
+
+        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, startTimeColor, startTimeShadowColor, showDeclined, showAmPm)
     }
 
     fun deleteSettings(widgetId: Int) {

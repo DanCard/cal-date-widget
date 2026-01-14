@@ -447,8 +447,8 @@ class DailyWidgetProvider : AppWidgetProvider() {
                 val measurePaint = android.text.TextPaint(basePaint)
                 measurePaint.textSize = 48f * eventScale
 
-                val eventText = buildEventText(event, true)
                 val isPastTodayEvent = currentDayIndex == todayIndex && event.endTime < currentTimeMillis
+                val eventText = buildEventText(event, true)
                 val layout = android.text.StaticLayout.Builder.obtain(
                     eventText, 0, eventText.length, measurePaint, textWidth
                 )
@@ -496,7 +496,11 @@ class DailyWidgetProvider : AppWidgetProvider() {
                 .replace("\u2026", "")
                 .replace("...", "")
             if (includeStart && !event.isAllDay) {
-                val timeString = timeFormat.format(Date(event.startTime))
+                val timeString = if (settings.showAmPm) {
+                    timeFormat.format(Date(event.startTime))
+                } else {
+                    SimpleDateFormat("h:mm", Locale.getDefault()).format(Date(event.startTime))
+                }
                 val spannable = SpannableString("$timeString $safeTitle")
 
                 spannable.setSpan(

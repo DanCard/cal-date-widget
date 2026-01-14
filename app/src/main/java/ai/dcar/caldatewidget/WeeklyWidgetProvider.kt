@@ -175,9 +175,6 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 // Determine text width for this column
                 val textWidth = (colWidth - 10f).toInt()
 
-                val buildEventText: (CalendarEvent, Boolean) -> CharSequence =
-                    { event, includeStart -> buildEventText(event, includeStart, settings, timeFormat) }
-
                 val availableHeight = height - (contentTop + bottomPadding)
 
                 // Calculate optimal font scale to fill available space
@@ -186,7 +183,8 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     textWidth = textWidth,
                     availableHeight = availableHeight,
                     basePaint = paints.textPaint,
-                    buildEventText = buildEventText,
+                    settings = settings,
+                    timeFormat = timeFormat,
                     currentTimeMillis = now,
                     todayIndex = todayIndex,
                     currentDayIndex = i
@@ -207,7 +205,8 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                         dayEvents,
                         textWidth,
                         paints.textPaint,
-                        buildEventText,
+                        settings,
+                        timeFormat,
                         now,
                         todayIndex,
                         i
@@ -239,7 +238,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     paints.textPaint.color = settings.textColor
 
                     val eventScale = if (i == todayIndex && event.endTime < now) {
-                        optimalFontScale * 0.8f
+                        optimalFontScale * 0.7f
                     } else {
                         optimalFontScale
                     }
@@ -248,8 +247,9 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     val isPastTodayEvent = (i == todayIndex && event.endTime < now)
                     val dynamicMaxLines = if (isPastTodayEvent) 1 else 0
 
-                    if (textWidth > 0) {
-                        val finalText = buildEventText(event, true)
+                        if (textWidth > 0) {
+                            val timeScale = if (isPastTodayEvent) 0.5f else 1f
+                            val finalText = buildEventText(event, true, settings, timeFormat, timeScale)
 
                         try {
                             val builder = android.text.StaticLayout.Builder.obtain(
@@ -345,7 +345,8 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
             textWidth: Int,
             availableHeight: Float,
             basePaint: android.text.TextPaint,
-            buildEventText: (CalendarEvent, Boolean) -> CharSequence,
+            settings: PrefsManager.WidgetSettings,
+            timeFormat: java.text.DateFormat,
             currentTimeMillis: Long,
             todayIndex: Int,
             currentDayIndex: Int
@@ -365,7 +366,8 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     dayEvents,
                     textWidth,
                     basePaint,
-                    buildEventText,
+                    settings,
+                    timeFormat,
                     currentTimeMillis,
                     todayIndex,
                     currentDayIndex
@@ -387,7 +389,8 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
             dayEvents: List<CalendarEvent>,
             textWidth: Int,
             basePaint: android.text.TextPaint,
-            buildEventText: (CalendarEvent, Boolean) -> CharSequence,
+            settings: PrefsManager.WidgetSettings,
+            timeFormat: java.text.DateFormat,
             currentTimeMillis: Long,
             todayIndex: Int,
             currentDayIndex: Int
@@ -395,15 +398,16 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
             var totalHeight = 0f
             for (event in dayEvents) {
                 val eventScale = if (currentDayIndex == todayIndex && event.endTime < currentTimeMillis) {
-                    scale * 0.8f
+                    scale * 0.7f
                 } else {
                     scale
                 }
                 val measurePaint = android.text.TextPaint(basePaint)
                 measurePaint.textSize = 48f * eventScale
 
-                val eventText = buildEventText(event, true)
                 val isPastTodayEvent = currentDayIndex == todayIndex && event.endTime < currentTimeMillis
+                val timeScale = if (isPastTodayEvent) 0.5f else 1f
+                val eventText = buildEventText(event, true, settings, timeFormat, timeScale)
                 val layout = android.text.StaticLayout.Builder.obtain(
                     eventText, 0, eventText.length, measurePaint, textWidth
                 )
@@ -413,6 +417,23 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                     .setMaxLines(if (isPastTodayEvent) 1 else 10)
                     .setEllipsize(if (isPastTodayEvent) android.text.TextUtils.TruncateAt.END else null)
                     .build()
+
+                if (!isPastTodayEvent) {
+                    val safeTitle = event.title
+                        .replace("\u2026", "")
+                        .replace("...", "")
+                    val lineLimit = when {
+                        safeTitle.length < 15 -> 3
+                        safeTitle.length < 20 -> 4
+                        safeTitle.length < 25 -> 5
+                        safeTitle.length < 30 -> 6
+                        safeTitle.length < 35 -> 7
+                        else -> 8
+                    }
+                    if (layout.lineCount > lineLimit) {
+                        return Float.MAX_VALUE
+                    }
+                }
 
                 val spacing = if (currentDayIndex == todayIndex) measurePaint.textSize * 0.1f else measurePaint.textSize * 0.2f
                 totalHeight += layout.height + spacing
@@ -445,13 +466,18 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
             event: CalendarEvent,
             includeStart: Boolean,
             settings: PrefsManager.WidgetSettings,
-            timeFormat: java.text.DateFormat
+            timeFormat: java.text.DateFormat,
+            timeScale: Float
         ): CharSequence {
             val safeTitle = event.title
                 .replace("\u2026", "")
                 .replace("...", "")
             if (includeStart && !event.isAllDay) {
-                val timeString = timeFormat.format(Date(event.startTime))
+                val timeString = if (settings.showAmPm) {
+                    timeFormat.format(Date(event.startTime))
+                } else {
+                    SimpleDateFormat("h:mm", Locale.getDefault()).format(Date(event.startTime))
+                }
                 val spannable = SpannableString("$timeString $safeTitle")
 
                 spannable.setSpan(
@@ -466,6 +492,15 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                         tp.setShadowLayer(6f, 3f, 3f, settings.startTimeShadowColor)
                     }
                 }, 0, timeString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                if (timeScale != 1f) {
+                    spannable.setSpan(
+                        android.text.style.RelativeSizeSpan(timeScale),
+                        0,
+                        timeString.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
 
                 return spannable
             }

@@ -59,6 +59,13 @@ class DailyConfigActivity : AppCompatActivity() {
             saveSettings()
         }
 
+        val cbShowAmPm = findViewById<CheckBox>(R.id.cb_show_ampm)
+        cbShowAmPm.isChecked = currentSettings.showAmPm
+        cbShowAmPm.setOnCheckedChangeListener { _, isChecked ->
+            currentSettings = currentSettings.copy(showAmPm = isChecked)
+            saveSettings()
+        }
+
         updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CALENDAR)
@@ -135,7 +142,9 @@ class DailyConfigActivity : AppCompatActivity() {
         DailyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
 
         val cbShowDeclined = findViewById<CheckBox>(R.id.cb_show_declined)
+        val cbShowAmPm = findViewById<CheckBox>(R.id.cb_show_ampm)
         cbShowDeclined.isChecked = currentSettings.showDeclinedEvents
+        cbShowAmPm.isChecked = currentSettings.showAmPm
 
         val previewText = findViewById<View>(R.id.preview_text_color)
         val previewShadow = findViewById<View>(R.id.preview_shadow_color)
