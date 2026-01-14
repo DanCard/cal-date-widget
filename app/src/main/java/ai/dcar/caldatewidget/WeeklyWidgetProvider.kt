@@ -87,6 +87,13 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
 
                 val width = size.widthPx
                 val height = size.heightPx
+
+                if (settings.bgColor != Color.TRANSPARENT) {
+                    canvas.drawColor(settings.bgColor)
+                } else {
+                    canvas.drawColor(0x4D000000.toInt())
+                }
+
                 val paints = createPaints(settings)
 
             // ... (Logic Start Date section remains same) ...
@@ -419,7 +426,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
                 textSize = 48f
                 isAntiAlias = true
                 textAlign = Paint.Align.LEFT
-                setShadowLayer(2f, 1f, 1f, settings.shadowColor)
+                setShadowLayer(6f, 3f, 3f, settings.shadowColor)
             }
             val dayHeaderPaint = Paint().apply {
                 color = Color.LTGRAY
@@ -456,7 +463,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
 
                 spannable.setSpan(object : CharacterStyle() {
                     override fun updateDrawState(tp: android.text.TextPaint) {
-                        tp.setShadowLayer(4f, 2f, 2f, settings.startTimeShadowColor)
+                        tp.setShadowLayer(6f, 3f, 3f, settings.startTimeShadowColor)
                     }
                 }, 0, timeString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 

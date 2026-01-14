@@ -9,7 +9,7 @@ class PrefsManager(context: Context) {
     companion object {
         private const val PREFS_NAME = "ai.dcar.caldatewidget.prefs"
         private const val KEY_PREFIX = "widget_"
-        
+
         const val DEFAULT_DATE_FORMAT = "EEE d"
         const val DEFAULT_TEXT_COLOR = Color.WHITE
         const val DEFAULT_SHADOW_COLOR = Color.BLACK

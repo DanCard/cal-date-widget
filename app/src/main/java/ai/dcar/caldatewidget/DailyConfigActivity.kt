@@ -6,16 +6,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.util.Calendar
 
-class WeeklyConfigActivity : AppCompatActivity() {
+class DailyConfigActivity : AppCompatActivity() {
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var prefsManager: PrefsManager
@@ -24,7 +21,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_weekly_config)
+        setContentView(R.layout.activity_daily_config)
 
         val extras = intent.extras
         if (extras != null) {
@@ -37,71 +34,33 @@ class WeeklyConfigActivity : AppCompatActivity() {
             finish()
             return
         }
-        
+
         prefsManager = PrefsManager(this)
         currentSettings = prefsManager.loadSettings(appWidgetId)
         initialSettings = currentSettings.copy()
 
-        // UI Elements
         val btnGrant = findViewById<Button>(R.id.btn_grant_permission)
         val btnUndo = findViewById<Button>(R.id.btn_undo)
-        val spinner = findViewById<Spinner>(R.id.spinner_start_day)
-        // val cbTitle = findViewById<CheckBox>(R.id.cb_show_title) // Not using title logic yet in provider but we can save it
-        
-        // Colors
+
         val previewText = findViewById<View>(R.id.preview_text_color)
         val btnPickText = findViewById<Button>(R.id.btn_pick_text_color)
         val previewShadow = findViewById<View>(R.id.preview_shadow_color)
         val btnPickShadow = findViewById<Button>(R.id.btn_pick_shadow_color)
-        
+
         val previewStartColor = findViewById<View>(R.id.preview_start_time_color)
         val btnPickStartColor = findViewById<Button>(R.id.btn_pick_start_time_color)
         val previewStartShadow = findViewById<View>(R.id.preview_start_time_shadow)
         val btnPickStartShadow = findViewById<Button>(R.id.btn_pick_start_time_shadow)
 
-        // Setup Spinner
-        val days = arrayOf("Current Day", "Sunday", "Monday", "Saturday")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, days)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
-        
         val cbShowDeclined = findViewById<CheckBox>(R.id.cb_show_declined)
         cbShowDeclined.isChecked = currentSettings.showDeclinedEvents
         cbShowDeclined.setOnCheckedChangeListener { _, isChecked ->
             currentSettings = currentSettings.copy(showDeclinedEvents = isChecked)
             saveSettings()
         }
-        
-        // Set initial state
+
         updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
-        
-        // Map weekStart to spinner index
-        val spinnerIndex = when(currentSettings.weekStartDay) {
-            -1 -> 0
-            Calendar.SUNDAY -> 1
-            Calendar.MONDAY -> 2
-            Calendar.SATURDAY -> 3
-            else -> 2 // Default Monday
-        }
-        spinner.setSelection(spinnerIndex)
 
-        spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long) {
-                val weekStart = when(position) {
-                    0 -> -1
-                    1 -> Calendar.SUNDAY
-                    2 -> Calendar.MONDAY
-                    3 -> Calendar.SATURDAY
-                    else -> Calendar.MONDAY
-                }
-                currentSettings = currentSettings.copy(weekStartDay = weekStart)
-                saveSettings()
-            }
-
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
-        }
-
-        // Check Permission
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CALENDAR)
             != PackageManager.PERMISSION_GRANTED) {
             btnGrant.visibility = View.VISIBLE
@@ -112,7 +71,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
         btnGrant.setOnClickListener {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_CALENDAR), 101)
         }
-        
+
         btnPickText.setOnClickListener {
             ColorPickerDialog.show(this, "Text Color", currentSettings.textColor) { color ->
                 currentSettings = currentSettings.copy(textColor = color)
@@ -120,7 +79,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
                 saveSettings()
             }
         }
-        
+
         btnPickShadow.setOnClickListener {
              ColorPickerDialog.show(this, "Shadow Color", currentSettings.shadowColor) { color ->
                 currentSettings = currentSettings.copy(shadowColor = color)
@@ -151,7 +110,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
 
         saveSettings()
     }
-    
+
     private fun updateColorPreviews(text: View, shadow: View, startColor: View, startShadow: View) {
         text.setBackgroundColor(currentSettings.textColor)
         shadow.setBackgroundColor(currentSettings.shadowColor)
@@ -162,7 +121,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
     private fun saveSettings() {
         prefsManager.saveSettings(appWidgetId, currentSettings)
         val appWidgetManager = AppWidgetManager.getInstance(this)
-        WeeklyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
+        DailyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
         updateUndoButtonState()
         setResult(Activity.RESULT_OK, Intent().apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -173,18 +132,9 @@ class WeeklyConfigActivity : AppCompatActivity() {
         currentSettings = initialSettings.copy()
         prefsManager.saveSettings(appWidgetId, currentSettings)
         val appWidgetManager = AppWidgetManager.getInstance(this)
-        WeeklyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
+        DailyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
 
-        val spinner = findViewById<Spinner>(R.id.spinner_start_day)
         val cbShowDeclined = findViewById<CheckBox>(R.id.cb_show_declined)
-        val spinnerIndex = when(currentSettings.weekStartDay) {
-            -1 -> 0
-            Calendar.SUNDAY -> 1
-            Calendar.MONDAY -> 2
-            Calendar.SATURDAY -> 3
-            else -> 2
-        }
-        spinner.setSelection(spinnerIndex)
         cbShowDeclined.isChecked = currentSettings.showDeclinedEvents
 
         val previewText = findViewById<View>(R.id.preview_text_color)

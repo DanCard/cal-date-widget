@@ -36,6 +36,18 @@
                 android:resource="@xml/weekly_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".DailyWidgetProvider"
+            android:exported="true"
+            android:label="Daily Calendar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/daily_widget_info" />
+        </receiver>
+
         <activity
             android:name=".ConfigActivity"
             android:exported="true">
@@ -46,6 +58,14 @@
 
         <activity
             android:name=".WeeklyConfigActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".DailyConfigActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
