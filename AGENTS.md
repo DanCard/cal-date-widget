@@ -35,8 +35,10 @@ adb shell am broadcast -a android.appwidget.action.APPWIDGET_UPDATE -n ai.dcar.c
 adb shell screencap -p /sdcard/screenshot.png
 adb pull /sdcard/screenshot.png /tmp/widget_screenshot.png
 
-# View widget logs
+ # View widget logs
 adb logcat -s WeeklyWidget:D
+adb logcat -s DailyWidget:D
+adb logcat -s DateWidget:D
 adb logcat -c  # Clear logs
 ```
 
@@ -121,6 +123,9 @@ This project does not have configured linting or type checking commands. Do not 
 - **Timezone handling:** All-day events are stored in UTC, convert to local timezone for display
 - **Dynamic text sizing:** Each column independently calculates optimal font scale using binary search (0.3x to 1.5x) to fill available space
 - **Past events on today:** Always 0.8x of optimal scale to make them smaller than current/future events
+- **Widget creation fix:** Config activities must call `setResult(RESULT_OK, intent)` with appWidgetId for widget to appear
+- **Background transparency:** Daily/Weekly widgets use 70% transparent dark background (0x4D000000) for better text contrast
+- **Text shadows:** Increased shadow radius to 6f and offset to (3f, 3f) for improved readability
 
 ### Dynamic Text Sizing Implementation
 The weekly widget uses per-column dynamic font sizing to fill available space:
@@ -151,13 +156,19 @@ The weekly widget uses per-column dynamic font sizing to fill available space:
 ### Adding New Features
 1. Update `WidgetSettings` data class in `PrefsManager.kt`
 2. Add save/load logic in `PrefsManager`
-3. Add UI controls in `WeeklyConfigActivity.kt` (or `ConfigActivity.kt` for date widget)
-4. Update rendering logic in `WeeklyWidgetProvider.kt` if display changes
+3. Add UI controls in config activity (`DailyConfigActivity.kt` for daily, `WeeklyConfigActivity.kt` for weekly, or `ConfigActivity.kt` for date widget)
+4. Update rendering logic in widget provider if display changes
 5. Add unit tests for new logic in appropriate test files
+6. **For daily widget:** Implement dynamic day count based on widget width (see `calculateNumberOfDays()` and `calculateCellWidthDp()`)
+7. **For daily widget:** Implement smart start day logic (today vs next day if events elapsed)
+8. **For any widget:** Update AndroidManifest.xml to register new provider and config activity
+9. **For any widget:** Add widget info XML file and layout files
 
 ### Widget Architecture Notes
-- Two separate widgets: `DateWidgetProvider` (single date) and `WeeklyWidgetProvider` (7-day view)
+- Three separate widgets: `DateWidgetProvider` (single date), `WeeklyWidgetProvider` (7-day view), and `DailyWidgetProvider` (dynamic day count)
 - Each has its own config activity and settings
 - Settings stored per-widget-instance using SharedPreferences
 - Widget renders as bitmap on Canvas, not using RecyclerView or other view recycling
 - Weekly widget column weights: Today (2.0x), Past (0.6x), Future (1.5x decaying to 0.7x)
+- Daily widget: Number of days equals widget width in cells (1-7 days), auto-calculated from widget size
+- Daily widget start day: Always starts with current day, or next day if all events for today have elapsed
