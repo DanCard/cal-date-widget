@@ -119,6 +119,34 @@ This project does not have configured linting or type checking commands. Do not 
 - **Clipping detection:** Use conservative estimates to detect clipping before rendering (e.g., 4 lines per event with start times)
 - **Equitable distribution:** When space is limited, share space equitably among items rather than first-come-first-served
 - **Timezone handling:** All-day events are stored in UTC, convert to local timezone for display
+- **Dynamic text sizing:** Each column independently calculates optimal font scale using binary search (0.3x to 1.5x) to fill available space
+- **Past events on today:** Always 0.8x of optimal scale to make them smaller than current/future events
+
+### Dynamic Text Sizing Implementation
+The weekly widget uses per-column dynamic font sizing to fill available space:
+
+**Algorithm:** Binary search for optimal font scale
+- Bounds: minScale=0.3f, maxScale=1.5f
+- Iterations: 10 (converges quickly)
+- Goal: Find largest scale where total height ≤ available height
+
+**Method:** `calculateOptimalFontScale()` in `WeeklyWidgetProvider.kt:429-461`
+- Returns optimal scale for each column independently
+- Empty columns return 0.5x scale (smaller for aesthetics)
+- Always shows start times (no longer toggles based on fit)
+
+**Helper method:** `measureTotalHeightForScale()` in `WeeklyWidgetProvider.kt:463-495`
+- Measures all events at given scale
+- Past events on today: Additional 0.8x multiplier applied
+- All other events: Direct scale
+
+**Base text size:** 48f pixels (hardcoded, no user override)
+- Event final size: 48f × optimalScale × eventScaleModifier
+- Start times inherit same scale as event text
+
+**No user-controllable text size:** Removed textSizeScale from settings
+- UI slider removed from config
+- Sizing is fully automatic based on content and space
 
 ### Adding New Features
 1. Update `WidgetSettings` data class in `PrefsManager.kt`

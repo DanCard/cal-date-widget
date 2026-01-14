@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.SeekBar
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -59,8 +58,6 @@ class WeeklyConfigActivity : AppCompatActivity() {
         val btnPickStartColor = findViewById<Button>(R.id.btn_pick_start_time_color)
         val previewStartShadow = findViewById<View>(R.id.preview_start_time_shadow)
         val btnPickStartShadow = findViewById<Button>(R.id.btn_pick_start_time_shadow)
-        
-        val seekSize = findViewById<SeekBar>(R.id.seekbar_text_size)
 
         // Setup Spinner
         val days = arrayOf("Current Day", "Sunday", "Monday", "Saturday")
@@ -73,9 +70,6 @@ class WeeklyConfigActivity : AppCompatActivity() {
         
         // Set initial state
         updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
-        
-        // Initial Progress: scale 1.0 -> progress 50 (if range is 0.5-2.5, 0->0.5, 100->1.5, 200->2.5)
-        seekSize.progress = ((currentSettings.textSizeScale - 0.5f) * 100).toInt()
         
         // Map weekStart to spinner index
         val spinnerIndex = when(currentSettings.weekStartDay) {
@@ -140,12 +134,8 @@ class WeeklyConfigActivity : AppCompatActivity() {
                 else -> Calendar.MONDAY
             }
             
-            // Map seekbar to scale
-            val scale = 0.5f + (seekSize.progress / 100f)
-            
             currentSettings = currentSettings.copy(
-                weekStartDay = weekStart, 
-                textSizeScale = scale,
+                weekStartDay = weekStart,
                 showDeclinedEvents = cbShowDeclined.isChecked
             )
             prefsManager.saveSettings(appWidgetId, currentSettings)

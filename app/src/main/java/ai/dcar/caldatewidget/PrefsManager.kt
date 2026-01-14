@@ -14,7 +14,6 @@ class PrefsManager(context: Context) {
         const val DEFAULT_TEXT_COLOR = Color.WHITE
         const val DEFAULT_SHADOW_COLOR = Color.BLACK
         const val DEFAULT_BG_COLOR = Color.TRANSPARENT
-        const val DEFAULT_TEXT_SCALE = 1.0f
     }
 
     data class WidgetSettings(
@@ -23,7 +22,6 @@ class PrefsManager(context: Context) {
         val shadowColor: Int = DEFAULT_SHADOW_COLOR,
         val bgColor: Int = DEFAULT_BG_COLOR,
         val weekStartDay: Int = 2, // Default Monday
-        val textSizeScale: Float = DEFAULT_TEXT_SCALE, // Default no scaling (base size)
         val startTimeColor: Int = Color.parseColor("#ccccff"),
         val startTimeShadowColor: Int = Color.BLACK,
         val showDeclinedEvents: Boolean = false
@@ -36,7 +34,6 @@ class PrefsManager(context: Context) {
             putInt("${KEY_PREFIX}${widgetId}_shadow_color", settings.shadowColor)
             putInt("${KEY_PREFIX}${widgetId}_bg_color", settings.bgColor)
             putInt("${KEY_PREFIX}${widgetId}_week_start", settings.weekStartDay)
-            putFloat("${KEY_PREFIX}${widgetId}_text_scale", settings.textSizeScale)
             putInt("${KEY_PREFIX}${widgetId}_start_time_color", settings.startTimeColor)
             putInt("${KEY_PREFIX}${widgetId}_start_time_shadow", settings.startTimeShadowColor)
             putBoolean("${KEY_PREFIX}${widgetId}_show_declined", settings.showDeclinedEvents)
@@ -50,12 +47,11 @@ class PrefsManager(context: Context) {
         val shadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_shadow_color", DEFAULT_SHADOW_COLOR)
         val bgColor = prefs.getInt("${KEY_PREFIX}${widgetId}_bg_color", DEFAULT_BG_COLOR)
         val weekStart = prefs.getInt("${KEY_PREFIX}${widgetId}_week_start", 2)
-        val textScale = prefs.getFloat("${KEY_PREFIX}${widgetId}_text_scale", DEFAULT_TEXT_SCALE)
         val startTimeColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_color", Color.parseColor("#ccccff"))
         val startTimeShadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_shadow", Color.BLACK)
         val showDeclined = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_declined", false)
         
-        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, textScale, startTimeColor, startTimeShadowColor, showDeclined)
+        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, startTimeColor, startTimeShadowColor, showDeclined)
     }
 
     fun deleteSettings(widgetId: Int) {
@@ -65,7 +61,6 @@ class PrefsManager(context: Context) {
             remove("${KEY_PREFIX}${widgetId}_shadow_color")
             remove("${KEY_PREFIX}${widgetId}_bg_color")
             remove("${KEY_PREFIX}${widgetId}_week_start")
-            remove("${KEY_PREFIX}${widgetId}_text_scale")
             apply()
         }
     }

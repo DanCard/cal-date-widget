@@ -65,14 +65,4 @@ class PrefsManagerTest {
         
         assertEquals(PrefsManager.DEFAULT_DATE_FORMAT, settings.dateFormat)
     }
-
-    @Test
-    fun `loadSettings falls back to default text scale`() {
-        val widgetId = 789
-        every { prefs.getFloat("widget_789_text_scale", PrefsManager.DEFAULT_TEXT_SCALE) } returns PrefsManager.DEFAULT_TEXT_SCALE
-
-        val settings = prefsManager.loadSettings(widgetId)
-
-        assertEquals(PrefsManager.DEFAULT_TEXT_SCALE, settings.textSizeScale, 0.0f)
-    }
 }
