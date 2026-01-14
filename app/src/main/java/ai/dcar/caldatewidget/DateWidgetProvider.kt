@@ -22,6 +22,11 @@ class DateWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: android.os.Bundle?) {
+        updateAppWidget(context, appWidgetManager, appWidgetId)
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+    }
+
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         val prefsManager = PrefsManager(context)
         for (appWidgetId in appWidgetIds) {
@@ -34,15 +39,51 @@ class DateWidgetProvider : AppWidgetProvider() {
             val prefsManager = PrefsManager(context)
             val settings = prefsManager.loadSettings(appWidgetId)
 
-            val views = RemoteViews(context.packageName, R.layout.widget_date)
-
             // 1. Format Date
-            val dateText = try {
+            var dateText = try {
                 val sdf = SimpleDateFormat(settings.dateFormat, Locale.getDefault())
                 sdf.format(Date())
             } catch (e: Exception) {
                 "Invalid Format"
             }
+
+            // Check widget size options to potentially force single-line
+            val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
+            if (options != null) {
+                val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+                val maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
+                val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+                val maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
+                
+                Log.d("DateWidget", "Update Widget $appWidgetId: Format='${settings.dateFormat}', Text='$dateText'")
+                Log.d("DateWidget", "Dimensions: minW=$minWidth, minH=$minHeight")
+                
+                // Logic for 2x2 or larger square-ish widgets:
+                // If height is large (>= 90) and it's not a skinny horizontal widget (minWidth >= 90),
+                // and there's a space but no newline, we can try to stack it automatically.
+                if (minHeight >= 90 && minWidth >= 90 && !dateText.contains("\n") && dateText.contains(" ")) {
+                    Log.d("DateWidget", "Auto-stacking for 2x2+ widget")
+                    dateText = dateText.replaceFirst(" ", "\n")
+                }
+                
+                // Logic for 1x2 or smaller:
+                // If the widget is short (roughly 1 cell high or less), remove newlines to force single line
+                if (minHeight > 0 && minHeight < 90) { 
+                    Log.d("DateWidget", "Forcing single line due to height < 90dp")
+                    dateText = dateText.replace("\n", " ")
+                }
+            } else {
+                Log.d("DateWidget", "Options are null for widget $appWidgetId")
+            }
+
+            // Use a layout with larger max text size for single digits
+            val layoutId = if (dateText.length == 1) {
+                R.layout.widget_date_single_digit
+            } else {
+                R.layout.widget_date
+            }
+            val views = RemoteViews(context.packageName, layoutId)
+
             views.setTextViewText(R.id.widget_date_text, dateText)
 
             // 2. Apply Colors

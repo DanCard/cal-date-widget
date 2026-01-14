@@ -16,6 +16,8 @@
     <string-array name="date_formats">
         <item>EEE, MMM d</item>
         <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
         <item>MM/dd/yyyy</item>
         <item>dd.MM.yyyy</item>
         <item>yyyy-MM-dd</item>

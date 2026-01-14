@@ -9,7 +9,7 @@
     android:minResizeWidth="40dp"
     android:minResizeHeight="40dp"
     android:resizeMode="horizontal|vertical"
-    android:previewImage="@drawable/ic_settings"
+    android:previewImage="@drawable/preview_weekly_widget"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"
     android:configure="ai.dcar.caldatewidget.WeeklyConfigActivity">
