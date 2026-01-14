@@ -59,7 +59,6 @@ class PrefsManagerTest {
     fun `loadSettings returns defaults when missing`() {
         val widgetId = 456
         every { prefs.getString("widget_456_format", any()) } returns null
-        every { prefs.getFloat("widget_456_text_scale", PrefsManager.DEFAULT_TEXT_SCALE) } returns PrefsManager.DEFAULT_TEXT_SCALE
         
         val settings = prefsManager.loadSettings(widgetId)
         

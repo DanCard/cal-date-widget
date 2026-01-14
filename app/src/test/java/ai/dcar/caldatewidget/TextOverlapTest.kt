@@ -1,11 +1,17 @@
 package ai.dcar.caldatewidget
 
+import android.os.Build
 import android.text.StaticLayout
 import android.text.TextPaint
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.Q])
 class TextOverlapTest {
 
     @Test
@@ -285,9 +291,6 @@ class TextOverlapTest {
         val lineHeightPast = pastPaint.textSize * 1.2f
         val spacingPast = pastPaint.textSize * 0.1f
         val consumedHeightPast = lineHeightPast + spacingPast
-
-        val spacingCurrent = currentPaint.textSize * 0.1f
-        val consumedHeightCurrent = currentLayout.height.toFloat() + spacingCurrent
 
         val yPosPast = 0f
         val yPosCurrent = yPosPast + consumedHeightPast

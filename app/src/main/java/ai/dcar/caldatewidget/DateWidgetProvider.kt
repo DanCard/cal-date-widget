@@ -51,9 +51,7 @@ class DateWidgetProvider : AppWidgetProvider() {
             val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
             if (options != null) {
                 val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
-                val maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT)
                 val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
-                val maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH)
                 
                 Log.d("DateWidget", "Update Widget $appWidgetId: Format='${settings.dateFormat}', Text='$dateText'")
                 Log.d("DateWidget", "Dimensions: minW=$minWidth, minH=$minHeight")

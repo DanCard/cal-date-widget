@@ -113,7 +113,7 @@ class ConfigActivity : AppCompatActivity() {
                 val custom = s.toString()
                 val newSettings = stateManager.currentSettings.copy(dateFormat = custom)
                 stateManager.applySessionChange(newSettings)
-                saveAndBroadcast(addToUndo = false)
+                saveAndBroadcast()
             }
         })
 
@@ -123,7 +123,7 @@ class ConfigActivity : AppCompatActivity() {
                 isRestoring = true
                 updateUIFromSettings(stateManager.currentSettings)
                 updatePreview()
-                saveAndBroadcast(addToUndo = false) 
+                saveAndBroadcast() 
                 isRestoring = false
                 updateUndoButton()
             }
@@ -163,7 +163,7 @@ class ConfigActivity : AppCompatActivity() {
                 stateManager.beginChangeSession()
             }
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                saveAndBroadcast(addToUndo = false)
+                saveAndBroadcast()
                 stateManager.endChangeSession()
                 updateUndoButton()
             }
@@ -172,15 +172,14 @@ class ConfigActivity : AppCompatActivity() {
     
     private fun updateSettings(newSettings: PrefsManager.WidgetSettings, pushUndo: Boolean = true) {
         stateManager.updateSettings(newSettings, pushToUndo = pushUndo)
-        saveAndBroadcast(addToUndo = false) // StateManager already handled the stack
+        saveAndBroadcast()
     }
 
     private fun updateUndoButton() {
         binding.btnUndo.isEnabled = stateManager.canUndo()
     }
 
-    private fun saveAndBroadcast(addToUndo: Boolean = false) {
-        // addToUndo param is legacy here, handled by callers calling updateSettings
+    private fun saveAndBroadcast() {
         
         prefsManager.saveSettings(appWidgetId, stateManager.currentSettings)
         

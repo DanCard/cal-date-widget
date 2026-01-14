@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'ai.dcar.caldatewidget'
+    namespace = 'ai.dcar.caldatewidget'
     compileSdk 35
 
     defaultConfig {
@@ -37,7 +37,7 @@ android {
         jvmTarget = '21'
     }
     buildFeatures {
-        viewBinding true
+        viewBinding = true
     }
 }
 
