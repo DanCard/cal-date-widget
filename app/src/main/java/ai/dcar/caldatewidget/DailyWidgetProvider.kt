@@ -147,14 +147,20 @@ class DailyWidgetProvider : AppWidgetProvider() {
                         dayFormatEEEd.format(dayMillis)
                     }
 
+                    val headerTextSize = if (i == todayIndex) {
+                        colWidth * 0.3f
+                    } else {
+                        colWidth * 0.25f
+                    }.coerceIn(30f, 70f)
+
                     if (i == todayIndex) {
                         paints.dayHeaderPaint.color = Color.YELLOW
                         paints.dayHeaderPaint.isFakeBoldText = true
-                        paints.dayHeaderPaint.textSize = 80f
+                        paints.dayHeaderPaint.textSize = headerTextSize
                     } else {
                         paints.dayHeaderPaint.color = Color.LTGRAY
                         paints.dayHeaderPaint.isFakeBoldText = false
-                        paints.dayHeaderPaint.textSize = 40f
+                        paints.dayHeaderPaint.textSize = headerTextSize
                     }
 
                     val fm = paints.dayHeaderPaint.fontMetrics
