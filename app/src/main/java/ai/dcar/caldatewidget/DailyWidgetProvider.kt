@@ -232,6 +232,9 @@ class DailyWidgetProvider : AppWidgetProvider() {
 
                         val eventScale = if (i == todayIndex && event.endTime < now) {
                             optimalFontScale * 0.8f
+                        } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED) {
+                            val invScale = (0.8f - 0.2f * optimalFontScale).coerceIn(0.5f, 0.7f)
+                            optimalFontScale * invScale
                         } else {
                             optimalFontScale
                         }
@@ -447,6 +450,9 @@ class DailyWidgetProvider : AppWidgetProvider() {
             for (event in dayEvents) {
                 val eventScale = if (currentDayIndex == todayIndex && event.endTime < currentTimeMillis) {
                     scale * 0.8f
+                } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED) {
+                    val invScale = (0.8f - 0.2f * scale).coerceIn(0.5f, 0.7f)
+                    scale * invScale
                 } else {
                     scale
                 }
@@ -486,7 +492,7 @@ class DailyWidgetProvider : AppWidgetProvider() {
                 textAlign = Paint.Align.CENTER
             }
             val linePaint = Paint().apply {
-                color = Color.DKGRAY
+                color = Color.BLACK
                 strokeWidth = 2f
             }
             return PaintBundle(textPaint, dayHeaderPaint, linePaint)

@@ -81,7 +81,8 @@ class CalendarRepository(private val context: Context) {
                             it.getLong(endIdx),
                             if (colorIdx >= 0) it.getInt(colorIdx) else 0xFF000000.toInt(),
                             allDay,
-                            isDeclined
+                            isDeclined,
+                            selfStatus
                         )
                     )
                 }
@@ -92,7 +93,7 @@ class CalendarRepository(private val context: Context) {
         
         // Deduplicate events that have same title, start, end, and allDay status
         return events.distinctBy { 
-            listOf(it.title, it.startTime, it.endTime, it.isAllDay, it.isDeclined)
+            listOf(it.title, it.startTime, it.endTime, it.isAllDay, it.isDeclined, it.selfStatus)
         }
     }
 

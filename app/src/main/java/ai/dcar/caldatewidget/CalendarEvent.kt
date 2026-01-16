@@ -7,5 +7,6 @@ data class CalendarEvent(
     val endTime: Long,
     val color: Int,
     val isAllDay: Boolean,
-    val isDeclined: Boolean
+    val isDeclined: Boolean,
+    val selfStatus: Int
 )
