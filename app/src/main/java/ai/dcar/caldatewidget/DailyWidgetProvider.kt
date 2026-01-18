@@ -15,11 +15,6 @@ import android.widget.RemoteViews
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import android.text.SpannableString
-import android.text.Spanned
-import java.util.Date
-import android.text.style.ForegroundColorSpan
-import android.text.style.CharacterStyle
 
 class DailyWidgetProvider : AppWidgetProvider() {
 
@@ -36,12 +31,6 @@ class DailyWidgetProvider : AppWidgetProvider() {
 
     companion object {
         private data class WidgetSize(val widthPx: Int, val heightPx: Int)
-
-        private data class PaintBundle(
-            val textPaint: android.text.TextPaint,
-            val dayHeaderPaint: Paint,
-            val linePaint: Paint
-        )
 
         fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
             val views = RemoteViews(context.packageName, R.layout.widget_daily)
@@ -91,7 +80,7 @@ class DailyWidgetProvider : AppWidgetProvider() {
                     canvas.drawColor(0x4D000000.toInt())
                 }
 
-                val paints = createPaints(settings)
+                val paints = WidgetRenderingHelper.createPaints(settings)
 
                 val calendar = Calendar.getInstance()
                 val todayCal = Calendar.getInstance()
@@ -171,42 +160,45 @@ class DailyWidgetProvider : AppWidgetProvider() {
                     val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
 
                     val textWidth = (colWidth - 10f).toInt()
-
-                    val buildEventText: (CalendarEvent, Boolean) -> CharSequence =
-                        { event, includeStart -> buildEventText(event, includeStart, settings, timeFormat) }
-
                     val availableHeight = height - (contentTop + bottomPadding)
 
-                    val optimalFontScale = calculateOptimalFontScale(
+                    val (optimalFontScale, compressDeclined) = WidgetRenderingHelper.calculateOptimalFontScale(
                         dayEvents = dayEvents,
                         textWidth = textWidth,
                         availableHeight = availableHeight,
                         basePaint = paints.textPaint,
-                        buildEventText = buildEventText,
+                        settings = settings,
+                        timeFormat = timeFormat,
                         currentTimeMillis = now,
                         todayIndex = todayIndex,
-                        currentDayIndex = i
+                        currentDayIndex = i,
+                        pastEventScaleFactor = 0.8f
                     )
 
-                    val (pastEventsOnToday, currentFutureEvents) = if (i == todayIndex) {
-                        dayEvents.partition { it.endTime < now }
-                    } else {
-                        Pair(emptyList(), dayEvents)
-                    }
-
-                    if (i == todayIndex) {
+                    // Debug logging
+                    if (i == todayIndex || i == todayIndex + 1) {
+                         val (pastEventsOnToday, currentFutureEvents) = if (i == todayIndex) {
+                            dayEvents.partition { it.endTime < now }
+                        } else {
+                            Pair(emptyList(), dayEvents)
+                        }
+                        
                         val estimatedLineHeight = (48f * optimalFontScale) * 1.2f
-                        val measuredHeight = measureTotalHeightForScale(
+                        val measuredHeight = WidgetRenderingHelper.measureTotalHeightForScale(
                             optimalFontScale,
                             dayEvents,
                             textWidth,
                             paints.textPaint,
-                            buildEventText,
+                            settings,
+                            timeFormat,
                             now,
                             todayIndex,
-                            i
+                            i,
+                            compressDeclined,
+                            0.8f
                         )
-                        logCurrentDayDebug(
+                        WidgetRenderingHelper.logCurrentDayDebug(
+                            "DailyWidget",
                             dayEvents,
                             pastEventsOnToday,
                             currentFutureEvents,
@@ -214,11 +206,9 @@ class DailyWidgetProvider : AppWidgetProvider() {
                             measuredHeight,
                             optimalFontScale,
                             now,
-                            estimatedLineHeight
+                            estimatedLineHeight,
+                            compressDeclined
                         )
-                        Log.d("DailyWidget", "Optimal font scale for today: $optimalFontScale")
-                    } else {
-                        Log.d("DailyWidget", "Optimal font scale for day $i: $optimalFontScale")
                     }
 
                     var remainingHeightForCurrentDay = availableHeight
@@ -230,22 +220,29 @@ class DailyWidgetProvider : AppWidgetProvider() {
 
                         paints.textPaint.color = settings.textColor
 
-                        val eventScale = if (i == todayIndex && event.endTime < now) {
+                        val isDeclinedOrInvited = event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined
+
+                        var eventScale = if (i == todayIndex && event.endTime < now) {
                             optimalFontScale * 0.8f
-                        } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined) {
+                        } else if (isDeclinedOrInvited) {
                             val invScale = (0.8f - 0.2f * optimalFontScale).coerceIn(0.5f, 0.7f)
                             optimalFontScale * invScale
                         } else {
                             optimalFontScale
                         }
+
+                        // Enforce minimum sizes
+                        val minEventScale = if (isDeclinedOrInvited) 0.5f else 0.7f
+                        if (eventScale < minEventScale) eventScale = minEventScale
+
                         paints.textPaint.textSize = 48f * eventScale
 
                         val isPastTodayEvent = (i == todayIndex && event.endTime < now)
-                        // Harmonize with measureTotalHeightForScale: Unlimited lines for future events to avoid cutoff
-                        val dynamicMaxLines = if (isPastTodayEvent) 1 else 0
+                        val forceOneLine = isPastTodayEvent || (compressDeclined && isDeclinedOrInvited)
+                        val dynamicMaxLines = if (forceOneLine) 1 else 0
 
                         if (textWidth > 0) {
-                            val finalText = buildEventText(event, true)
+                            val finalText = WidgetRenderingHelper.buildEventText(event, true, settings, timeFormat)
 
                             try {
                                 val builder = android.text.StaticLayout.Builder.obtain(
@@ -381,180 +378,6 @@ class DailyWidgetProvider : AppWidgetProvider() {
             }
 
             return cal.timeInMillis
-        }
-
-        private fun calculateOptimalFontScale(
-            dayEvents: List<CalendarEvent>,
-            textWidth: Int,
-            availableHeight: Float,
-            basePaint: android.text.TextPaint,
-            buildEventText: (CalendarEvent, Boolean) -> CharSequence,
-            currentTimeMillis: Long,
-            todayIndex: Int,
-            currentDayIndex: Int
-        ): Float {
-            if (dayEvents.isEmpty() || textWidth <= 0 || availableHeight <= 0f) {
-                return 0.5f
-            }
-
-            var minScale = 0.3f
-            var maxScale = 1.5f
-            var optimalScale = 1.0f
-
-            for (iteration in 0 until 10) {
-                val midScale = (minScale + maxScale) / 2f
-                val totalHeight = measureTotalHeightForScale(
-                    midScale,
-                    dayEvents,
-                    textWidth,
-                    basePaint,
-                    buildEventText,
-                    currentTimeMillis,
-                    todayIndex,
-                    currentDayIndex
-                )
-
-                if (totalHeight <= availableHeight) {
-                    minScale = midScale
-                    optimalScale = midScale
-                } else {
-                    maxScale = midScale
-                }
-            }
-
-            return optimalScale
-        }
-
-        private fun measureTotalHeightForScale(
-            scale: Float,
-            dayEvents: List<CalendarEvent>,
-            textWidth: Int,
-            basePaint: android.text.TextPaint,
-            buildEventText: (CalendarEvent, Boolean) -> CharSequence,
-            currentTimeMillis: Long,
-            todayIndex: Int,
-            currentDayIndex: Int
-        ): Float {
-            var totalHeight = 0f
-            for (event in dayEvents) {
-                val eventScale = if (currentDayIndex == todayIndex && event.endTime < currentTimeMillis) {
-                    scale * 0.8f
-                } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined) {
-                    val invScale = (0.8f - 0.2f * scale).coerceIn(0.5f, 0.7f)
-                    scale * invScale
-                } else {
-                    scale
-                }
-                val measurePaint = android.text.TextPaint(basePaint)
-                measurePaint.textSize = 48f * eventScale
-
-                val isPastTodayEvent = currentDayIndex == todayIndex && event.endTime < currentTimeMillis
-                val eventText = buildEventText(event, true)
-                val layout = android.text.StaticLayout.Builder.obtain(
-                    eventText, 0, eventText.length, measurePaint, textWidth
-                )
-                    .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
-                    .setLineSpacing(0f, 1f)
-                    .setIncludePad(false)
-                    // Unlimited lines for future/current events to ensure accurate height measurement
-                    .setMaxLines(if (isPastTodayEvent) 1 else 0)
-                    .setEllipsize(if (isPastTodayEvent) android.text.TextUtils.TruncateAt.END else null)
-                    .build()
-
-                if (!isPastTodayEvent) {
-                    val safeTitle = event.title
-                        .replace("\u2026", "")
-                        .replace("...", "")
-                    val lineLimit = when {
-                        safeTitle.length < 15 -> 3
-                        safeTitle.length < 20 -> 4
-                        safeTitle.length < 25 -> 5
-                        safeTitle.length < 30 -> 6
-                        safeTitle.length < 35 -> 7
-                        else -> 8
-                    }
-                    if (layout.lineCount > lineLimit) {
-                        return Float.MAX_VALUE
-                    }
-                }
-
-                val spacing = if (currentDayIndex == todayIndex) measurePaint.textSize * 0.1f else measurePaint.textSize * 0.2f
-                totalHeight += layout.height + spacing
-            }
-            return totalHeight
-        }
-
-        private fun createPaints(settings: PrefsManager.WidgetSettings): PaintBundle {
-            val textPaint = android.text.TextPaint().apply {
-                color = settings.textColor
-                textSize = 48f
-                isAntiAlias = true
-                textAlign = Paint.Align.LEFT
-                setShadowLayer(6f, 3f, 3f, settings.shadowColor)
-            }
-            val dayHeaderPaint = Paint().apply {
-                color = Color.LTGRAY
-                textSize = 30f
-                isAntiAlias = true
-                textAlign = Paint.Align.CENTER
-            }
-            val linePaint = Paint().apply {
-                color = Color.BLACK
-                strokeWidth = 2f
-            }
-            return PaintBundle(textPaint, dayHeaderPaint, linePaint)
-        }
-
-        private fun buildEventText(
-            event: CalendarEvent,
-            includeStart: Boolean,
-            settings: PrefsManager.WidgetSettings,
-            timeFormat: java.text.DateFormat
-        ): CharSequence {
-            val safeTitle = event.title
-                .replace("\u2026", "")
-                .replace("...", "")
-            if (includeStart && !event.isAllDay) {
-                val timeString = if (settings.showAmPm) {
-                    timeFormat.format(Date(event.startTime))
-                } else {
-                    SimpleDateFormat("h:mm", Locale.getDefault()).format(Date(event.startTime))
-                }
-                val spannable = SpannableString("$timeString $safeTitle")
-
-                spannable.setSpan(
-                    ForegroundColorSpan(settings.startTimeColor),
-                    0,
-                    timeString.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-
-                spannable.setSpan(object : CharacterStyle() {
-                    override fun updateDrawState(tp: android.text.TextPaint) {
-                        tp.setShadowLayer(6f, 3f, 3f, settings.startTimeShadowColor)
-                    }
-                }, 0, timeString.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-                return spannable
-            }
-            return safeTitle
-        }
-
-        private fun logCurrentDayDebug(
-            dayEvents: List<CalendarEvent>,
-            pastEventsOnToday: List<CalendarEvent>,
-            currentFutureEvents: List<CalendarEvent>,
-            availableHeight: Float,
-            measuredHeight: Float,
-            optimalScale: Float,
-            currentTimeMillis: Long,
-            estimatedLineHeight: Float
-        ) {
-            Log.d("DailyWidget", "=== Current Day Debug ===")
-            Log.d("DailyWidget", "Total events: ${dayEvents.size}, Past events: ${pastEventsOnToday.size}, Future events: ${currentFutureEvents.size}")
-            Log.d("DailyWidget", "Available height: $availableHeight, Est line height: $estimatedLineHeight")
-            Log.d("DailyWidget", "Measured height: $measuredHeight, Optimal scale: $optimalScale")
-            Log.d("DailyWidget", "Current time: ${SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT).format(Date(currentTimeMillis))}")
         }
 
         internal fun maxLinesForEvent(isToday: Boolean, eventEndTime: Long, nowMillis: Long): Int {
