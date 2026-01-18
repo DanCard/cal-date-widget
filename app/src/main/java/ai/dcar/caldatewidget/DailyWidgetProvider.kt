@@ -241,6 +241,7 @@ class DailyWidgetProvider : AppWidgetProvider() {
                         paints.textPaint.textSize = 48f * eventScale
 
                         val isPastTodayEvent = (i == todayIndex && event.endTime < now)
+                        // Harmonize with measureTotalHeightForScale: Unlimited lines for future events to avoid cutoff
                         val dynamicMaxLines = if (isPastTodayEvent) 1 else 0
 
                         if (textWidth > 0) {
@@ -263,8 +264,8 @@ class DailyWidgetProvider : AppWidgetProvider() {
 
                                 val layout = builder.build()
 
-                                if (i == todayIndex) {
-                                    Log.d("DailyWidget", "Layout for '${event.title}': text='$finalText', textWidth=$textWidth, maxLines=$dynamicMaxLines, actualLines=${layout.lineCount}, height=${layout.height}")
+                                if (i == todayIndex || layout.lineCount > 3) {
+                                    Log.d("DailyWidget", "Layout for day $i '${event.title}': textWidth=$textWidth, maxLines=$dynamicMaxLines, actualLines=${layout.lineCount}, height=${layout.height}")
                                 }
 
                                 canvas.translate(currentX + 5f, yPos)
@@ -455,9 +456,27 @@ class DailyWidgetProvider : AppWidgetProvider() {
                     .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
                     .setLineSpacing(0f, 1f)
                     .setIncludePad(false)
-                    .setMaxLines(if (isPastTodayEvent) 1 else 10)
+                    // Unlimited lines for future/current events to ensure accurate height measurement
+                    .setMaxLines(if (isPastTodayEvent) 1 else 0)
                     .setEllipsize(if (isPastTodayEvent) android.text.TextUtils.TruncateAt.END else null)
                     .build()
+
+                if (!isPastTodayEvent) {
+                    val safeTitle = event.title
+                        .replace("\u2026", "")
+                        .replace("...", "")
+                    val lineLimit = when {
+                        safeTitle.length < 15 -> 3
+                        safeTitle.length < 20 -> 4
+                        safeTitle.length < 25 -> 5
+                        safeTitle.length < 30 -> 6
+                        safeTitle.length < 35 -> 7
+                        else -> 8
+                    }
+                    if (layout.lineCount > lineLimit) {
+                        return Float.MAX_VALUE
+                    }
+                }
 
                 val spacing = if (currentDayIndex == todayIndex) measurePaint.textSize * 0.1f else measurePaint.textSize * 0.2f
                 totalHeight += layout.height + spacing
