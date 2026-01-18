@@ -226,8 +226,9 @@ object WidgetRenderingHelper {
             val measurePaint = android.text.TextPaint(basePaint)
             measurePaint.textSize = 48f * eventScale
 
+            val hasFutureEvents = dayEvents.any { it.endTime >= currentTimeMillis }
             val isPastTodayEvent = currentDayIndex == todayIndex && event.endTime < currentTimeMillis
-            val forceOneLine = isPastTodayEvent || (compressDeclined && isDeclinedOrInvited)
+            val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isDeclinedOrInvited)
             
             val timeScale = if (isPastTodayEvent) 0.5f else 1f
             val eventText = buildEventText(event, true, settings, timeFormat, timeScale)

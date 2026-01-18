@@ -150,8 +150,9 @@ object WidgetDrawer {
                     
                     paints.textPaint.textSize = 48f * eventScale
 
+                    val hasFutureEvents = dayEvents.any { it.endTime >= now }
                     val isPastTodayEvent = (i == todayIndex && event.endTime < now)
-                    val forceOneLine = isPastTodayEvent || (compressDeclined && isDeclinedOrInvited)
+                    val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isDeclinedOrInvited)
                     val dynamicMaxLines = if (forceOneLine) 1 else 0
 
                     if (textWidth > 0) {
@@ -335,8 +336,9 @@ object WidgetDrawer {
 
                     paints.textPaint.textSize = 48f * eventScale
 
+                    val hasFutureEvents = dayEvents.any { it.endTime >= now }
                     val isPastTodayEvent = (i == todayIndex && event.endTime < now)
-                    val forceOneLine = isPastTodayEvent || (compressDeclined && isDeclinedOrInvited)
+                    val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isDeclinedOrInvited)
                     val dynamicMaxLines = if (forceOneLine) 1 else 0
 
                     if (textWidth > 0) {
