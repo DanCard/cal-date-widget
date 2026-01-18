@@ -8,6 +8,7 @@ import android.text.Spanned
 import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.util.LruCache
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -19,6 +20,20 @@ object WidgetRenderingHelper {
         val dayHeaderPaint: Paint,
         val linePaint: Paint
     )
+
+    // Cache key for font scaling
+    private data class FontScaleCacheKey(
+        val eventHash: Int,
+        val textWidth: Int,
+        val availableHeight: Float,
+        val settingsHash: Int,
+        val isToday: Boolean,
+        val currentTimeWindow: Long // Bucket time to ~1 minute to invalidate past/future status
+    )
+
+    // LRU Cache: Store result (optimalScale, compressDeclined)
+    // Size 100 should be enough for a few widgets * 7 days
+    private val fontScaleCache = LruCache<FontScaleCacheKey, Pair<Float, Boolean>>(100)
 
     fun createPaints(settings: PrefsManager.WidgetSettings): PaintBundle {
         val textPaint = android.text.TextPaint().apply {
@@ -102,6 +117,29 @@ object WidgetRenderingHelper {
             return Pair(0.5f, false)
         }
 
+        // Generate Cache Key
+        // Bucket time to 1 minute (60000ms) to ensure cache validity for "past/future" status
+        // which drives the 'isPastTodayEvent' logic.
+        val timeWindow = currentTimeMillis / 60000 
+        val eventHash = dayEvents.hashCode() // Depends on List implementation, usually good
+        val settingsHash = settings.hashCode()
+        val isToday = (todayIndex == currentDayIndex)
+
+        val cacheKey = FontScaleCacheKey(
+            eventHash,
+            textWidth,
+            availableHeight,
+            settingsHash,
+            isToday,
+            timeWindow
+        )
+
+        fontScaleCache.get(cacheKey)?.let {
+            // Cache Hit
+            return it
+        }
+
+        // Cache Miss - Calculate
         // Function to run binary search
         fun findScale(compressDeclined: Boolean): Float {
             var minScale = 0.7f
@@ -135,19 +173,24 @@ object WidgetRenderingHelper {
         }
 
         // Pass 1: Try normal (no compression)
+        var result = Pair(0.5f, false)
         val normalScale = findScale(false)
         if (normalScale != -1.0f) {
-            return Pair(normalScale, false)
+            result = Pair(normalScale, false)
+        } else {
+            // Pass 2: Try compressed
+            val compressedScale = findScale(true)
+            if (compressedScale != -1.0f) {
+                result = Pair(compressedScale, true)
+            } else {
+                // Fallback: Minimum scale with compression
+                result = Pair(0.7f, true)
+            }
         }
 
-        // Pass 2: Try compressed
-        val compressedScale = findScale(true)
-        if (compressedScale != -1.0f) {
-            return Pair(compressedScale, true)
-        }
-
-        // Fallback: Minimum scale with compression
-        return Pair(0.7f, true)
+        // Save to Cache
+        fontScaleCache.put(cacheKey, result)
+        return result
     }
 
     fun measureTotalHeightForScale(

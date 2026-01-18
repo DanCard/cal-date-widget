@@ -7,15 +7,15 @@ import java.util.Calendar
 
 class CalendarRepository(private val context: Context) {
 
-    fun getEventsForWeek(startMillis: Long): List<CalendarEvent> {
+    fun getEvents(startMillis: Long, numDays: Int): List<CalendarEvent> {
         val events = mutableListOf<CalendarEvent>()
         
         // 1. Get Visible Calendar IDs
         val visibleCalendarIds = getVisibleCalendarIds()
         if (visibleCalendarIds.isEmpty()) return events
 
-        // End of the week (7 days later)
-        val endMillis = startMillis + (7 * 24 * 60 * 60 * 1000)
+        // End of the range
+        val endMillis = startMillis + (numDays.toLong() * 24 * 60 * 60 * 1000)
 
         val projection = arrayOf(
             CalendarContract.Instances.EVENT_ID,
