@@ -232,7 +232,7 @@ class DailyWidgetProvider : AppWidgetProvider() {
 
                         val eventScale = if (i == todayIndex && event.endTime < now) {
                             optimalFontScale * 0.8f
-                        } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED) {
+                        } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined) {
                             val invScale = (0.8f - 0.2f * optimalFontScale).coerceIn(0.5f, 0.7f)
                             optimalFontScale * invScale
                         } else {
@@ -352,21 +352,9 @@ class DailyWidgetProvider : AppWidgetProvider() {
         }
 
         private fun calculateCellWidthDp(widthDp: Float, heightDp: Float): Float {
-            val minCellSize = 70f
-            val maxCellSize = 95f
-
-            val aspectRatio = widthDp / heightDp
-
-            val cellWidth = when {
-                aspectRatio < 1.5f -> maxCellSize
-                aspectRatio > 3.5f -> minCellSize
-                else -> {
-                    val ratioNormalized = (aspectRatio - 1.5f) / (3.5f - 1.5f)
-                    maxCellSize - (ratioNormalized * (maxCellSize - minCellSize))
-                }
-            }
-
-            return cellWidth
+            // Fixed cell width to ensure consistency across different heights (1x4 vs 2x4)
+            // 370dp width / 92dp ~= 4.02 -> 4 days
+            return 92f
         }
 
         private fun calculateStartDate(calendar: Calendar, context: Context): Long {
@@ -450,7 +438,7 @@ class DailyWidgetProvider : AppWidgetProvider() {
             for (event in dayEvents) {
                 val eventScale = if (currentDayIndex == todayIndex && event.endTime < currentTimeMillis) {
                     scale * 0.8f
-                } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED) {
+                } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined) {
                     val invScale = (0.8f - 0.2f * scale).coerceIn(0.5f, 0.7f)
                     scale * invScale
                 } else {

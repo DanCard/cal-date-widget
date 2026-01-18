@@ -45,6 +45,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
         // UI Elements
         val btnGrant = findViewById<Button>(R.id.btn_grant_permission)
         val btnUndo = findViewById<Button>(R.id.btn_undo)
+        val btnRefresh = findViewById<Button>(R.id.btn_refresh)
         val spinner = findViewById<Spinner>(R.id.spinner_start_day)
         // val cbTitle = findViewById<CheckBox>(R.id.cb_show_title) // Not using title logic yet in provider but we can save it
         
@@ -156,9 +157,22 @@ class WeeklyConfigActivity : AppCompatActivity() {
             undoSettings()
         }
 
+        btnRefresh.setOnClickListener {
+            val appWidgetManager = AppWidgetManager.getInstance(this)
+            WeeklyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
+        }
+
         saveSettings()
     }
     
+    override fun onResume() {
+        super.onResume()
+        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+            val appWidgetManager = AppWidgetManager.getInstance(this)
+            WeeklyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
+        }
+    }
+
     private fun updateColorPreviews(text: View, shadow: View, startColor: View, startShadow: View) {
         text.setBackgroundColor(currentSettings.textColor)
         shadow.setBackgroundColor(currentSettings.shadowColor)

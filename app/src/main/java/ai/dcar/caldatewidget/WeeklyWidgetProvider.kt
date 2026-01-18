@@ -239,7 +239,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
 
                     val eventScale = if (i == todayIndex && event.endTime < now) {
                         optimalFontScale * 0.7f
-                    } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED) {
+                    } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined) {
                         val invScale = (0.8f - 0.2f * optimalFontScale).coerceIn(0.5f, 0.7f)
                         optimalFontScale * invScale
                     } else {
@@ -402,7 +402,7 @@ class WeeklyWidgetProvider : AppWidgetProvider() {
             for (event in dayEvents) {
                 val eventScale = if (currentDayIndex == todayIndex && event.endTime < currentTimeMillis) {
                     scale * 0.7f
-                } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED) {
+                } else if (event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined) {
                     val invScale = (0.8f - 0.2f * scale).coerceIn(0.5f, 0.7f)
                     scale * invScale
                 } else {

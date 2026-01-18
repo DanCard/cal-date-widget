@@ -24,7 +24,7 @@ class PrefsManager(context: Context) {
         val weekStartDay: Int = 2, // Default Monday
         val startTimeColor: Int = Color.parseColor("#ccccff"),
         val startTimeShadowColor: Int = Color.BLACK,
-        val showDeclinedEvents: Boolean = false,
+        val showDeclinedEvents: Boolean = true,
         val showAmPm: Boolean = false
     )
 
@@ -51,7 +51,7 @@ class PrefsManager(context: Context) {
         val weekStart = prefs.getInt("${KEY_PREFIX}${widgetId}_week_start", 2)
         val startTimeColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_color", Color.parseColor("#ccccff"))
         val startTimeShadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_shadow", Color.BLACK)
-        val showDeclined = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_declined", false)
+        val showDeclined = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_declined", true)
         val showAmPm = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_ampm", false)
 
         return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, startTimeColor, startTimeShadowColor, showDeclined, showAmPm)

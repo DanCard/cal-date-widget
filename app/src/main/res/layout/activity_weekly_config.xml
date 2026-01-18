@@ -10,6 +10,36 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_undo"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Undo"
+                android:enabled="false"
+                android:layout_marginEnd="8dp"
+                app:cornerRadius="40dp"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_refresh"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Refresh"
+                android:layout_marginStart="8dp"
+                app:cornerRadius="40dp"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+        </LinearLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_grant_permission"
             android:layout_width="match_parent"
@@ -46,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Show Declined Events"
-            android:checked="false"
+            android:checked="true"
             android:layout_marginTop="8dp"/>
 
         <CheckBox
@@ -78,11 +108,12 @@
                 android:background="@android:color/white"
                 android:layout_marginEnd="8dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_pick_text_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pick" />
+                android:text="Pick"
+                app:cornerRadius="24dp"/>
         </LinearLayout>
 
         <TextView
@@ -105,11 +136,12 @@
                 android:background="@android:color/black"
                 android:layout_marginEnd="8dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_pick_shadow_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pick" />
+                android:text="Pick"
+                app:cornerRadius="24dp"/>
         </LinearLayout>
 
         <!-- Start Time Colors -->
@@ -133,11 +165,12 @@
                 android:background="@android:color/holo_blue_light"
                 android:layout_marginEnd="8dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_pick_start_time_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pick" />
+                android:text="Pick"
+                app:cornerRadius="24dp"/>
         </LinearLayout>
 
         <TextView
@@ -160,11 +193,12 @@
                 android:background="@android:color/holo_orange_light"
                 android:layout_marginEnd="8dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_pick_start_time_shadow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pick" />
+                android:text="Pick"
+                app:cornerRadius="24dp"/>
         </LinearLayout>
 
         <TextView
@@ -174,14 +208,6 @@
             android:textSize="12sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="24dp"/>
-
-        <Button
-            android:id="@+id/btn_undo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Undo"
-            android:layout_marginTop="8dp"
-            android:enabled="false"/>
 
     </LinearLayout>
 </ScrollView>

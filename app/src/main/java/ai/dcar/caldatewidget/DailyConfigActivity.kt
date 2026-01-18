@@ -41,6 +41,7 @@ class DailyConfigActivity : AppCompatActivity() {
 
         val btnGrant = findViewById<Button>(R.id.btn_grant_permission)
         val btnUndo = findViewById<Button>(R.id.btn_undo)
+        val btnRefresh = findViewById<Button>(R.id.btn_refresh)
 
         val previewText = findViewById<View>(R.id.preview_text_color)
         val btnPickText = findViewById<Button>(R.id.btn_pick_text_color)
@@ -115,7 +116,20 @@ class DailyConfigActivity : AppCompatActivity() {
             undoSettings()
         }
 
+        btnRefresh.setOnClickListener {
+            val appWidgetManager = AppWidgetManager.getInstance(this)
+            DailyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
+        }
+
         saveSettings()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+            val appWidgetManager = AppWidgetManager.getInstance(this)
+            DailyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
+        }
     }
 
     private fun updateColorPreviews(text: View, shadow: View, startColor: View, startShadow: View) {
