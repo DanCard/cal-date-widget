@@ -7,8 +7,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.provider.CalendarContract
+import android.content.pm.PackageManager
 import android.util.Log
 import android.util.TypedValue
+import androidx.core.content.ContextCompat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -48,8 +50,16 @@ object WidgetDrawer {
         
             val startMillis = WeeklyDisplayLogic.getStartDate(calendar, settings.weekStartDay)
         
-            val repo = CalendarRepository(context)
-            var events = repo.getEvents(startMillis, 7)
+            var events = emptyList<CalendarEvent>()
+            val hasPermission = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
+            Log.d("WidgetDrawer", "Permission Check (Weekly): $hasPermission")
+
+            if (hasPermission) {
+                val repo = CalendarRepository(context)
+                // If no calendars selected, use smart default (personal calendars only)
+                val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
+                events = repo.getEvents(startMillis, 7, selectedIds.ifEmpty { null })
+            }
         
             if (!settings.showDeclinedEvents) {
                 events = events.filter { !it.isDeclined }
@@ -133,11 +143,12 @@ object WidgetDrawer {
 
                     paints.textPaint.color = settings.textColor
 
-                    val isDeclinedOrInvited = event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined
+                    val isLessInteresting = WidgetRenderingHelper.isLessInteresting(event)
+                    Log.d("WidgetDebug", "Weekly Event: '${event.title}', status=${event.selfStatus}, declined=${event.isDeclined}, lessInteresting=$isLessInteresting")
                     
                     var eventScale = if (i == todayIndex && event.endTime < now) {
                         optimalFontScale * 0.7f
-                    } else if (isDeclinedOrInvited) {
+                    } else if (isLessInteresting) {
                         val invScale = (0.8f - 0.2f * optimalFontScale).coerceIn(0.5f, 0.7f)
                         optimalFontScale * invScale
                     } else {
@@ -145,15 +156,16 @@ object WidgetDrawer {
                     }
                     
                     // Enforce minimum sizes
-                    val minEventScale = if (isDeclinedOrInvited) 0.5f else 0.7f
+                    val minEventScale = if (isLessInteresting) 0.5f else 0.7f
                     if (eventScale < minEventScale) eventScale = minEventScale
                     
                     paints.textPaint.textSize = 48f * eventScale
 
                     val hasFutureEvents = dayEvents.any { it.endTime >= now }
                     val isPastTodayEvent = (i == todayIndex && event.endTime < now)
-                    val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isDeclinedOrInvited)
-                    val dynamicMaxLines = if (forceOneLine) 1 else 0
+                    val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isLessInteresting)
+                    
+                    val dynamicMaxLines = if (forceOneLine) 1 else if (compressDeclined) 3 else 0
 
                     if (textWidth > 0) {
                         val timeScale = if (isPastTodayEvent) 0.5f else 1f
@@ -193,7 +205,6 @@ object WidgetDrawer {
             }
             return bitmap
         } catch (e: Exception) {
-            Log.e("WidgetDrawer", "Error drawing weekly widget", e)
             return createErrorBitmap(e)
         }
     }
@@ -229,10 +240,32 @@ object WidgetDrawer {
 
             val numDays = calculateNumberOfDays(context, size.widthPx, size.heightPx)
 
-            val startMillis = calculateStartDate(calendar)
+            var events = emptyList<CalendarEvent>()
+            val hasPermission = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
+            Log.d("WidgetDrawer", "Permission Check (Daily): $hasPermission")
 
-            val repo = CalendarRepository(context)
-            var events = repo.getEvents(startMillis, numDays)
+            if (hasPermission) {
+                val repo = CalendarRepository(context)
+                // If no calendars selected, use smart default (personal calendars only)
+                val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
+                val selection = selectedIds.ifEmpty { null }
+                
+                // Auto-advance logic: If we have events today and they are ALL in the past, skip today
+                val checkStart = calculateStartDate(calendar)
+                val todayEvents = repo.getEvents(checkStart, 1, selection)
+                val now = System.currentTimeMillis()
+
+                if (DailyDisplayLogic.shouldAutoAdvance(todayEvents, now, settings.showDeclinedEvents)) {
+                     calendar.add(Calendar.DAY_OF_YEAR, 1)
+                     Log.d("WidgetDrawer", "All events for today are in the past. Auto-advancing to tomorrow.")
+                }
+
+                // Final start date
+                val startMillis = calculateStartDate(calendar)
+                events = repo.getEvents(startMillis, numDays, selection)
+            }
+
+            val startMillis = calculateStartDate(calendar) // Ensure startMillis matches the potentially advanced calendar
 
             if (!settings.showDeclinedEvents) {
                 events = events.filter { !it.isDeclined }
@@ -319,11 +352,12 @@ object WidgetDrawer {
 
                     paints.textPaint.color = settings.textColor
 
-                    val isDeclinedOrInvited = event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined
+                    val isLessInteresting = WidgetRenderingHelper.isLessInteresting(event)
+                    Log.d("WidgetDebug", "Daily Event: '${event.title}', status=${event.selfStatus}, declined=${event.isDeclined}, lessInteresting=$isLessInteresting")
 
                     var eventScale = if (i == todayIndex && event.endTime < now) {
                         optimalFontScale * 0.8f
-                    } else if (isDeclinedOrInvited) {
+                    } else if (isLessInteresting) {
                         val invScale = (0.8f - 0.2f * optimalFontScale).coerceIn(0.5f, 0.7f)
                         optimalFontScale * invScale
                     } else {
@@ -331,14 +365,14 @@ object WidgetDrawer {
                     }
 
                     // Enforce minimum sizes
-                    val minEventScale = if (isDeclinedOrInvited) 0.5f else 0.7f
+                    val minEventScale = if (isLessInteresting) 0.5f else 0.7f
                     if (eventScale < minEventScale) eventScale = minEventScale
 
                     paints.textPaint.textSize = 48f * eventScale
 
                     val hasFutureEvents = dayEvents.any { it.endTime >= now }
                     val isPastTodayEvent = (i == todayIndex && event.endTime < now)
-                    val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isDeclinedOrInvited)
+                    val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isLessInteresting)
                     val dynamicMaxLines = if (forceOneLine) 1 else 0
 
                     if (textWidth > 0) {
@@ -392,21 +426,48 @@ object WidgetDrawer {
         appWidgetId: Int
     ): WidgetSize {
         val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
-        val minWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250)
-        val minHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110)
-
         val dm = context.resources.displayMetrics
+
+        // Try to use appWidgetSizes (Android 12+) for accurate current size
+        var widthDp = 250f
+        var heightDp = 110f
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            @Suppress("DEPRECATION")
+            val sizes = options.getParcelableArrayList<android.util.SizeF>("appWidgetSizes")
+            if (!sizes.isNullOrEmpty()) {
+                // First entry is portrait size, which is what we want
+                val portraitSize = sizes[0]
+                widthDp = portraitSize.width
+                heightDp = portraitSize.height
+                Log.d("WidgetSize", "Widget $appWidgetId: Using appWidgetSizes[0] = ${widthDp}x${heightDp}dp")
+            }
+        }
+
+        // Fallback to min/max if appWidgetSizes not available
+        if (widthDp == 250f && heightDp == 110f) {
+            val minWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250)
+            val minHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110)
+            val maxHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, minHeightDp)
+            // In portrait: width is min, height is max
+            widthDp = minWidthDp.toFloat()
+            heightDp = maxHeightDp.toFloat()
+            Log.d("WidgetSize", "Widget $appWidgetId: Fallback to min/max = ${widthDp}x${heightDp}dp")
+        }
+
         val widthPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            minWidthDp.toFloat(),
+            widthDp,
             dm
         ).toInt().coerceAtLeast(1)
 
         val heightPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
-            minHeightDp.toFloat(),
+            heightDp,
             dm
         ).toInt().coerceAtLeast(1)
+
+        Log.d("WidgetSize", "Widget $appWidgetId: Final size = ${widthPx}x${heightPx}px")
 
         return WidgetSize(widthPx, heightPx)
     }
@@ -414,7 +475,6 @@ object WidgetDrawer {
     private fun calculateNumberOfDays(context: Context, widthPx: Int, heightPx: Int): Int {
         val dm = context.resources.displayMetrics
         val widthDp = widthPx / dm.density
-        val heightDp = heightPx / dm.density
 
         val cellWidthDp = 92f // Fixed cell width
         val numDays = ((widthDp / cellWidthDp) + 0.5f).toInt().coerceIn(1, 7)
