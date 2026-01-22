@@ -4,11 +4,14 @@ import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.LinearLayout
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -19,8 +22,11 @@ class WeeklyConfigActivity : AppCompatActivity() {
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
     private lateinit var prefsManager: PrefsManager
+    private lateinit var calendarRepository: CalendarRepository
     private var currentSettings = PrefsManager.WidgetSettings()
     private lateinit var initialSettings: PrefsManager.WidgetSettings
+    private var availableCalendars: List<CalendarInfo> = emptyList()
+    private val calendarCheckboxes = mutableMapOf<Long, CheckBox>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +45,14 @@ class WeeklyConfigActivity : AppCompatActivity() {
         }
         
         prefsManager = PrefsManager(this)
+        calendarRepository = CalendarRepository(this)
         currentSettings = prefsManager.loadSettings(appWidgetId)
         initialSettings = currentSettings.copy()
 
         // UI Elements
         val btnGrant = findViewById<Button>(R.id.btn_grant_permission)
         val btnUndo = findViewById<Button>(R.id.btn_undo)
+        val btnBack = findViewById<Button>(R.id.btn_back)
         val btnRefresh = findViewById<Button>(R.id.btn_refresh)
         val spinner = findViewById<Spinner>(R.id.spinner_start_day)
         // val cbTitle = findViewById<CheckBox>(R.id.cb_show_title) // Not using title logic yet in provider but we can save it
@@ -80,6 +88,9 @@ class WeeklyConfigActivity : AppCompatActivity() {
             saveSettings()
         }
 
+        // Calendar selection - populate inline checkboxes
+        populateCalendarCheckboxes()
+
         // Set initial state
         updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
         
@@ -110,11 +121,15 @@ class WeeklyConfigActivity : AppCompatActivity() {
         }
 
         // Check Permission
+        val settingsContainer = findViewById<View>(R.id.settings_container)
+
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_CALENDAR)
             != PackageManager.PERMISSION_GRANTED) {
             btnGrant.visibility = View.VISIBLE
+            settingsContainer.visibility = View.GONE
         } else {
             btnGrant.visibility = View.GONE
+            settingsContainer.visibility = View.VISIBLE
         }
 
         btnGrant.setOnClickListener {
@@ -155,6 +170,10 @@ class WeeklyConfigActivity : AppCompatActivity() {
 
         btnUndo.setOnClickListener {
             undoSettings()
+        }
+
+        btnBack.setOnClickListener {
+            finish()
         }
 
         btnRefresh.setOnClickListener {
@@ -216,6 +235,7 @@ class WeeklyConfigActivity : AppCompatActivity() {
         val previewStartShadow = findViewById<View>(R.id.preview_start_time_shadow)
         updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
 
+        updateCalendarCheckboxes()
         updateUndoButtonState()
     }
 
@@ -228,6 +248,87 @@ class WeeklyConfigActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 101 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             findViewById<Button>(R.id.btn_grant_permission).visibility = View.GONE
+            findViewById<View>(R.id.settings_container).visibility = View.VISIBLE
+            // Refresh calendar list after permission granted
+            populateCalendarCheckboxes()
         }
+    }
+
+    private fun populateCalendarCheckboxes() {
+        val container = findViewById<LinearLayout>(R.id.calendar_checkboxes_container) ?: return
+        container.removeAllViews()
+        calendarCheckboxes.clear()
+
+        try {
+            availableCalendars = calendarRepository.getAvailableCalendars()
+        } catch (e: Exception) {
+            return
+        }
+
+        if (availableCalendars.isEmpty()) return
+
+        // Determine which calendars should be checked
+        val selectedIds = currentSettings.selectedCalendarIds
+
+        for (cal in availableCalendars) {
+            val checkBox = CheckBox(this).apply {
+                val suffix = if (cal.isPersonalCalendar()) "" else " [shared]"
+                text = "${cal.displayName}$suffix"
+                setTextColor(Color.WHITE)
+
+                // If no prior selection, use smart default (personal calendars only)
+                isChecked = if (selectedIds.isEmpty()) {
+                    cal.isPersonalCalendar()
+                } else {
+                    selectedIds.contains(cal.id)
+                }
+
+                // Style: dimmed text for shared calendars
+                if (!cal.isPersonalCalendar()) {
+                    setTextColor(Color.LTGRAY)
+                    setTypeface(null, Typeface.ITALIC)
+                }
+
+                setOnCheckedChangeListener { _, _ ->
+                    saveCalendarSelection()
+                }
+            }
+
+            calendarCheckboxes[cal.id] = checkBox
+            container.addView(checkBox)
+        }
+    }
+
+    private fun updateCalendarCheckboxes() {
+        val selectedIds = currentSettings.selectedCalendarIds
+
+        for ((calId, checkBox) in calendarCheckboxes) {
+            val cal = availableCalendars.find { it.id == calId } ?: continue
+
+            // Temporarily remove listener to avoid triggering save
+            checkBox.setOnCheckedChangeListener(null)
+
+            checkBox.isChecked = if (selectedIds.isEmpty()) {
+                cal.isPersonalCalendar()
+            } else {
+                selectedIds.contains(calId)
+            }
+
+            // Re-add listener
+            checkBox.setOnCheckedChangeListener { _, _ ->
+                saveCalendarSelection()
+            }
+        }
+    }
+
+    private fun saveCalendarSelection() {
+        val selectedIds = calendarCheckboxes
+            .filter { it.value.isChecked }
+            .keys
+            .toSet()
+
+        // Store the selection (don't convert to empty set for "all" - keep explicit selection)
+        currentSettings = currentSettings.copy(selectedCalendarIds = selectedIds)
+        saveSettings()
     }
 }

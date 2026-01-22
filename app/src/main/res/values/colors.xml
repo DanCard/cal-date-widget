@@ -10,4 +10,9 @@
     <color name="default_text">#FFFFFFFF</color>
     <color name="default_shadow">#FF000000</color>
     <color name="default_bg">#00000000</color> <!-- Transparent -->
+
+    <!-- Button Colors -->
+    <color name="btn_undo">#FFB300</color> <!-- Amber 600 -->
+    <color name="btn_back">#43A047</color> <!-- Green 600 -->
+    <color name="btn_refresh">#1E88E5</color> <!-- Blue 600 -->
 </resources>

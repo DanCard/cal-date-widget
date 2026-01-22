@@ -10,11 +10,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_grant_permission"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:text="Grant Calendar Permission"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            style="@style/Widget.MaterialComponents.Button"
+            app:cornerRadius="40dp"/>
+
+        <LinearLayout
+            android:id="@+id/settings_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="2"
+            android:weightSum="3"
             android:layout_marginBottom="8dp">
 
             <com.google.android.material.button.MaterialButton
@@ -24,8 +41,26 @@
                 android:layout_weight="1"
                 android:text="Undo"
                 android:enabled="false"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="4dp"
+                android:textColor="@color/selector_btn_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 app:cornerRadius="40dp"
+                app:backgroundTint="@color/selector_btn_undo_bg"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_back"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Back"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                app:cornerRadius="40dp"
+                app:backgroundTint="@color/btn_back"
                 style="@style/Widget.MaterialComponents.Button"/>
 
             <com.google.android.material.button.MaterialButton
@@ -34,22 +69,23 @@
                 android:layout_height="80dp"
                 android:layout_weight="1"
                 android:text="Refresh"
-                android:layout_marginStart="8dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginStart="4dp"
                 app:cornerRadius="40dp"
+                app:backgroundTint="@color/btn_refresh"
                 style="@style/Widget.MaterialComponents.Button"/>
 
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_grant_permission"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Grant Calendar Permission"
-            android:visibility="gone"
+            android:text="Changes are saved automatically"
+            android:textSize="12sp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            style="@style/Widget.MaterialComponents.Button"
-            app:cornerRadius="24dp"/>
+            android:layout_marginBottom="8dp"/>
 
         <CheckBox
             android:id="@+id/cb_show_title"
@@ -187,13 +223,22 @@
                 app:cornerRadius="24dp"/>
         </LinearLayout>
 
+        <!-- Calendar Selection -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Changes are saved automatically"
-            android:textSize="12sp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"/>
+            android:text="Calendars"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/calendar_checkboxes_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="4dp"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>
