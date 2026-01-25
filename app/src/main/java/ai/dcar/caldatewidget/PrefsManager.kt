@@ -25,7 +25,8 @@ class PrefsManager(context: Context) {
         val startTimeColor: Int = Color.parseColor("#ccccff"),
         val startTimeShadowColor: Int = Color.BLACK,
         val showDeclinedEvents: Boolean = true,
-        val showAmPm: Boolean = false
+        val showAmPm: Boolean = false,
+        val selectedCalendarIds: Set<Long> = emptySet()
     )
 
     fun saveSettings(widgetId: Int, settings: WidgetSettings) {
@@ -39,6 +40,7 @@ class PrefsManager(context: Context) {
             putInt("${KEY_PREFIX}${widgetId}_start_time_shadow", settings.startTimeShadowColor)
             putBoolean("${KEY_PREFIX}${widgetId}_show_declined", settings.showDeclinedEvents)
             putBoolean("${KEY_PREFIX}${widgetId}_show_ampm", settings.showAmPm)
+            putStringSet("${KEY_PREFIX}${widgetId}_calendars", settings.selectedCalendarIds.map { it.toString() }.toSet())
             apply()
         }
     }
@@ -53,8 +55,10 @@ class PrefsManager(context: Context) {
         val startTimeShadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_shadow", Color.BLACK)
         val showDeclined = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_declined", true)
         val showAmPm = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_ampm", false)
+        val selectedCalendarIds = prefs.getStringSet("${KEY_PREFIX}${widgetId}_calendars", emptySet())
+            ?.mapNotNull { it.toLongOrNull() }?.toSet() ?: emptySet()
 
-        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, startTimeColor, startTimeShadowColor, showDeclined, showAmPm)
+        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, startTimeColor, startTimeShadowColor, showDeclined, showAmPm, selectedCalendarIds)
     }
 
     fun deleteSettings(widgetId: Int) {
@@ -64,6 +68,11 @@ class PrefsManager(context: Context) {
             remove("${KEY_PREFIX}${widgetId}_shadow_color")
             remove("${KEY_PREFIX}${widgetId}_bg_color")
             remove("${KEY_PREFIX}${widgetId}_week_start")
+            remove("${KEY_PREFIX}${widgetId}_start_time_color")
+            remove("${KEY_PREFIX}${widgetId}_start_time_shadow")
+            remove("${KEY_PREFIX}${widgetId}_show_declined")
+            remove("${KEY_PREFIX}${widgetId}_show_ampm")
+            remove("${KEY_PREFIX}${widgetId}_calendars")
             apply()
         }
     }

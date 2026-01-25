@@ -5,13 +5,29 @@ import android.content.Context
 import android.provider.CalendarContract
 import java.util.Calendar
 
+data class CalendarInfo(
+    val id: Long,
+    val displayName: String,
+    val accountName: String,
+    val ownerAccount: String
+)
+
+fun CalendarInfo.isPersonalCalendar(): Boolean {
+    return accountName == ownerAccount
+}
+
 class CalendarRepository(private val context: Context) {
 
-    fun getEvents(startMillis: Long, numDays: Int): List<CalendarEvent> {
+    fun getEvents(startMillis: Long, numDays: Int, calendarIds: Set<Long>? = null): List<CalendarEvent> {
         val events = mutableListOf<CalendarEvent>()
         
-        // 1. Get Visible Calendar IDs
-        val visibleCalendarIds = getVisibleCalendarIds()
+        // 1. Get Visible Calendar IDs (or use provided list)
+        val visibleCalendarIds = if (calendarIds != null && calendarIds.isNotEmpty()) {
+            calendarIds.toList()
+        } else {
+            getVisibleCalendarIds()
+        }
+        
         if (visibleCalendarIds.isEmpty()) return events
 
         // End of the range
@@ -115,5 +131,47 @@ class CalendarRepository(private val context: Context) {
             // Ignore
         }
         return ids
+    }
+
+    fun getAvailableCalendars(): List<CalendarInfo> {
+        val calendars = mutableListOf<CalendarInfo>()
+        val uri = CalendarContract.Calendars.CONTENT_URI
+        val projection = arrayOf(
+            CalendarContract.Calendars._ID,
+            CalendarContract.Calendars.CALENDAR_DISPLAY_NAME,
+            CalendarContract.Calendars.ACCOUNT_NAME,
+            CalendarContract.Calendars.OWNER_ACCOUNT
+        )
+
+        try {
+            val cursor = context.contentResolver.query(uri, projection, null, null, null)
+            cursor?.use {
+                val idIdx = it.getColumnIndex(CalendarContract.Calendars._ID)
+                val nameIdx = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
+                val accountIdx = it.getColumnIndex(CalendarContract.Calendars.ACCOUNT_NAME)
+                val ownerIdx = it.getColumnIndex(CalendarContract.Calendars.OWNER_ACCOUNT)
+
+                while (it.moveToNext()) {
+                    calendars.add(
+                        CalendarInfo(
+                            it.getLong(idIdx),
+                            it.getString(nameIdx) ?: "Unknown",
+                            it.getString(accountIdx) ?: "",
+                            it.getString(ownerIdx) ?: ""
+                        )
+                    )
+                }
+            }
+        } catch (e: SecurityException) {
+            // Permission not granted
+        }
+        return calendars
+    }
+
+    fun getDefaultCalendarIds(): Set<Long> {
+        return getAvailableCalendars()
+            .filter { it.isPersonalCalendar() }
+            .map { it.id }
+            .toSet()
     }
 }

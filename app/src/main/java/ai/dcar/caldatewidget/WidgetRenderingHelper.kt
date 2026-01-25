@@ -35,6 +35,10 @@ object WidgetRenderingHelper {
     // Size 100 should be enough for a few widgets * 7 days
     private val fontScaleCache = LruCache<FontScaleCacheKey, Pair<Float, Boolean>>(100)
 
+    fun isLessInteresting(event: CalendarEvent): Boolean {
+        return event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined
+    }
+
     fun createPaints(settings: PrefsManager.WidgetSettings): PaintBundle {
         val textPaint = android.text.TextPaint().apply {
             color = settings.textColor
