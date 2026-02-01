@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.dcar.caldatewidget.PrefsManagerTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-01-18T23:12:02.454Z" hostname="bosgame" time="0.45">
+  <properties/>
+  <testcase name="loadSettings returns defaults when missing" classname="ai.dcar.caldatewidget.PrefsManagerTest" time="0.397"/>
+  <testcase name="saveSettings saves all values to editor" classname="ai.dcar.caldatewidget.PrefsManagerTest" time="0.053"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

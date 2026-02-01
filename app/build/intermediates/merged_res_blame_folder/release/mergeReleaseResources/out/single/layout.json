@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeReleaseResources-37:/layout/activity_config.xml",
+        "source": "ai.dcar.caldatewidget.app-main-39:/layout/activity_config.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeReleaseResources-37:/layout/widget_weekly.xml",
+        "source": "ai.dcar.caldatewidget.app-main-39:/layout/widget_weekly.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeReleaseResources-37:/layout/dialog_color_picker.xml",
+        "source": "ai.dcar.caldatewidget.app-main-39:/layout/dialog_color_picker.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeReleaseResources-37:/layout/widget_date_single_digit.xml",
+        "source": "ai.dcar.caldatewidget.app-main-39:/layout/widget_date_single_digit.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeReleaseResources-37:/layout/activity_daily_config.xml",
+        "source": "ai.dcar.caldatewidget.app-main-39:/layout/activity_daily_config.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeReleaseResources-37:/layout/widget_daily.xml",
+        "source": "ai.dcar.caldatewidget.app-main-39:/layout/widget_daily.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeReleaseResources-37:/layout/activity_weekly_config.xml",
+        "source": "ai.dcar.caldatewidget.app-main-39:/layout/activity_weekly_config.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeReleaseResources-37:/layout/widget_date.xml",
+        "source": "ai.dcar.caldatewidget.app-main-39:/layout/widget_date.xml"
+    }
+]

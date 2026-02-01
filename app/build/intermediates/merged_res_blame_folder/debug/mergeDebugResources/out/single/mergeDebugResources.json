@@ -1,0 +1,86 @@
+[
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/xml_weekly_widget_info.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/xml/weekly_widget_info.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/xml_daily_widget_info.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/xml/daily_widget_info.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_widget_date_single_digit.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_date_single_digit.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_widget_date_vertical.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_date_vertical.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/drawable_ic_app_icon_foreground.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/drawable/ic_app_icon_foreground.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/color_selector_btn_text.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/color/selector_btn_text.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_widget_weekly.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_weekly.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/color_selector_btn_undo_bg.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/color/selector_btn_undo_bg.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/drawable_ic_settings.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/drawable/ic_settings.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_activity_daily_config.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/activity_daily_config.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/drawable_preview_date_widget.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/drawable/preview_date_widget.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/xml_date_widget_info.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/xml/date_widget_info.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_activity_weekly_config.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/activity_weekly_config.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/drawable_preview_bg_checkerboard.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/drawable/preview_bg_checkerboard.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_activity_config.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/activity_config.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_widget_daily.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_daily.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_dialog_color_picker.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/dialog_color_picker.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/layout_widget_date.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_date.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-debug-38:/drawable_preview_weekly_widget.xml.flat",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/drawable/preview_weekly_widget.xml"
+    }
+]

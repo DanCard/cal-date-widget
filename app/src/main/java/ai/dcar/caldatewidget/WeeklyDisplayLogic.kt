@@ -216,17 +216,19 @@ object WeeklyDisplayLogic {
             return false
         }
 
-        // Title similarity: At least 5 words in common (case-insensitive)
+        // Title similarity: At least 5 words in common OR > 60% match (for short titles)
         // Split on whitespace, slashes, hyphens, and other punctuation
         val wordsA = a.title.lowercase().split("[\\s/\\-_,;:]+".toRegex()).filter { it.isNotBlank() }.toSet()
         val wordsB = b.title.lowercase().split("[\\s/\\-_,;:]+".toRegex()).filter { it.isNotBlank() }.toSet()
         val commonWords = wordsA.intersect(wordsB).size
+        val maxWords = kotlin.math.max(wordsA.size, wordsB.size)
+        val similarity = if (maxWords > 0) commonWords.toDouble() / maxWords else 0.0
 
-        android.util.Log.d("NearDuplicate", "Comparing '${a.title}' vs '${b.title}': ${commonWords} common words (need 5)")
+        android.util.Log.d("NearDuplicate", "Comparing '${a.title}' vs '${b.title}': ${commonWords} common words (need 5), similarity=${String.format("%.2f", similarity)} (need > 0.60)")
         android.util.Log.d("NearDuplicate", "  Words A: $wordsA")
         android.util.Log.d("NearDuplicate", "  Words B: $wordsB")
         android.util.Log.d("NearDuplicate", "  Common: ${wordsA.intersect(wordsB)}")
 
-        return commonWords >= 5
+        return commonWords >= 5 || (commonWords >= 1 && similarity > 0.60)
     }
 }

@@ -1,0 +1,2891 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.13.1" type="incidents">
+
+    <incident
+        id="OldTargetApi"
+        severity="warning"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.">
+        <fix-replace
+            description="Update targetSdkVersion to 36"
+            oldString="35"
+            replacement="36"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="13"
+            column="9"
+            startOffset="245"
+            endLine="13"
+            endColumn="21"
+            endOffset="257"/>
+    </incident>
+
+    <incident
+        id="AndroidGradlePluginVersion"
+        severity="warning"
+        message="A newer version of Gradle than 8.13 is available: 8.14.3">
+        <fix-replace
+            description="Update to 8.14.3"
+            oldString="8.13"
+            replacement="8.14.3"
+            priority="0"/>
+        <location
+            file="$HOME/projects/cal-date-widget/gradle/wrapper/gradle-wrapper.properties"
+            line="3"
+            column="17"
+            startOffset="81"
+            endLine="3"
+            endColumn="79"
+            endOffset="143"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of `compileSdkVersion` than 35 is available: 36">
+        <fix-replace
+            description="Set compileSdkVersion to 36"
+            oldString="35"
+            replacement="36"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="8"
+            column="5"
+            startOffset="138"
+            endLine="8"
+            endColumn="18"
+            endOffset="151"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.core:core-ktx than 1.12.0 is available: 1.17.0">
+        <fix-replace
+            description="Change to 1.17.0"
+            family="Update versions"
+            oldString="1.12.0"
+            replacement="1.17.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="45"
+            column="20"
+            startOffset="945"
+            endLine="45"
+            endColumn="51"
+            endOffset="976"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.appcompat:appcompat than 1.6.1 is available: 1.7.1">
+        <fix-replace
+            description="Change to 1.7.1"
+            family="Update versions"
+            oldString="1.6.1"
+            replacement="1.7.1"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="46"
+            column="20"
+            startOffset="996"
+            endLine="46"
+            endColumn="56"
+            endOffset="1032"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.android.material:material than 1.11.0 is available: 1.13.0">
+        <fix-replace
+            description="Change to 1.13.0"
+            family="Update versions"
+            oldString="1.11.0"
+            replacement="1.13.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="47"
+            column="20"
+            startOffset="1052"
+            endLine="47"
+            endColumn="65"
+            endOffset="1097"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.constraintlayout:constraintlayout than 2.1.4 is available: 2.2.1">
+        <fix-replace
+            description="Change to 2.2.1"
+            family="Update versions"
+            oldString="2.1.4"
+            replacement="2.2.1"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="48"
+            column="20"
+            startOffset="1117"
+            endLine="48"
+            endColumn="70"
+            endOffset="1167"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.work:work-runtime-ktx than 2.9.0 is available: 2.11.0">
+        <fix-replace
+            description="Change to 2.11.0"
+            family="Update versions"
+            oldString="2.9.0"
+            replacement="2.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="49"
+            column="20"
+            startOffset="1187"
+            endLine="49"
+            endColumn="58"
+            endOffset="1225"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test:core than 1.5.0 is available: 1.7.0">
+        <fix-replace
+            description="Change to 1.7.0"
+            family="Update versions"
+            oldString="1.5.0"
+            replacement="1.7.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="53"
+            column="24"
+            startOffset="1357"
+            endLine="53"
+            endColumn="50"
+            endOffset="1383"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.1.5 is available: 1.3.0">
+        <fix-replace
+            description="Change to 1.3.0"
+            family="Update versions"
+            oldString="1.1.5"
+            replacement="1.3.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="55"
+            column="31"
+            startOffset="1458"
+            endLine="55"
+            endColumn="62"
+            endOffset="1489"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.5.1 is available: 3.7.0">
+        <fix-replace
+            description="Change to 3.7.0"
+            family="Update versions"
+            oldString="3.5.1"
+            replacement="3.7.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="56"
+            column="31"
+            startOffset="1520"
+            endLine="56"
+            endColumn="75"
+            endOffset="1564"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of io.mockk:mockk than 1.13.8 is available: 1.14.7">
+        <fix-replace
+            description="Change to 1.14.7"
+            family="Update versions"
+            oldString="1.13.8"
+            replacement="1.14.7"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="51"
+            column="24"
+            startOffset="1250"
+            endLine="51"
+            endColumn="47"
+            endOffset="1273"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of org.robolectric:robolectric than 4.11.1 is available: 4.16">
+        <fix-replace
+            description="Change to 4.16"
+            family="Update versions"
+            oldString="4.11.1"
+            replacement="4.16"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="52"
+            column="24"
+            startOffset="1297"
+            endLine="52"
+            endColumn="60"
+            endOffset="1333"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="This folder configuration (`v26`) is unnecessary; `minSdkVersion` is 26. Merge all the resources in this folder into `mipmap-anydpi`.">
+        <fix-data file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26" folderName="mipmap-anydpi" requiresApi="26"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive icon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26/ic_launcher.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="264"/>
+    </incident>
+
+    <incident
+        id="MonochromeLauncherIcon"
+        severity="warning"
+        message="The application adaptive roundIcon is missing a monochrome tag">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/mipmap-anydpi-v26/ic_launcher_round.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="5"
+            endColumn="17"
+            endOffset="264"/>
+    </incident>
+
+    <incident
+        id="Autofill"
+        severity="warning"
+        message="Missing `autofillHints` attribute">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set autofillHints"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="autofillHints"
+                value=""
+                point="0"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAutofill=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAutofill"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_config.xml"
+            line="51"
+            column="10"
+            startOffset="1809"
+            endLine="51"
+            endColumn="18"
+            endOffset="1817"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="android.net.Uri.parse(toUri(Intent.URI_INTENT_SCHEME))"
+            replacement="toUri(Intent.URI_INTENT_SCHEME).toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                startOffset="1729"
+                endOffset="1783"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+            line="43"
+            column="24"
+            startOffset="1729"
+            endLine="43"
+            endColumn="78"
+            endOffset="1783"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="android.net.Uri.parse(toUri(Intent.URI_INTENT_SCHEME))"
+            replacement="toUri(Intent.URI_INTENT_SCHEME).toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                startOffset="1729"
+                endOffset="1783"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+            line="43"
+            column="24"
+            startOffset="1729"
+            endLine="43"
+            endColumn="78"
+            endOffset="1783"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX function `createBitmap` instead?">
+        <fix-replace
+            description="Replace with the createBitmap function"
+            family="Replace with the createBitmap function"
+            robot="true"
+            independent="true"
+            oldString="Bitmap.createBitmap(size.widthPx, size.heightPx, Bitmap.Config.ARGB_8888)"
+            replacement="createBitmap(size.widthPx, size.heightPx)"
+            reformat="value"
+            imports="androidx.core.graphics.createBitmap"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                startOffset="3238"
+                endOffset="3311"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+            line="71"
+            column="30"
+            startOffset="3238"
+            endLine="71"
+            endColumn="103"
+            endOffset="3311"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `Canvas.withClip` instead?">
+        <fix-composite
+            description="Replace with the withClip extension function"
+            family="Replace with the withClip extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with withClip(currentX, contentTop, currentX + colWidth, height.toFloat()"
+                robot="true"
+                independent="true"
+                oldString="save("
+                replacement="withClip(currentX, contentTop, currentX + colWidth, height.toFloat()"
+                reformat="value"
+                imports="androidx.core.graphics.withClip"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="9715"
+                    endOffset="9720"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with ) {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=") {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="9720"
+                    endOffset="9721"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;                        canvas.clipRect(currentX, contentTop, currentX + colWidth, height.toFloat())&#xA;&quot;"
+                robot="true"
+                independent="true"
+                oldString="                        canvas.clipRect(currentX, contentTop, currentX + colWidth, height.toFloat())&#xA;"
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="9722"
+                    endOffset="9823"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;canvas.&quot;"
+                robot="true"
+                independent="true"
+                oldString="canvas."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12436"
+                    endOffset="12443"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with this"
+                robot="true"
+                independent="true"
+                oldString="canvas"
+                replacement="this"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12518"
+                    endOffset="12524"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;canvas.&quot;"
+                robot="true"
+                independent="true"
+                oldString="canvas."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12558"
+                    endOffset="12565"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString="canvas.restore()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13651"
+                    endOffset="13667"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="9824"
+                    endOffset="9824"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="9893"
+                    endOffset="9893"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10035"
+                    endOffset="10035"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10122"
+                    endOffset="10122"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10174"
+                    endOffset="10174"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10232"
+                    endOffset="10232"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10329"
+                    endOffset="10329"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10385"
+                    endOffset="10385"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10418"
+                    endOffset="10418"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10463"
+                    endOffset="10463"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10490"
+                    endOffset="10490"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10539"
+                    endOffset="10539"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10623"
+                    endOffset="10623"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10707"
+                    endOffset="10707"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10777"
+                    endOffset="10777"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10865"
+                    endOffset="10865"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="10970"
+                    endOffset="10970"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11044"
+                    endOffset="11044"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11089"
+                    endOffset="11089"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11206"
+                    endOffset="11206"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11240"
+                    endOffset="11240"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11328"
+                    endOffset="11328"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11424"
+                    endOffset="11424"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11458"
+                    endOffset="11458"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11548"
+                    endOffset="11548"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11604"
+                    endOffset="11604"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11659"
+                    endOffset="11659"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11718"
+                    endOffset="11718"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11791"
+                    endOffset="11791"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11887"
+                    endOffset="11887"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11928"
+                    endOffset="11928"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="11991"
+                    endOffset="11991"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12026"
+                    endOffset="12026"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12088"
+                    endOffset="12088"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12167"
+                    endOffset="12167"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12369"
+                    endOffset="12369"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12404"
+                    endOffset="12404"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12474"
+                    endOffset="12474"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12526"
+                    endOffset="12526"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12601"
+                    endOffset="12601"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12739"
+                    endOffset="12739"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12799"
+                    endOffset="12799"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12888"
+                    endOffset="12888"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="12978"
+                    endOffset="12978"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13024"
+                    endOffset="13024"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13098"
+                    endOffset="13098"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13136"
+                    endOffset="13136"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13170"
+                    endOffset="13170"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13225"
+                    endOffset="13225"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13280"
+                    endOffset="13280"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13363"
+                    endOffset="13363"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13397"
+                    endOffset="13397"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13450"
+                    endOffset="13450"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13570"
+                    endOffset="13570"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                    startOffset="13600"
+                    endOffset="13600"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+            line="218"
+            column="25"
+            startOffset="9708"
+            endLine="218"
+            endColumn="38"
+            endOffset="9721"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX function `createBitmap` instead?">
+        <fix-replace
+            description="Replace with the createBitmap function"
+            family="Replace with the createBitmap function"
+            robot="true"
+            independent="true"
+            oldString="Bitmap.createBitmap(800, 400, Bitmap.Config.ARGB_8888)"
+            replacement="createBitmap(800, 400)"
+            reformat="value"
+            imports="androidx.core.graphics.createBitmap"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+                startOffset="13924"
+                endOffset="13978"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DailyWidgetProvider.kt"
+            line="298"
+            column="35"
+            startOffset="13924"
+            endLine="298"
+            endColumn="89"
+            endOffset="13978"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="android.net.Uri.parse(toUri(Intent.URI_INTENT_SCHEME))"
+            replacement="toUri(Intent.URI_INTENT_SCHEME).toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DateWidgetProvider.kt"
+                startOffset="7669"
+                endOffset="7723"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DateWidgetProvider.kt"
+            line="137"
+            column="24"
+            startOffset="7669"
+            endLine="137"
+            endColumn="78"
+            endOffset="7723"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="android.net.Uri.parse(toUri(Intent.URI_INTENT_SCHEME))"
+            replacement="toUri(Intent.URI_INTENT_SCHEME).toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DateWidgetProvider.kt"
+                startOffset="7669"
+                endOffset="7723"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/DateWidgetProvider.kt"
+            line="137"
+            column="24"
+            startOffset="7669"
+            endLine="137"
+            endColumn="78"
+            endOffset="7723"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toColorInt` instead?">
+        <fix-replace
+            description="Replace with the toColorInt extension function"
+            family="Replace with the toColorInt extension function"
+            robot="true"
+            independent="true"
+            oldString="Color.parseColor(&quot;#ccccff&quot;)"
+            replacement="&quot;#ccccff&quot;.toColorInt()"
+            reformat="value"
+            imports="androidx.core.graphics.toColorInt"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/PrefsManager.kt"
+                startOffset="895"
+                endOffset="922"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/PrefsManager.kt"
+            line="25"
+            column="35"
+            startOffset="895"
+            endLine="25"
+            endColumn="62"
+            endOffset="922"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toColorInt` instead?">
+        <fix-replace
+            description="Replace with the toColorInt extension function"
+            family="Replace with the toColorInt extension function"
+            robot="true"
+            independent="true"
+            oldString="Color.parseColor(&quot;#ccccff&quot;)"
+            replacement="&quot;#ccccff&quot;.toColorInt()"
+            reformat="value"
+            imports="androidx.core.graphics.toColorInt"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/PrefsManager.kt"
+                startOffset="895"
+                endOffset="922"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/PrefsManager.kt"
+            line="25"
+            column="35"
+            startOffset="895"
+            endLine="25"
+            endColumn="62"
+            endOffset="922"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toColorInt` instead?">
+        <fix-replace
+            description="Replace with the toColorInt extension function"
+            family="Replace with the toColorInt extension function"
+            robot="true"
+            independent="true"
+            oldString="Color.parseColor(&quot;#ccccff&quot;)"
+            replacement="&quot;#ccccff&quot;.toColorInt()"
+            reformat="value"
+            imports="androidx.core.graphics.toColorInt"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/PrefsManager.kt"
+                startOffset="2576"
+                endOffset="2603"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/PrefsManager.kt"
+            line="52"
+            column="88"
+            startOffset="2576"
+            endLine="52"
+            endColumn="115"
+            endOffset="2603"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="android.net.Uri.parse(toUri(Intent.URI_INTENT_SCHEME))"
+            replacement="toUri(Intent.URI_INTENT_SCHEME).toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                startOffset="2006"
+                endOffset="2060"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+            line="51"
+            column="24"
+            startOffset="2006"
+            endLine="51"
+            endColumn="78"
+            endOffset="2060"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `String.toUri` instead?">
+        <fix-replace
+            description="Replace with the toUri extension function"
+            family="Replace with the toUri extension function"
+            robot="true"
+            independent="true"
+            oldString="android.net.Uri.parse(toUri(Intent.URI_INTENT_SCHEME))"
+            replacement="toUri(Intent.URI_INTENT_SCHEME).toUri()"
+            reformat="value"
+            imports="androidx.core.net.toUri"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                startOffset="2006"
+                endOffset="2060"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+            line="51"
+            column="24"
+            startOffset="2006"
+            endLine="51"
+            endColumn="78"
+            endOffset="2060"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX function `createBitmap` instead?">
+        <fix-replace
+            description="Replace with the createBitmap function"
+            family="Replace with the createBitmap function"
+            robot="true"
+            independent="true"
+            oldString="Bitmap.createBitmap(size.widthPx, size.heightPx, Bitmap.Config.ARGB_8888)"
+            replacement="createBitmap(size.widthPx, size.heightPx)"
+            reformat="value"
+            imports="androidx.core.graphics.createBitmap"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                startOffset="3493"
+                endOffset="3566"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+            line="79"
+            column="30"
+            startOffset="3493"
+            endLine="79"
+            endColumn="103"
+            endOffset="3566"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX extension function `Canvas.withClip` instead?">
+        <fix-composite
+            description="Replace with the withClip extension function"
+            family="Replace with the withClip extension function"
+            robot="true"
+            independent="true">
+            <fix-replace
+                description="Replace with withClip(currentX, contentTop, currentX + colWidth, height.toFloat()"
+                robot="true"
+                independent="true"
+                oldString="save("
+                replacement="withClip(currentX, contentTop, currentX + colWidth, height.toFloat()"
+                reformat="value"
+                imports="androidx.core.graphics.withClip"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="9886"
+                    endOffset="9891"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with ) {"
+                robot="true"
+                independent="true"
+                oldString=")"
+                replacement=") {"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="9891"
+                    endOffset="9892"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;                        canvas.clipRect(currentX, contentTop, currentX + colWidth, height.toFloat())&#xA;&quot;"
+                robot="true"
+                independent="true"
+                oldString="                        canvas.clipRect(currentX, contentTop, currentX + colWidth, height.toFloat())&#xA;"
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="9893"
+                    endOffset="9994"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;canvas.&quot;"
+                robot="true"
+                independent="true"
+                oldString="canvas."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12685"
+                    endOffset="12692"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with this"
+                robot="true"
+                independent="true"
+                oldString="canvas"
+                replacement="this"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12767"
+                    endOffset="12773"/>
+            </fix-replace>
+            <fix-replace
+                description="Delete &quot;canvas.&quot;"
+                robot="true"
+                independent="true"
+                oldString="canvas."
+                replacement=""
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12807"
+                    endOffset="12814"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with }"
+                robot="true"
+                independent="true"
+                oldString="canvas.restore()"
+                replacement="}"
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13900"
+                    endOffset="13916"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="9995"
+                    endOffset="9995"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10064"
+                    endOffset="10064"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10230"
+                    endOffset="10230"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10317"
+                    endOffset="10317"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10369"
+                    endOffset="10369"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10427"
+                    endOffset="10427"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10524"
+                    endOffset="10524"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10580"
+                    endOffset="10580"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10613"
+                    endOffset="10613"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10658"
+                    endOffset="10658"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10709"
+                    endOffset="10709"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10758"
+                    endOffset="10758"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10842"
+                    endOffset="10842"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="10950"
+                    endOffset="10950"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11020"
+                    endOffset="11020"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11108"
+                    endOffset="11108"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11213"
+                    endOffset="11213"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11287"
+                    endOffset="11287"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11332"
+                    endOffset="11332"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11411"
+                    endOffset="11411"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11539"
+                    endOffset="11539"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11573"
+                    endOffset="11573"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11661"
+                    endOffset="11661"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11757"
+                    endOffset="11757"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11791"
+                    endOffset="11791"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11881"
+                    endOffset="11881"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11937"
+                    endOffset="11937"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="11992"
+                    endOffset="11992"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12051"
+                    endOffset="12051"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12124"
+                    endOffset="12124"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12220"
+                    endOffset="12220"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12261"
+                    endOffset="12261"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12324"
+                    endOffset="12324"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12359"
+                    endOffset="12359"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12421"
+                    endOffset="12421"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12476"
+                    endOffset="12476"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12618"
+                    endOffset="12618"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12653"
+                    endOffset="12653"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12723"
+                    endOffset="12723"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12775"
+                    endOffset="12775"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12850"
+                    endOffset="12850"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="12988"
+                    endOffset="12988"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13048"
+                    endOffset="13048"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13137"
+                    endOffset="13137"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13227"
+                    endOffset="13227"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13273"
+                    endOffset="13273"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13347"
+                    endOffset="13347"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13385"
+                    endOffset="13385"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13419"
+                    endOffset="13419"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13474"
+                    endOffset="13474"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13529"
+                    endOffset="13529"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13612"
+                    endOffset="13612"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13646"
+                    endOffset="13646"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13699"
+                    endOffset="13699"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13820"
+                    endOffset="13820"/>
+            </fix-replace>
+            <fix-replace
+                description="Replace with     "
+                robot="true"
+                independent="true"
+                oldString=""
+                replacement="    "
+                priority="0">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                    startOffset="13850"
+                    endOffset="13850"/>
+            </fix-replace>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+            line="220"
+            column="25"
+            startOffset="9879"
+            endLine="220"
+            endColumn="38"
+            endOffset="9892"/>
+    </incident>
+
+    <incident
+        id="UseKtx"
+        severity="warning"
+        message="Use the KTX function `createBitmap` instead?">
+        <fix-replace
+            description="Replace with the createBitmap function"
+            family="Replace with the createBitmap function"
+            robot="true"
+            independent="true"
+            oldString="Bitmap.createBitmap(800, 400, Bitmap.Config.ARGB_8888)"
+            replacement="createBitmap(800, 400)"
+            reformat="value"
+            imports="androidx.core.graphics.createBitmap"
+            priority="0">
+            <range
+                file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+                startOffset="14172"
+                endOffset="14226"/>
+        </fix-replace>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/ai/dcar/caldatewidget/WeeklyWidgetProvider.kt"
+            line="298"
+            column="35"
+            startOffset="14172"
+            endLine="298"
+            endColumn="89"
+            endOffset="14226"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/widget_daily.xml"
+            line="7"
+            column="6"
+            startOffset="255"
+            endLine="7"
+            endColumn="15"
+            endOffset="264"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/widget_weekly.xml"
+            line="7"
+            column="6"
+            startOffset="256"
+            endLine="7"
+            endColumn="15"
+            endOffset="265"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_config.xml"
+            line="85"
+            column="17"
+            startOffset="3132"
+            endLine="85"
+            endColumn="36"
+            endOffset="3151"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_config.xml"
+            line="113"
+            column="17"
+            startOffset="4165"
+            endLine="113"
+            endColumn="36"
+            endOffset="4184"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_config.xml"
+            line="141"
+            column="18"
+            startOffset="5196"
+            endLine="141"
+            endColumn="37"
+            endOffset="5215"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Opacity (Background)&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_config.xml"
+            line="147"
+            column="13"
+            startOffset="5379"
+            endLine="147"
+            endColumn="48"
+            endOffset="5414"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Undo&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="25"
+            column="17"
+            startOffset="922"
+            endLine="25"
+            endColumn="36"
+            endOffset="941"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Refresh&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="36"
+            column="17"
+            startOffset="1391"
+            endLine="36"
+            endColumn="39"
+            endOffset="1413"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Grant Calendar Permission&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="47"
+            column="13"
+            startOffset="1814"
+            endLine="47"
+            endColumn="53"
+            endOffset="1854"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Show Current Date in Title&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="58"
+            column="13"
+            startOffset="2252"
+            endLine="58"
+            endColumn="54"
+            endOffset="2293"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Show Declined Events&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="66"
+            column="13"
+            startOffset="2550"
+            endLine="66"
+            endColumn="48"
+            endOffset="2585"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Show AM/PM&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="74"
+            column="13"
+            startOffset="2837"
+            endLine="74"
+            endColumn="38"
+            endOffset="2862"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Text Color&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="81"
+            column="13"
+            startOffset="3072"
+            endLine="81"
+            endColumn="38"
+            endOffset="3097"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="102"
+            column="17"
+            startOffset="3900"
+            endLine="102"
+            endColumn="36"
+            endOffset="3919"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Shadow Color&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="109"
+            column="13"
+            startOffset="4114"
+            endLine="109"
+            endColumn="40"
+            endOffset="4141"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="130"
+            column="17"
+            startOffset="4948"
+            endLine="130"
+            endColumn="36"
+            endOffset="4967"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Start Time Color&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="137"
+            column="13"
+            startOffset="5162"
+            endLine="137"
+            endColumn="44"
+            endOffset="5193"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="158"
+            column="17"
+            startOffset="6018"
+            endLine="158"
+            endColumn="36"
+            endOffset="6037"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Start Time Shadow&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="165"
+            column="13"
+            startOffset="6232"
+            endLine="165"
+            endColumn="45"
+            endOffset="6264"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="186"
+            column="17"
+            startOffset="7093"
+            endLine="186"
+            endColumn="36"
+            endOffset="7112"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Changes are saved automatically&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_daily_config.xml"
+            line="193"
+            column="13"
+            startOffset="7307"
+            endLine="193"
+            endColumn="59"
+            endOffset="7353"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Undo&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="25"
+            column="17"
+            startOffset="922"
+            endLine="25"
+            endColumn="36"
+            endOffset="941"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Refresh&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="36"
+            column="17"
+            startOffset="1391"
+            endLine="36"
+            endColumn="39"
+            endOffset="1413"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Grant Calendar Permission&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="47"
+            column="13"
+            startOffset="1814"
+            endLine="47"
+            endColumn="53"
+            endOffset="1854"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Start Day&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="57"
+            column="13"
+            startOffset="2208"
+            endLine="57"
+            endColumn="37"
+            endOffset="2232"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Show Current Date in Title&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="70"
+            column="13"
+            startOffset="2654"
+            endLine="70"
+            endColumn="54"
+            endOffset="2695"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Show Declined Events&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="78"
+            column="13"
+            startOffset="2952"
+            endLine="78"
+            endColumn="48"
+            endOffset="2987"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Show AM/PM&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="86"
+            column="13"
+            startOffset="3239"
+            endLine="86"
+            endColumn="38"
+            endOffset="3264"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Text Color&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="94"
+            column="13"
+            startOffset="3498"
+            endLine="94"
+            endColumn="38"
+            endOffset="3523"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="115"
+            column="17"
+            startOffset="4326"
+            endLine="115"
+            endColumn="36"
+            endOffset="4345"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Shadow Color&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="122"
+            column="13"
+            startOffset="4540"
+            endLine="122"
+            endColumn="40"
+            endOffset="4567"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="143"
+            column="17"
+            startOffset="5374"
+            endLine="143"
+            endColumn="36"
+            endOffset="5393"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Start Time Color&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="151"
+            column="13"
+            startOffset="5623"
+            endLine="151"
+            endColumn="44"
+            endOffset="5654"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="172"
+            column="17"
+            startOffset="6479"
+            endLine="172"
+            endColumn="36"
+            endOffset="6498"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Start Time Shadow&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="179"
+            column="13"
+            startOffset="6693"
+            endLine="179"
+            endColumn="45"
+            endOffset="6725"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pick&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="200"
+            column="17"
+            startOffset="7554"
+            endLine="200"
+            endColumn="36"
+            endOffset="7573"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Changes are saved automatically&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_weekly_config.xml"
+            line="207"
+            column="13"
+            startOffset="7768"
+            endLine="207"
+            endColumn="59"
+            endOffset="7814"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Red&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_color_picker.xml"
+            line="15"
+            column="15"
+            startOffset="482"
+            endLine="15"
+            endColumn="33"
+            endOffset="500"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Green&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_color_picker.xml"
+            line="18"
+            column="15"
+            startOffset="704"
+            endLine="18"
+            endColumn="35"
+            endOffset="724"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Blue&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_color_picker.xml"
+            line="21"
+            column="15"
+            startOffset="959"
+            endLine="21"
+            endColumn="34"
+            endOffset="978"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Settings&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/widget_daily.xml"
+            line="23"
+            column="9"
+            startOffset="824"
+            endLine="23"
+            endColumn="46"
+            endOffset="861"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Tue 2&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/widget_date.xml"
+            line="13"
+            column="9"
+            startOffset="502"
+            endLine="13"
+            endColumn="29"
+            endOffset="522"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;9&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/widget_date_single_digit.xml"
+            line="13"
+            column="9"
+            startOffset="502"
+            endLine="13"
+            endColumn="25"
+            endOffset="518"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Settings&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/widget_weekly.xml"
+            line="23"
+            column="9"
+            startOffset="827"
+            endLine="23"
+            endColumn="46"
+            endOffset="864"/>
+    </incident>
+
+</incidents>

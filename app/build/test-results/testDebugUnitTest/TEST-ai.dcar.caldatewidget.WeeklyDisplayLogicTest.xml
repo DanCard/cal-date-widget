@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" tests="36" skipped="0" failures="0" errors="0" timestamp="2026-02-01T19:45:32.570Z" hostname="bosgame" time="1.568">
+  <properties/>
+  <testcase name="shouldShowStartTimes for current day with realistic clipping scenario" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="1.026"/>
+  <testcase name="shouldShowStartTimes returns false when there is clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.021"/>
+  <testcase name="getColumnWeights assigns weights correctly" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.018"/>
+  <testcase name="getMaxLinesForCurrentDayEvent realistic scenario from logs" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.019"/>
+  <testcase name="filterNearDuplicates handles real-world DTU Anti-Drone case" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.052"/>
+  <testcase name="filterNearDuplicates handles three-way duplicates" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.016"/>
+  <testcase name="shouldShowStartTimes detects clipping when many events on current day" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.015"/>
+  <testcase name="filterNearDuplicates handles word reordering" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.015"/>
+  <testcase name="shouldShowStartTimes returns true at the boundary" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.012"/>
+  <testcase name="getStartDate goes back to past Monday if today is Wednesday" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.013"/>
+  <testcase name="filterNearDuplicates keeps all-day separate from timed events" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.015"/>
+  <testcase name="shouldShowStartTimes for weekend day with sparse events" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.014"/>
+  <testcase name="shouldShowStartTimes returns true when there is no clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.012"/>
+  <testcase name="filterNearDuplicates rotates selection based on time" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.012"/>
+  <testcase name="getMaxLinesForCurrentDayEvent returns 1 line for past events when clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.014"/>
+  <testcase name="shouldShowStartTimes for current day with few events and space" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.013"/>
+  <testcase name="shouldShowStartTimes handles zero events" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.015"/>
+  <testcase name="getMaxLinesForCurrentDayEvent returns at least 1 line for future events" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.015"/>
+  <testcase name="filterNearDuplicates returns empty list for empty input" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.014"/>
+  <testcase name="filterNearDuplicates matches events with high similarity but fewer than 5 words" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.016"/>
+  <testcase name="shouldShowStartTimes returns false just over the boundary" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.016"/>
+  <testcase name="filterNearDuplicates keeps events beyond 15 minute window" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.016"/>
+  <testcase name="filterNearDuplicates does not match distinct short titles" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.024"/>
+  <testcase name="filterNearDuplicates hides event with same start time and title" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.013"/>
+  <testcase name="filterNearDuplicates handles single event" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.012"/>
+  <testcase name="filterNearDuplicates matches short titles with majority match" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.012"/>
+  <testcase name="getStartDate returns today if today matches start day" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.011"/>
+  <testcase name="shouldShowStartTimes handles single event with plenty of space" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.013"/>
+  <testcase name="filterNearDuplicates matches events with at least 5 common words" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.016"/>
+  <testcase name="getMaxLinesForCurrentDayEvent distributes space equitably for future events when clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.014"/>
+  <testcase name="filterNearDuplicates matches events within 15 minute window" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.012"/>
+  <testcase name="getMaxLinesForCurrentDayEvent caps current future events when clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.012"/>
+  <testcase name="filterNearDuplicates returns original list when no duplicates" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.011"/>
+  <testcase name="getMaxLinesForCurrentDayEvent returns 1 line for past events even when no clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.009"/>
+  <testcase name="filterNearDuplicates uses case-insensitive word matching" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.011"/>
+  <testcase name="filterNearDuplicates matches short titles with partial majority" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

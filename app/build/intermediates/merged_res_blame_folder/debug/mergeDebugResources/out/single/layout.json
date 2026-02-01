@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/activity_config.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/activity_config.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/widget_daily.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_daily.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/activity_daily_config.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/activity_daily_config.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/activity_weekly_config.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/activity_weekly_config.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/widget_date_vertical.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_date_vertical.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/widget_weekly.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_weekly.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/widget_date.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_date.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/widget_date_single_digit.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/widget_date_single_digit.xml"
+    },
+    {
+        "merged": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/dialog_color_picker.xml",
+        "source": "/home/dcar/.gradle/daemon/8.13/ai.dcar.caldatewidget.app-main-40:/layout/dialog_color_picker.xml"
+    },
+    {
+        "merged": "ai.dcar.caldatewidget.app-mergeDebugResources-37:/layout/widget_daily.xml",
+        "source": "ai.dcar.caldatewidget.app-main-40:/layout/widget_daily.xml"
+    }
+]

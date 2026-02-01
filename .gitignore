@@ -1,11 +1,15 @@
-*.iml
-.gradle
-/local.properties
-/.idea/
-.DS_Store
-/build
-/app/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+ *.iml
+ .gradle
+ /local.properties
+ /.idea/
+ .DS_Store
+ /build
+ /app/build
+ /captures
+ .externalNativeBuild
+ .cxx
+ local.properties
+
+# Audio files
+*.m4a
+

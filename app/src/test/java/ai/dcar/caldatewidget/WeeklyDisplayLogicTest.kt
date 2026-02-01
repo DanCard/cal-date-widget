@@ -3,8 +3,13 @@ package ai.dcar.caldatewidget
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.util.Calendar
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33])
 class WeeklyDisplayLogicTest {
 
     @Test
@@ -524,8 +529,9 @@ class WeeklyDisplayLogicTest {
     }
 
     @Test
-    fun `filterNearDuplicates keeps events with fewer than 5 common words`() {
-        // Given: Two events with only 3 common words
+    fun `filterNearDuplicates matches events with high similarity but fewer than 5 words`() {
+        // Given: Two events with 4 words total, 3 common (75% match)
+        // Similarity: 3/4 = 0.75 > 0.60
         val baseTime = 1000000000L
         val events = listOf(
             createEvent(1, "Team Meeting Room A", baseTime),
@@ -535,8 +541,8 @@ class WeeklyDisplayLogicTest {
         // When
         val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
 
-        // Then: Should keep both (only 3 common words: Team, Meeting, Room)
-        assertEquals(2, result.size)
+        // Then: Should be detected as duplicates under new majority rule
+        assertEquals(1, result.size)
     }
 
     @Test
@@ -596,5 +602,53 @@ class WeeklyDisplayLogicTest {
         // Then: Should have 2 events (one DTU Anti-Drone, one different meeting)
         assertEquals(2, result.size)
         assertTrue(result.any { it.title.contains("Different") })
+    }
+
+    @Test
+    fun `filterNearDuplicates matches short titles with majority match`() {
+        // Given: Two events "Team Sync" and "Team Sync" (2/2 match)
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "Team Sync", baseTime),
+            createEvent(2, "Team Sync", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should be detected as duplicates (100% match, > 2 words? No 2 words)
+        assertEquals(1, result.size)
+    }
+    
+    @Test
+    fun `filterNearDuplicates matches short titles with partial majority`() {
+        // Given: "Project Alpha Sync" vs "Project Alpha Review" (2/3 match = 66%)
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "Project Alpha Sync", baseTime),
+            createEvent(2, "Project Alpha Review", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should be detected as duplicates
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates does not match distinct short titles`() {
+        // Given: "Team Meeting" vs "Client Meeting" (1/2 match = 50%)
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "Team Meeting", baseTime),
+            createEvent(2, "Client Meeting", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should NOT be duplicates
+        assertEquals(2, result.size)
     }
 }

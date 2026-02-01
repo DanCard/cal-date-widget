@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-01-18T23:12:03.829Z" hostname="bosgame" time="0.001">
+  <properties/>
+  <testcase name="shouldShowStartTimes for current day with realistic clipping scenario" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes returns false when there is clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="getColumnWeights assigns weights correctly" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="getMaxLinesForCurrentDayEvent realistic scenario from logs" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes detects clipping when many events on current day" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes returns true at the boundary" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.001"/>
+  <testcase name="getStartDate goes back to past Monday if today is Wednesday" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes for weekend day with sparse events" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes returns true when there is no clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="getMaxLinesForCurrentDayEvent returns 1 line for past events when clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes for current day with few events and space" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes handles zero events" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="getMaxLinesForCurrentDayEvent returns at least 1 line for future events" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes returns false just over the boundary" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="getStartDate returns today if today matches start day" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="shouldShowStartTimes handles single event with plenty of space" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="getMaxLinesForCurrentDayEvent distributes space equitably for future events when clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="getMaxLinesForCurrentDayEvent caps current future events when clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <testcase name="getMaxLinesForCurrentDayEvent returns 1 line for past events even when no clipping" classname="ai.dcar.caldatewidget.WeeklyDisplayLogicTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

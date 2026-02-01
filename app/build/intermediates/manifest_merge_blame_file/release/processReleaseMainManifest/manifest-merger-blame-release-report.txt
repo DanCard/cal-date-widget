@@ -1,0 +1,424 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="ai.dcar.caldatewidget"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="35" />
+10
+11    <uses-permission android:name="android.permission.READ_CALENDAR" />
+11-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:5:5-72
+11-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:5:22-69
+12    <uses-permission android:name="android.permission.WAKE_LOCK" />
+12-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:23:5-68
+12-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:23:22-65
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:24:5-79
+13-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:24:22-76
+14    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+14-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:25:5-81
+14-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:25:22-78
+15    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+15-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:26:5-77
+15-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:26:22-74
+16
+17    <permission
+17-->[androidx.core:core:1.12.0] /home/dcar/.gradle/caches/8.13/transforms/4fe1e5d59d383fafa035e1580c8dacb0/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
+18        android:name="ai.dcar.caldatewidget.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+18-->[androidx.core:core:1.12.0] /home/dcar/.gradle/caches/8.13/transforms/4fe1e5d59d383fafa035e1580c8dacb0/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
+19        android:protectionLevel="signature" />
+19-->[androidx.core:core:1.12.0] /home/dcar/.gradle/caches/8.13/transforms/4fe1e5d59d383fafa035e1580c8dacb0/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
+20
+21    <uses-permission android:name="ai.dcar.caldatewidget.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+21-->[androidx.core:core:1.12.0] /home/dcar/.gradle/caches/8.13/transforms/4fe1e5d59d383fafa035e1580c8dacb0/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
+21-->[androidx.core:core:1.12.0] /home/dcar/.gradle/caches/8.13/transforms/4fe1e5d59d383fafa035e1580c8dacb0/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
+22
+23    <application
+23-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:7:5-75:19
+24        android:allowBackup="true"
+24-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:8:9-35
+25        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+25-->[androidx.core:core:1.12.0] /home/dcar/.gradle/caches/8.13/transforms/4fe1e5d59d383fafa035e1580c8dacb0/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
+26        android:extractNativeLibs="false"
+27        android:icon="@mipmap/ic_launcher"
+27-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:9:9-43
+28        android:label="@string/app_name"
+28-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:10:9-41
+29        android:roundIcon="@mipmap/ic_launcher_round"
+29-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:11:9-54
+30        android:supportsRtl="true"
+30-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:12:9-35
+31        android:theme="@style/Theme.CalDateWidget" >
+31-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:13:9-51
+32        <receiver
+32-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:15:9-25:20
+33            android:name="ai.dcar.caldatewidget.DateWidgetProvider"
+33-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:16:13-47
+34            android:exported="true"
+34-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:17:13-36
+35            android:label="@string/app_name" >
+35-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:18:13-45
+36            <intent-filter>
+36-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:19:13-21:29
+37                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+37-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:20:17-84
+37-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:20:25-81
+38            </intent-filter>
+39
+40            <meta-data
+40-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:22:13-24:60
+41                android:name="android.appwidget.provider"
+41-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:23:17-58
+42                android:resource="@xml/date_widget_info" />
+42-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:24:17-57
+43        </receiver>
+44        <receiver
+44-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:27:9-37:20
+45            android:name="ai.dcar.caldatewidget.WeeklyWidgetProvider"
+45-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:28:13-49
+46            android:exported="true"
+46-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:29:13-36
+47            android:label="Weekly Calendar" >
+47-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:30:13-44
+48            <intent-filter>
+48-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:19:13-21:29
+49                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+49-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:20:17-84
+49-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:20:25-81
+50            </intent-filter>
+51
+52            <meta-data
+52-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:22:13-24:60
+53                android:name="android.appwidget.provider"
+53-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:23:17-58
+54                android:resource="@xml/weekly_widget_info" />
+54-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:24:17-57
+55        </receiver>
+56        <receiver
+56-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:39:9-49:20
+57            android:name="ai.dcar.caldatewidget.DailyWidgetProvider"
+57-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:40:13-48
+58            android:exported="true"
+58-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:41:13-36
+59            android:label="Daily Calendar" >
+59-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:42:13-43
+60            <intent-filter>
+60-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:19:13-21:29
+61                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+61-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:20:17-84
+61-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:20:25-81
+62            </intent-filter>
+63
+64            <meta-data
+64-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:22:13-24:60
+65                android:name="android.appwidget.provider"
+65-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:23:17-58
+66                android:resource="@xml/daily_widget_info" />
+66-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:24:17-57
+67        </receiver>
+68
+69        <activity
+69-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:51:9-57:20
+70            android:name="ai.dcar.caldatewidget.ConfigActivity"
+70-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:52:13-43
+71            android:exported="true" >
+71-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:53:13-36
+72            <intent-filter>
+72-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:54:13-56:29
+73                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+73-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:55:17-87
+73-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:55:25-84
+74            </intent-filter>
+75        </activity>
+76        <activity
+76-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:59:9-65:20
+77            android:name="ai.dcar.caldatewidget.WeeklyConfigActivity"
+77-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:60:13-49
+78            android:exported="true" >
+78-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:61:13-36
+79            <intent-filter>
+79-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:54:13-56:29
+80                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+80-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:55:17-87
+80-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:55:25-84
+81            </intent-filter>
+82        </activity>
+83        <activity
+83-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:67:9-73:20
+84            android:name="ai.dcar.caldatewidget.DailyConfigActivity"
+84-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:68:13-48
+85            android:exported="true" >
+85-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:69:13-36
+86            <intent-filter>
+86-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:54:13-56:29
+87                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+87-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:55:17-87
+87-->/home/dcar/projects/cal-date-widget/app/src/main/AndroidManifest.xml:55:25-84
+88            </intent-filter>
+89        </activity>
+90
+91        <provider
+91-->[androidx.emoji2:emoji2:1.2.0] /home/dcar/.gradle/caches/8.13/transforms/9886aac15cb50ac1026fca5349256e33/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+92            android:name="androidx.startup.InitializationProvider"
+92-->[androidx.emoji2:emoji2:1.2.0] /home/dcar/.gradle/caches/8.13/transforms/9886aac15cb50ac1026fca5349256e33/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
+93            android:authorities="ai.dcar.caldatewidget.androidx-startup"
+93-->[androidx.emoji2:emoji2:1.2.0] /home/dcar/.gradle/caches/8.13/transforms/9886aac15cb50ac1026fca5349256e33/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
+94            android:exported="false" >
+94-->[androidx.emoji2:emoji2:1.2.0] /home/dcar/.gradle/caches/8.13/transforms/9886aac15cb50ac1026fca5349256e33/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
+95            <meta-data
+95-->[androidx.emoji2:emoji2:1.2.0] /home/dcar/.gradle/caches/8.13/transforms/9886aac15cb50ac1026fca5349256e33/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+96                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+96-->[androidx.emoji2:emoji2:1.2.0] /home/dcar/.gradle/caches/8.13/transforms/9886aac15cb50ac1026fca5349256e33/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
+97                android:value="androidx.startup" />
+97-->[androidx.emoji2:emoji2:1.2.0] /home/dcar/.gradle/caches/8.13/transforms/9886aac15cb50ac1026fca5349256e33/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+98            <meta-data
+98-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:34:13-36:52
+99                android:name="androidx.work.WorkManagerInitializer"
+99-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:35:17-68
+100                android:value="androidx.startup" />
+100-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:36:17-49
+101            <meta-data
+101-->[androidx.lifecycle:lifecycle-process:2.6.1] /home/dcar/.gradle/caches/8.13/transforms/9241709342b195e286d823170faf0e23/transformed/lifecycle-process-2.6.1/AndroidManifest.xml:29:13-31:52
+102                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+102-->[androidx.lifecycle:lifecycle-process:2.6.1] /home/dcar/.gradle/caches/8.13/transforms/9241709342b195e286d823170faf0e23/transformed/lifecycle-process-2.6.1/AndroidManifest.xml:30:17-78
+103                android:value="androidx.startup" />
+103-->[androidx.lifecycle:lifecycle-process:2.6.1] /home/dcar/.gradle/caches/8.13/transforms/9241709342b195e286d823170faf0e23/transformed/lifecycle-process-2.6.1/AndroidManifest.xml:31:17-49
+104            <meta-data
+104-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:29:13-31:52
+105                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+105-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:30:17-85
+106                android:value="androidx.startup" />
+106-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:31:17-49
+107        </provider>
+108
+109        <service
+109-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:39:9-45:35
+110            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+110-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:40:13-88
+111            android:directBootAware="false"
+111-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:41:13-44
+112            android:enabled="@bool/enable_system_alarm_service_default"
+112-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:42:13-72
+113            android:exported="false" />
+113-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:43:13-37
+114        <service
+114-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:46:9-52:35
+115            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+115-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:47:13-84
+116            android:directBootAware="false"
+116-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:48:13-44
+117            android:enabled="@bool/enable_system_job_service_default"
+117-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:49:13-70
+118            android:exported="true"
+118-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:50:13-36
+119            android:permission="android.permission.BIND_JOB_SERVICE" />
+119-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:51:13-69
+120        <service
+120-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:53:9-59:35
+121            android:name="androidx.work.impl.foreground.SystemForegroundService"
+121-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:54:13-81
+122            android:directBootAware="false"
+122-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:55:13-44
+123            android:enabled="@bool/enable_system_foreground_service_default"
+123-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:56:13-77
+124            android:exported="false" />
+124-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:57:13-37
+125
+126        <receiver
+126-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:61:9-66:35
+127            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+127-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:62:13-88
+128            android:directBootAware="false"
+128-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:63:13-44
+129            android:enabled="true"
+129-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:64:13-35
+130            android:exported="false" />
+130-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:65:13-37
+131        <receiver
+131-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:67:9-77:20
+132            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+132-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:68:13-106
+133            android:directBootAware="false"
+133-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:69:13-44
+134            android:enabled="false"
+134-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:70:13-36
+135            android:exported="false" >
+135-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:71:13-37
+136            <intent-filter>
+136-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:73:13-76:29
+137                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+137-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:74:17-87
+137-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:74:25-84
+138                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+138-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:75:17-90
+138-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:75:25-87
+139            </intent-filter>
+140        </receiver>
+141        <receiver
+141-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:78:9-88:20
+142            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+142-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:79:13-104
+143            android:directBootAware="false"
+143-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:80:13-44
+144            android:enabled="false"
+144-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:81:13-36
+145            android:exported="false" >
+145-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:82:13-37
+146            <intent-filter>
+146-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:84:13-87:29
+147                <action android:name="android.intent.action.BATTERY_OKAY" />
+147-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:85:17-77
+147-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:85:25-74
+148                <action android:name="android.intent.action.BATTERY_LOW" />
+148-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:86:17-76
+148-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:86:25-73
+149            </intent-filter>
+150        </receiver>
+151        <receiver
+151-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:89:9-99:20
+152            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+152-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:90:13-104
+153            android:directBootAware="false"
+153-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:91:13-44
+154            android:enabled="false"
+154-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:92:13-36
+155            android:exported="false" >
+155-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:93:13-37
+156            <intent-filter>
+156-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:95:13-98:29
+157                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+157-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:96:17-83
+157-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:96:25-80
+158                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+158-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:97:17-82
+158-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:97:25-79
+159            </intent-filter>
+160        </receiver>
+161        <receiver
+161-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:100:9-109:20
+162            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+162-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:101:13-103
+163            android:directBootAware="false"
+163-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:102:13-44
+164            android:enabled="false"
+164-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:103:13-36
+165            android:exported="false" >
+165-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:104:13-37
+166            <intent-filter>
+166-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:106:13-108:29
+167                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+167-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:107:17-79
+167-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:107:25-76
+168            </intent-filter>
+169        </receiver>
+170        <receiver
+170-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:110:9-121:20
+171            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+171-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:111:13-88
+172            android:directBootAware="false"
+172-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:112:13-44
+173            android:enabled="false"
+173-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:113:13-36
+174            android:exported="false" >
+174-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:114:13-37
+175            <intent-filter>
+175-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:116:13-120:29
+176                <action android:name="android.intent.action.BOOT_COMPLETED" />
+176-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:117:17-79
+176-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:117:25-76
+177                <action android:name="android.intent.action.TIME_SET" />
+177-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:118:17-73
+177-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:118:25-70
+178                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+178-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:119:17-81
+178-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:119:25-78
+179            </intent-filter>
+180        </receiver>
+181        <receiver
+181-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:122:9-131:20
+182            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+182-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:123:13-99
+183            android:directBootAware="false"
+183-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:124:13-44
+184            android:enabled="@bool/enable_system_alarm_service_default"
+184-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:125:13-72
+185            android:exported="false" >
+185-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:126:13-37
+186            <intent-filter>
+186-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:128:13-130:29
+187                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+187-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:129:17-98
+187-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:129:25-95
+188            </intent-filter>
+189        </receiver>
+190        <receiver
+190-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:132:9-142:20
+191            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+191-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:133:13-78
+192            android:directBootAware="false"
+192-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:134:13-44
+193            android:enabled="true"
+193-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:135:13-35
+194            android:exported="true"
+194-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:136:13-36
+195            android:permission="android.permission.DUMP" >
+195-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:137:13-57
+196            <intent-filter>
+196-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:139:13-141:29
+197                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+197-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:140:17-88
+197-->[androidx.work:work-runtime:2.9.0] /home/dcar/.gradle/caches/8.13/transforms/4c020e57905d413598aeb14debe9579b/transformed/work-runtime-2.9.0/AndroidManifest.xml:140:25-85
+198            </intent-filter>
+199        </receiver>
+200
+201        <service
+201-->[androidx.room:room-runtime:2.5.0] /home/dcar/.gradle/caches/8.13/transforms/4564cb8134602a7bc111156be0492345/transformed/room-runtime-2.5.0/AndroidManifest.xml:24:9-28:63
+202            android:name="androidx.room.MultiInstanceInvalidationService"
+202-->[androidx.room:room-runtime:2.5.0] /home/dcar/.gradle/caches/8.13/transforms/4564cb8134602a7bc111156be0492345/transformed/room-runtime-2.5.0/AndroidManifest.xml:25:13-74
+203            android:directBootAware="true"
+203-->[androidx.room:room-runtime:2.5.0] /home/dcar/.gradle/caches/8.13/transforms/4564cb8134602a7bc111156be0492345/transformed/room-runtime-2.5.0/AndroidManifest.xml:26:13-43
+204            android:exported="false" />
+204-->[androidx.room:room-runtime:2.5.0] /home/dcar/.gradle/caches/8.13/transforms/4564cb8134602a7bc111156be0492345/transformed/room-runtime-2.5.0/AndroidManifest.xml:27:13-37
+205
+206        <receiver
+206-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:34:9-52:20
+207            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+207-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:35:13-76
+208            android:directBootAware="false"
+208-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:36:13-44
+209            android:enabled="true"
+209-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:37:13-35
+210            android:exported="true"
+210-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:38:13-36
+211            android:permission="android.permission.DUMP" >
+211-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:39:13-57
+212            <intent-filter>
+212-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:40:13-42:29
+213                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+213-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:41:17-91
+213-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:41:25-88
+214            </intent-filter>
+215            <intent-filter>
+215-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:43:13-45:29
+216                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+216-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:44:17-85
+216-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:44:25-82
+217            </intent-filter>
+218            <intent-filter>
+218-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:46:13-48:29
+219                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+219-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:47:17-88
+219-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:47:25-85
+220            </intent-filter>
+221            <intent-filter>
+221-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:49:13-51:29
+222                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+222-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:50:17-95
+222-->[androidx.profileinstaller:profileinstaller:1.3.0] /home/dcar/.gradle/caches/8.13/transforms/20718a1f5103daf591372876d0a15536/transformed/profileinstaller-1.3.0/AndroidManifest.xml:50:25-92
+223            </intent-filter>
+224        </receiver>
+225    </application>
+226
+227</manifest>

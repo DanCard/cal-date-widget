@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "ai.dcar.caldatewidget.app-mergeDebugResources-36:/values-watch-v21/values-watch-v21.xml",
+            "map": [
+                {
+                    "source": "/home/dcar/.gradle/caches/8.13/transforms/ec4b7e3fd7557f887cf735cbb37411f2/transformed/appcompat-1.6.1/res/values-watch-v21/values-watch-v21.xml",
+                    "from": {
+                        "startLines": "2,6,10",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,271,499",
+                        "endLines": "5,9,13",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "266,494,724"
+                    }
+                }
+            ]
+        }
+    ]
+}
