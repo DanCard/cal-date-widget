@@ -179,6 +179,9 @@ class WeeklyConfigActivity : AppCompatActivity() {
         btnRefresh.setOnClickListener {
             val appWidgetManager = AppWidgetManager.getInstance(this)
             WeeklyWidgetProvider.updateAppWidget(this, appWidgetManager, appWidgetId)
+
+            // Show feedback toast
+            android.widget.Toast.makeText(this, "Widget refreshing...", android.widget.Toast.LENGTH_SHORT).show()
         }
 
         saveSettings()

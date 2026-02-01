@@ -145,6 +145,14 @@ object WeeklyDisplayLogic {
     fun filterNearDuplicates(events: List<CalendarEvent>, currentTimeMillis: Long): List<CalendarEvent> {
         if (events.size <= 1) return events
 
+        // Log all events being processed
+        android.util.Log.d("NearDuplicate", "=== Processing ${events.size} events ===")
+        val dateFormat = java.text.SimpleDateFormat("EEE HH:mm", java.util.Locale.getDefault())
+        events.forEachIndexed { index, event ->
+            val timeStr = dateFormat.format(java.util.Date(event.startTime))
+            android.util.Log.d("NearDuplicate", "Event $index: '${event.title}' at $timeStr (id=${event.id}, allDay=${event.isAllDay})")
+        }
+
         val processedIds = mutableSetOf<Long>()
         val clusters = mutableListOf<List<CalendarEvent>>()
 
@@ -159,24 +167,33 @@ object WeeklyDisplayLogic {
             for (other in events) {
                 if (other.id in processedIds) continue
                 if (areNearDuplicates(event, other)) {
+                    android.util.Log.d("NearDuplicate", "Found duplicate: '${event.title}' matches '${other.title}'")
                     cluster.add(other)
                     processedIds.add(other.id)
                 }
             }
 
+            if (cluster.size > 1) {
+                android.util.Log.d("NearDuplicate", "Cluster of ${cluster.size} events: ${cluster.map { it.title }}")
+            }
             clusters.add(cluster)
         }
 
         // Select one event from each cluster
-        return clusters.map { cluster ->
+        val filtered = clusters.map { cluster ->
             if (cluster.size == 1) {
                 cluster[0]
             } else {
                 // Time-based rotation: changes roughly every minute
                 val seed = (currentTimeMillis / 60000 + cluster.sumOf { it.id }) % cluster.size
-                cluster[seed.toInt()]
+                val selected = cluster[seed.toInt()]
+                android.util.Log.d("NearDuplicate", "Selected '${selected.title}' from cluster of ${cluster.size}")
+                selected
             }
         }
+
+        android.util.Log.d("NearDuplicate", "Before: ${events.size} events, After: ${filtered.size} events")
+        return filtered
     }
 
     /**
@@ -187,16 +204,28 @@ object WeeklyDisplayLogic {
      */
     private fun areNearDuplicates(a: CalendarEvent, b: CalendarEvent): Boolean {
         // Same type check
-        if (a.isAllDay != b.isAllDay) return false
+        if (a.isAllDay != b.isAllDay) {
+            android.util.Log.d("NearDuplicate", "Different types: '${a.title}' (allDay=${a.isAllDay}) vs '${b.title}' (allDay=${b.isAllDay})")
+            return false
+        }
 
         // Time proximity (15 minutes = 900,000 ms)
         val timeDiff = kotlin.math.abs(a.startTime - b.startTime)
-        if (timeDiff > 900_000) return false
+        if (timeDiff > 900_000) {
+            android.util.Log.d("NearDuplicate", "Too far apart: '${a.title}' vs '${b.title}' (${timeDiff / 60000} minutes)")
+            return false
+        }
 
         // Title similarity: At least 5 words in common (case-insensitive)
-        val wordsA = a.title.lowercase().split("\\s+".toRegex()).filter { it.isNotBlank() }.toSet()
-        val wordsB = b.title.lowercase().split("\\s+".toRegex()).filter { it.isNotBlank() }.toSet()
+        // Split on whitespace, slashes, hyphens, and other punctuation
+        val wordsA = a.title.lowercase().split("[\\s/\\-_,;:]+".toRegex()).filter { it.isNotBlank() }.toSet()
+        val wordsB = b.title.lowercase().split("[\\s/\\-_,;:]+".toRegex()).filter { it.isNotBlank() }.toSet()
         val commonWords = wordsA.intersect(wordsB).size
+
+        android.util.Log.d("NearDuplicate", "Comparing '${a.title}' vs '${b.title}': ${commonWords} common words (need 5)")
+        android.util.Log.d("NearDuplicate", "  Words A: $wordsA")
+        android.util.Log.d("NearDuplicate", "  Words B: $wordsB")
+        android.util.Log.d("NearDuplicate", "  Common: ${wordsA.intersect(wordsB)}")
 
         return commonWords >= 5
     }
