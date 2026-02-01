@@ -45,6 +45,14 @@ adb logcat -c  # Clear logs
 ### No Linting/Typechecking Commands
 This project does not have configured linting or type checking commands. Do not attempt to run them.
 
+## Git Workflow
+
+### Committing Changes
+- **Always commit all relevant changes:** Include both modified files and appropriate untracked files when creating commits
+- **Before committing:** Run `git status` to review all changes, then use `git add -A` or explicitly list all relevant files
+- **If unsure:** Ask the user about including untracked files (e.g., `plans/`, temporary files) before adding them
+- **Test first:** Always run tests with `./gradlew testDebugUnitTest` before committing code changes
+
 ## Code Style Guidelines
 
 ### Language & Platform
@@ -115,6 +123,7 @@ This project does not have configured linting or type checking commands. Do not 
 - Widget updates use `AppWidgetManager.updateAppWidget()` with `RemoteViews`
 - Use `android.util.Log.d()` for debug logging with appropriate tag
 - Bitmap rendering uses `Canvas` with `StaticLayout` for multi-line text
+- **Widget click handling:** Use `BroadcastReceiver` (e.g., `WidgetClickReceiver`) to handle widget clicks, open calendar immediately, then schedule delayed refresh via WorkManager with battery constraints
 
 ### Critical Implementation Details
 - **StaticLayout maxLines:** ALWAYS call `.setEllipsize(TextUtils.TruncateAt.END)` - without this, maxLines is ignored
@@ -126,6 +135,8 @@ This project does not have configured linting or type checking commands. Do not 
 - **Widget creation fix:** Config activities must call `setResult(RESULT_OK, intent)` with appWidgetId for widget to appear
 - **Background transparency:** Daily/Weekly widgets use 70% transparent dark background (0x4D000000) for better text contrast
 - **Text shadows:** Increased shadow radius to 6f and offset to (3f, 3f) for improved readability
+- **Near-duplicate filtering:** Events with same type (both all-day or both timed), start times within 15 minutes, and 5+ common words in titles are grouped together. One representative is selected using time-based rotation (changes every minute) to ensure all duplicates get shown over time. Word matching is case-insensitive and splits on whitespace and punctuation (/,-_,;:)
+- **Widget click refresh:** Widget clicks go through `WidgetClickReceiver` which immediately opens calendar, then schedules a 90-second delayed refresh via WorkManager with battery-friendly constraints. This captures user edits without overwhelming the system.
 
 ### Dynamic Text Sizing Implementation
 The weekly widget uses per-column dynamic font sizing to fill available space:
