@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.dcar.caldatewidget.ConfigActivityTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-02-01T22:28:29.584Z" hostname="bosgame" time="2.168">
+  <properties/>
+  <testcase name="selecting custom format shows edit text" classname="ai.dcar.caldatewidget.ConfigActivityTest" time="2.025"/>
+  <testcase name="activity initializes correctly with widget id" classname="ai.dcar.caldatewidget.ConfigActivityTest" time="0.143"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
