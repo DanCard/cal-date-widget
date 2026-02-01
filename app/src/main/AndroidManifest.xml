@@ -48,6 +48,14 @@
                 android:resource="@xml/daily_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".WidgetClickReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ai.dcar.caldatewidget.WIDGET_CLICK" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".ConfigActivity"
             android:exported="true">

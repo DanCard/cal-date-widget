@@ -128,4 +128,76 @@ object WeeklyDisplayLogic {
             }
         }
     }
+
+    /**
+     * Filters out near-duplicate events, keeping only one representative from each duplicate group.
+     * Near-duplicates are events that:
+     * - Have the same event type (both all-day OR both timed)
+     * - Start within 15 minutes of each other
+     * - Share at least 5 common words in their titles (case-insensitive)
+     *
+     * Selection rotates based on refresh time to ensure all duplicates get shown over time.
+     *
+     * @param events List of calendar events to filter
+     * @param currentTimeMillis Current time in milliseconds, used for rotation seed
+     * @return Filtered list with one event per duplicate group
+     */
+    fun filterNearDuplicates(events: List<CalendarEvent>, currentTimeMillis: Long): List<CalendarEvent> {
+        if (events.size <= 1) return events
+
+        val processedIds = mutableSetOf<Long>()
+        val clusters = mutableListOf<List<CalendarEvent>>()
+
+        // Group events into duplicate clusters
+        for (event in events) {
+            if (event.id in processedIds) continue
+
+            val cluster = mutableListOf(event)
+            processedIds.add(event.id)
+
+            // Find all duplicates of this event
+            for (other in events) {
+                if (other.id in processedIds) continue
+                if (areNearDuplicates(event, other)) {
+                    cluster.add(other)
+                    processedIds.add(other.id)
+                }
+            }
+
+            clusters.add(cluster)
+        }
+
+        // Select one event from each cluster
+        return clusters.map { cluster ->
+            if (cluster.size == 1) {
+                cluster[0]
+            } else {
+                // Time-based rotation: changes roughly every minute
+                val seed = (currentTimeMillis / 60000 + cluster.sumOf { it.id }) % cluster.size
+                cluster[seed.toInt()]
+            }
+        }
+    }
+
+    /**
+     * Determines if two events are near-duplicates based on:
+     * - Same event type (both all-day OR both timed)
+     * - Start times within 15 minutes
+     * - At least 5 common words in titles (case-insensitive)
+     */
+    private fun areNearDuplicates(a: CalendarEvent, b: CalendarEvent): Boolean {
+        // Same type check
+        if (a.isAllDay != b.isAllDay) return false
+
+        // Time proximity (15 minutes = 900,000 ms)
+        val timeDiff = kotlin.math.abs(a.startTime - b.startTime)
+        if (timeDiff > 900_000) return false
+
+        // Title similarity: At least 5 words in common (case-insensitive)
+        val wordsA = a.title.lowercase().split("\\s+".toRegex()).filter { it.isNotBlank() }.toSet()
+        val wordsB = b.title.lowercase().split("\\s+".toRegex()).filter { it.isNotBlank() }.toSet()
+        val commonWords = wordsA.intersect(wordsB).size
+
+        return commonWords >= 5
+    }
 }

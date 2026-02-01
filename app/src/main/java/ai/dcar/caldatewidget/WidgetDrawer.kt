@@ -60,11 +60,14 @@ object WidgetDrawer {
                 val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
                 events = repo.getEvents(startMillis, 7, selectedIds.ifEmpty { null })
             }
-        
+
             if (!settings.showDeclinedEvents) {
                 events = events.filter { !it.isDeclined }
             }
-        
+
+            // Filter near-duplicate events
+            events = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
             val diff = (todayMillis - startMillis) / (24 * 60 * 60 * 1000)
             val todayIndex = diff.toInt()
         
@@ -270,6 +273,9 @@ object WidgetDrawer {
             if (!settings.showDeclinedEvents) {
                 events = events.filter { !it.isDeclined }
             }
+
+            // Filter near-duplicate events
+            events = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
 
             val diff = (todayMillis - startMillis) / (24 * 60 * 60 * 1000)
             val todayIndex = diff.toInt()

@@ -356,4 +356,245 @@ class WeeklyDisplayLogicTest {
         // 2 future events should share this: 588.2 / (2 * 86.4) = ~3.4 -> 3 lines each
         assertEquals(3, futureMaxLines)
     }
+
+    // Tests for filterNearDuplicates
+
+    private fun createEvent(
+        id: Long,
+        title: String,
+        startTime: Long,
+        isAllDay: Boolean = false
+    ) = CalendarEvent(id, title, startTime, startTime + 3600000, 0, isAllDay, false, 0)
+
+    @Test
+    fun `filterNearDuplicates returns original list when no duplicates`() {
+        // Given: Three distinct events at different times
+        val events = listOf(
+            createEvent(1, "Morning Meeting", 1000000000L),
+            createEvent(2, "Lunch Break", 2000000000L),
+            createEvent(3, "Afternoon Review", 3000000000L)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: All events should be kept
+        assertEquals(3, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates returns empty list for empty input`() {
+        // Given: Empty list
+        val events = emptyList<CalendarEvent>()
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Empty list returned
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates handles single event`() {
+        // Given: Single event
+        val events = listOf(
+            createEvent(1, "Solo Meeting", 1000000000L)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Single event returned
+        assertEquals(1, result.size)
+        assertEquals("Solo Meeting", result[0].title)
+    }
+
+    @Test
+    fun `filterNearDuplicates hides event with same start time and title`() {
+        // Given: Two events at same time with identical titles
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "Team Weekly Standup Meeting Discussion", baseTime),
+            createEvent(2, "Team Weekly Standup Meeting Discussion", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Only one event should remain
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates matches events within 15 minute window`() {
+        // Given: Two events 10 minutes apart with similar titles
+        val baseTime = 1000000000L
+        val tenMinutes = 10 * 60 * 1000L
+        val events = listOf(
+            createEvent(1, "DTU Anti-Drone C-UAS Group Weekly", baseTime),
+            createEvent(2, "DTU Anti-Drone C-UAS Group Weekly", baseTime + tenMinutes)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should be detected as duplicates, only one kept
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates uses case-insensitive word matching`() {
+        // Given: Two events with different case
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "DTU ANTI-DRONE C-UAS GROUP WEEKLY", baseTime),
+            createEvent(2, "dtu anti-drone c-uas group weekly", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should match regardless of case
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates matches events with at least 5 common words`() {
+        // Given: Two events with exactly 5 common words
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "Team Weekly Planning Meeting Session", baseTime),
+            createEvent(2, "Team Weekly Planning Meeting Session Extra", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should be detected as duplicates (5 common words)
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates handles word reordering`() {
+        // Given: Two events with words in different order
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "DTU Anti-Drone C-UAS Group Weekly", baseTime),
+            createEvent(2, "DTU Anti-Drone Weekly C-UAS Group", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should match regardless of word order (6 common words)
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates keeps events beyond 15 minute window`() {
+        // Given: Two events 20 minutes apart
+        val baseTime = 1000000000L
+        val twentyMinutes = 20 * 60 * 1000L
+        val events = listOf(
+            createEvent(1, "DTU Anti-Drone C-UAS Group Weekly", baseTime),
+            createEvent(2, "DTU Anti-Drone C-UAS Group Weekly", baseTime + twentyMinutes)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should keep both (outside 15 minute window)
+        assertEquals(2, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates keeps all-day separate from timed events`() {
+        // Given: One all-day event and one timed event with same title
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "DTU Anti-Drone C-UAS Group Weekly", baseTime, isAllDay = true),
+            createEvent(2, "DTU Anti-Drone C-UAS Group Weekly", baseTime, isAllDay = false)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should keep both (different event types)
+        assertEquals(2, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates keeps events with fewer than 5 common words`() {
+        // Given: Two events with only 3 common words
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "Team Meeting Room A", baseTime),
+            createEvent(2, "Team Meeting Room B", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should keep both (only 3 common words: Team, Meeting, Room)
+        assertEquals(2, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates handles three-way duplicates`() {
+        // Given: Three duplicate events
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "DTU Anti-Drone C-UAS Group Weekly", baseTime),
+            createEvent(2, "DTU Anti-Drone C-UAS Group Weekly", baseTime),
+            createEvent(3, "DTU Anti-Drone C-UAS Group Weekly", baseTime)
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should keep only one
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `filterNearDuplicates rotates selection based on time`() {
+        // Given: Two duplicate events with different IDs
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "DTU Anti-Drone C-UAS Group Weekly", baseTime),
+            createEvent(2, "DTU Anti-Drone C-UAS Group Weekly", baseTime)
+        )
+
+        // When: Filter at two different times
+        val time1 = 1000000L
+        val time2 = 1000000L + (60000L * 2) // 2 minutes later
+
+        val result1 = WeeklyDisplayLogic.filterNearDuplicates(events, time1)
+        val result2 = WeeklyDisplayLogic.filterNearDuplicates(events, time2)
+
+        // Then: Both should return one event, but may be different
+        assertEquals(1, result1.size)
+        assertEquals(1, result2.size)
+        // Verify it's deterministic for same time
+        val result1Again = WeeklyDisplayLogic.filterNearDuplicates(events, time1)
+        assertEquals(result1[0].id, result1Again[0].id)
+    }
+
+    @Test
+    fun `filterNearDuplicates handles real-world DTU Anti-Drone case`() {
+        // Given: Real-world scenario with two similar events at 11:00 AM
+        val baseTime = 1000000000L
+        val events = listOf(
+            createEvent(1, "DTU Anti-Drone C-UAS Group Weekly", baseTime),
+            createEvent(2, "DTU Anti-Drone Weekly C-UAS Group", baseTime),
+            createEvent(3, "Completely Different Meeting", baseTime + 3600000L) // Different event 1 hour later
+        )
+
+        // When
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        // Then: Should have 2 events (one DTU Anti-Drone, one different meeting)
+        assertEquals(2, result.size)
+        assertTrue(result.any { it.title.contains("Different") })
+    }
 }

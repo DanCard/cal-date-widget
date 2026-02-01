@@ -55,14 +55,14 @@ class WidgetUpdateWorker(
         )
         views.setOnClickPendingIntent(R.id.weekly_config_btn, configPendingIntent)
 
-        // Calendar Intent
-        val calendarUri = CalendarContract.CONTENT_URI.buildUpon().appendPath("time").build()
-        val calendarIntent = Intent(Intent.ACTION_VIEW).apply {
-            data = calendarUri
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        // Widget Click Intent - opens calendar and schedules delayed refresh
+        val clickIntent = Intent(applicationContext, WidgetClickReceiver::class.java).apply {
+            action = WidgetClickReceiver.ACTION_WIDGET_CLICK
+            putExtra(WidgetClickReceiver.EXTRA_WIDGET_ID, appWidgetId)
+            putExtra(WidgetClickReceiver.EXTRA_WIDGET_TYPE, "WEEKLY")
         }
-        val pendingIntent = PendingIntent.getActivity(
-            applicationContext, 0, calendarIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext, appWidgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         views.setOnClickPendingIntent(R.id.weekly_canvas, pendingIntent)
 
@@ -86,14 +86,14 @@ class WidgetUpdateWorker(
         )
         views.setOnClickPendingIntent(R.id.daily_config_btn, configPendingIntent)
 
-        // Calendar Intent
-        val calendarUri = CalendarContract.CONTENT_URI.buildUpon().appendPath("time").build()
-        val calendarIntent = Intent(Intent.ACTION_VIEW).apply {
-            data = calendarUri
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        // Widget Click Intent - opens calendar and schedules delayed refresh
+        val clickIntent = Intent(applicationContext, WidgetClickReceiver::class.java).apply {
+            action = WidgetClickReceiver.ACTION_WIDGET_CLICK
+            putExtra(WidgetClickReceiver.EXTRA_WIDGET_ID, appWidgetId)
+            putExtra(WidgetClickReceiver.EXTRA_WIDGET_TYPE, "DAILY")
         }
-        val pendingIntent = PendingIntent.getActivity(
-            applicationContext, 0, calendarIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext, appWidgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         views.setOnClickPendingIntent(R.id.daily_canvas, pendingIntent)
 
