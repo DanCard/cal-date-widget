@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
+import android.util.Log
 import androidx.work.Constraints
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
@@ -43,6 +45,8 @@ class WidgetClickReceiver : BroadcastReceiver() {
     private fun scheduleDelayedRefresh(context: Context, appWidgetId: Int, widgetType: String) {
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
 
+        Log.d(TAG, "scheduleDelayedRefresh $widgetType widget=$appWidgetId, ts=${System.currentTimeMillis()}")
+
         // Battery-friendly constraints: only refresh when device is not low on battery
         val constraints = Constraints.Builder()
             .setRequiresBatteryNotLow(true)  // Don't run if battery is low
@@ -61,10 +65,17 @@ class WidgetClickReceiver : BroadcastReceiver() {
             .setConstraints(constraints)
             .build()
 
-        WorkManager.getInstance(context).enqueue(workRequest)
+        val workName = "${WORK_NAME_PREFIX}${widgetType.lowercase()}_$appWidgetId"
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            workName,
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
     }
 
     companion object {
+        private const val TAG = "WidgetLoop"
+        private const val WORK_NAME_PREFIX = "widget_click_refresh_"
         const val ACTION_WIDGET_CLICK = "ai.dcar.caldatewidget.WIDGET_CLICK"
         const val EXTRA_WIDGET_ID = "widget_id"
         const val EXTRA_WIDGET_TYPE = "widget_type"

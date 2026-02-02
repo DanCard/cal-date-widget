@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.dcar.caldatewidget.WeeklyWidgetProviderTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-02-01T22:28:34.848Z" hostname="bosgame" time="0.001">
+<testsuite name="ai.dcar.caldatewidget.WeeklyWidgetProviderTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-02-02T23:05:37.152Z" hostname="bosgame" time="0.001">
   <properties/>
   <testcase name="future or current events remain uncapped" classname="ai.dcar.caldatewidget.WeeklyWidgetProviderTest" time="0.001"/>
   <testcase name="non-today past events are uncapped" classname="ai.dcar.caldatewidget.WeeklyWidgetProviderTest" time="0.0"/>

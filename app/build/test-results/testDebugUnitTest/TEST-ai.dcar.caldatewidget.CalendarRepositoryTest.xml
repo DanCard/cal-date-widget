@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.dcar.caldatewidget.CalendarRepositoryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-02-01T22:28:27.183Z" hostname="bosgame" time="2.395">
+<testsuite name="ai.dcar.caldatewidget.CalendarRepositoryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-02-02T23:05:25.982Z" hostname="bosgame" time="3.696">
   <properties/>
-  <testcase name="getEvents returns empty when no visible calendars" classname="ai.dcar.caldatewidget.CalendarRepositoryTest" time="2.279"/>
-  <testcase name="getEvents returns events correctly" classname="ai.dcar.caldatewidget.CalendarRepositoryTest" time="0.066"/>
-  <testcase name="getEvents handles duplicates" classname="ai.dcar.caldatewidget.CalendarRepositoryTest" time="0.029"/>
-  <testcase name="getEvents handles SecurityException gracefully" classname="ai.dcar.caldatewidget.CalendarRepositoryTest" time="0.02"/>
+  <testcase name="getEvents returns empty when no visible calendars" classname="ai.dcar.caldatewidget.CalendarRepositoryTest" time="3.524"/>
+  <testcase name="getEvents returns events correctly" classname="ai.dcar.caldatewidget.CalendarRepositoryTest" time="0.097"/>
+  <testcase name="getEvents handles duplicates" classname="ai.dcar.caldatewidget.CalendarRepositoryTest" time="0.046"/>
+  <testcase name="getEvents handles SecurityException gracefully" classname="ai.dcar.caldatewidget.CalendarRepositoryTest" time="0.028"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (/home/dcar/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.14.6/46e2545d7a97b6ccb195621650c5957279eb4812/byte-buddy-agent-1.14.6.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
