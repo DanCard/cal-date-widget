@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -17,18 +16,11 @@ class WidgetUpdateWorker(
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
-    companion object {
-        private const val TAG = "WidgetLoop"
-    }
-
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val appWidgetId = inputData.getInt("appWidgetId", AppWidgetManager.INVALID_APPWIDGET_ID)
         val type = inputData.getString("type")
 
-        Log.d(TAG, "doWork started $type widget=$appWidgetId, ts=${System.currentTimeMillis()}")
-
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID || type == null) {
-            Log.w(TAG, "doWork invalid input: appWidgetId=$appWidgetId, type=$type")
             return@withContext Result.failure()
         }
 
@@ -39,10 +31,8 @@ class WidgetUpdateWorker(
                 "WEEKLY" -> updateWeeklyWidget(appWidgetId, appWidgetManager)
                 "DAILY" -> updateDailyWidget(appWidgetId, appWidgetManager)
             }
-            Log.d(TAG, "doWork completed $type widget=$appWidgetId, ts=${System.currentTimeMillis()}")
             Result.success()
         } catch (e: Exception) {
-            Log.e(TAG, "doWork failed $type widget=$appWidgetId", e)
             e.printStackTrace()
             Result.failure()
         }

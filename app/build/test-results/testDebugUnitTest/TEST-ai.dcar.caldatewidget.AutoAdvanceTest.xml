@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.dcar.caldatewidget.AutoAdvanceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-02-02T23:05:25.823Z" hostname="bosgame" time="0.025">
+<testsuite name="ai.dcar.caldatewidget.AutoAdvanceTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-02-01T22:28:27.108Z" hostname="bosgame" time="0.012">
   <properties/>
-  <testcase name="shouldAutoAdvance respects declined events if showDeclined is true" classname="ai.dcar.caldatewidget.AutoAdvanceTest" time="0.022"/>
-  <testcase name="shouldAutoAdvance returns false when there is a future event" classname="ai.dcar.caldatewidget.AutoAdvanceTest" time="0.001"/>
-  <testcase name="shouldAutoAdvance returns false when there are no events" classname="ai.dcar.caldatewidget.AutoAdvanceTest" time="0.0"/>
+  <testcase name="shouldAutoAdvance respects declined events if showDeclined is true" classname="ai.dcar.caldatewidget.AutoAdvanceTest" time="0.01"/>
+  <testcase name="shouldAutoAdvance returns false when there is a future event" classname="ai.dcar.caldatewidget.AutoAdvanceTest" time="0.0"/>
+  <testcase name="shouldAutoAdvance returns false when there are no events" classname="ai.dcar.caldatewidget.AutoAdvanceTest" time="0.001"/>
   <testcase name="shouldAutoAdvance returns true when all events are in the past" classname="ai.dcar.caldatewidget.AutoAdvanceTest" time="0.0"/>
   <testcase name="shouldAutoAdvance ignores declined events if showDeclined is false" classname="ai.dcar.caldatewidget.AutoAdvanceTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
