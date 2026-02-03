@@ -1,17 +1,15 @@
- *.iml
- .gradle
- /local.properties
- /.idea/
- .DS_Store
- /build
- /app/build
- /captures
- .externalNativeBuild
- .cxx
- local.properties
+*.iml
+.gradle/
+app/build/
+.DS_Store
+.externalNativeBuild
+.cxx
+local.properties
+build
+.vscode
 
 # Audio files
-  *.m4a
+*.m4a
 
 # AI assistant local settings
 .claude/settings.local.json
@@ -22,4 +20,3 @@
 
 # Emulator configuration
 emulator_*.txt
-
