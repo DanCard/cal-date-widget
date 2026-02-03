@@ -11,5 +11,15 @@
  local.properties
 
 # Audio files
-*.m4a
+  *.m4a
+
+# AI assistant local settings
+.claude/settings.local.json
+.gemini/settings.json
+
+# Local log files
+*.log
+
+# Emulator configuration
+emulator_*.txt
 
