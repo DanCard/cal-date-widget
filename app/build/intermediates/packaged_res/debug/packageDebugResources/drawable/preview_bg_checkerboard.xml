@@ -1,4 +1,0 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFCCCCCC"/>
-    <!-- Simple placeholder for a checkerboard pattern which is hard in XML shape, just gray for now -->
-</shape>

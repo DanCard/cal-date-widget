@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.dcar.caldatewidget.WeeklyWidgetResizingTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-01-18T23:12:03.832Z" hostname="bosgame" time="0.001">
-  <properties/>
-  <testcase name="calculate bitmap dimensions respects aspect ratio" classname="ai.dcar.caldatewidget.WeeklyWidgetResizingTest" time="0.001"/>
-  <testcase name="calculate bitmap dimensions handles narrow height" classname="ai.dcar.caldatewidget.WeeklyWidgetResizingTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

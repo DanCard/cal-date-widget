@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.dcar.caldatewidget.WeeklyWidgetProviderTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-01-18T23:12:03.831Z" hostname="bosgame" time="0.001">
-  <properties/>
-  <testcase name="future or current events remain uncapped" classname="ai.dcar.caldatewidget.WeeklyWidgetProviderTest" time="0.001"/>
-  <testcase name="non-today past events are uncapped" classname="ai.dcar.caldatewidget.WeeklyWidgetProviderTest" time="0.0"/>
-  <testcase name="past events on current day are capped to one line" classname="ai.dcar.caldatewidget.WeeklyWidgetProviderTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
