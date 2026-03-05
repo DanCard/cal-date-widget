@@ -10,6 +10,7 @@ import android.provider.CalendarContract
 import android.content.pm.PackageManager
 import android.util.Log
 import android.util.TypedValue
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -18,6 +19,14 @@ import java.util.Locale
 object WidgetDrawer {
 
     data class WidgetSize(val widthPx: Int, val heightPx: Int)
+    internal data class TomorrowIndicatorHeaderLayout(
+        val dayName: String,
+        val indicator: String,
+        val rainbowTextSize: Float,
+        val spacing: Float
+    )
+
+    internal const val TOMORROW_INDICATOR = "🌈"
 
     fun drawWeeklyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
         try {
@@ -244,6 +253,7 @@ object WidgetDrawer {
             val numDays = calculateNumberOfDays(context, size.widthPx, size.heightPx)
 
             var events = emptyList<CalendarEvent>()
+            var didAutoAdvance = false
             val hasPermission = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
             Log.d("WidgetDrawer", "Permission Check (Daily): $hasPermission")
 
@@ -260,6 +270,7 @@ object WidgetDrawer {
 
                 if (DailyDisplayLogic.shouldAutoAdvance(todayEvents, now, settings.showDeclinedEvents)) {
                      calendar.add(Calendar.DAY_OF_YEAR, 1)
+                     didAutoAdvance = true
                      Log.d("WidgetDrawer", "All events for today are in the past. Auto-advancing to tomorrow.")
                 }
 
@@ -330,7 +341,26 @@ object WidgetDrawer {
 
                 val fm = paints.dayHeaderPaint.fontMetrics
                 val headerBaseline = (contentTop / 2f) - (fm.ascent + fm.descent) / 2f
-                canvas.drawText(dayName, currentX + colWidth / 2, headerBaseline, paints.dayHeaderPaint)
+                val centerX = currentX + colWidth / 2f
+                val shouldDrawTomorrowIndicator = shouldDrawTomorrowIndicator(didAutoAdvance, i, validStart)
+                if (shouldDrawTomorrowIndicator) {
+                    val indicatorDrawn = drawHeaderWithTomorrowIndicator(
+                        canvas = canvas,
+                        dayName = dayName,
+                        centerX = centerX,
+                        centerY = contentTop / 2f,
+                        colWidth = colWidth,
+                        basePaint = paints.dayHeaderPaint
+                    )
+                    if (indicatorDrawn) {
+                        Log.d("WidgetDrawer", "Drawing tomorrow indicator for daily widget $appWidgetId")
+                    } else {
+                        canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
+                        Log.d("WidgetDrawer", "Skipped tomorrow indicator due to narrow column for widget $appWidgetId")
+                    }
+                } else {
+                    canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
+                }
 
                 val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
                 val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
@@ -485,6 +515,115 @@ object WidgetDrawer {
         val cellWidthDp = 92f // Fixed cell width
         val numDays = ((widthDp / cellWidthDp) + 0.5f).toInt().coerceIn(1, 7)
         return numDays
+    }
+
+    @VisibleForTesting
+    internal fun shouldDrawTomorrowIndicator(
+        didAutoAdvance: Boolean,
+        currentColumn: Int,
+        firstVisibleColumn: Int
+    ): Boolean {
+        return didAutoAdvance && currentColumn == firstVisibleColumn
+    }
+
+    private fun drawHeaderWithTomorrowIndicator(
+        canvas: Canvas,
+        dayName: String,
+        centerX: Float,
+        centerY: Float,
+        colWidth: Float,
+        basePaint: Paint
+    ): Boolean {
+        val horizontalPadding = 10f
+        val availableWidth = (colWidth - horizontalPadding).coerceAtLeast(1f)
+        val baseTextWidth = basePaint.measureText(dayName)
+        if (baseTextWidth >= availableWidth) {
+            return false
+        }
+
+        val layout = buildTomorrowIndicatorHeaderLayout(
+            dayName = dayName,
+            dayNameWidth = baseTextWidth,
+            baseTextSize = basePaint.textSize,
+            availableWidth = availableWidth
+        ) { candidateTextSize ->
+            val rainbowPaint = Paint(basePaint).apply { textSize = candidateTextSize }
+            rainbowPaint.measureText(TOMORROW_INDICATOR)
+        } ?: return false
+
+        val rainbowPaint = Paint(basePaint).apply { textSize = layout.rainbowTextSize }
+        val rainbowWidth = rainbowPaint.measureText(layout.indicator)
+        val combinedWidth = baseTextWidth + layout.spacing + rainbowWidth
+        val leftX = centerX - (combinedWidth / 2f)
+        val baseCenterX = leftX + (baseTextWidth / 2f)
+        val rainbowCenterX = leftX + baseTextWidth + layout.spacing + (rainbowWidth / 2f)
+
+        val baseFm = basePaint.fontMetrics
+        val baseBaseline = centerY - (baseFm.ascent + baseFm.descent) / 2f
+        val rainbowFm = rainbowPaint.fontMetrics
+        val rainbowBaseline = centerY - (rainbowFm.ascent + rainbowFm.descent) / 2f
+
+        canvas.drawText(dayName, baseCenterX, baseBaseline, basePaint)
+        canvas.drawText(layout.indicator, rainbowCenterX, rainbowBaseline, rainbowPaint)
+        return true
+    }
+
+    @VisibleForTesting
+    internal fun drawHeaderWithTomorrowIndicatorForTest(
+        canvas: Canvas,
+        dayName: String,
+        centerX: Float,
+        centerY: Float,
+        colWidth: Float,
+        basePaint: Paint
+    ): Boolean {
+        return drawHeaderWithTomorrowIndicator(canvas, dayName, centerX, centerY, colWidth, basePaint)
+    }
+
+    internal fun calculateRainbowIndicatorTextSize(
+        dayNameWidth: Float,
+        baseTextSize: Float,
+        availableWidth: Float,
+        rainbowWidthAtTextSize: (Float) -> Float
+    ): Float? {
+        val spacing = (baseTextSize * 0.12f).coerceAtLeast(2f)
+        var scale = 0.62f
+
+        while (scale >= 0.35f) {
+            val candidateTextSize = (baseTextSize * scale).coerceIn(18f, 44f)
+            val rainbowWidth = rainbowWidthAtTextSize(candidateTextSize)
+            val combinedWidth = dayNameWidth + spacing + rainbowWidth
+            if (combinedWidth <= availableWidth) {
+                return candidateTextSize
+            }
+            scale -= 0.05f
+        }
+
+        return null
+    }
+
+    @VisibleForTesting
+    internal fun buildTomorrowIndicatorHeaderLayout(
+        dayName: String,
+        dayNameWidth: Float,
+        baseTextSize: Float,
+        availableWidth: Float,
+        rainbowWidthAtTextSize: (Float) -> Float
+    ): TomorrowIndicatorHeaderLayout? {
+        val spacing = (baseTextSize * 0.12f).coerceAtLeast(2f)
+        val rainbowTextSize = calculateRainbowIndicatorTextSize(
+            dayNameWidth = dayNameWidth,
+            baseTextSize = baseTextSize,
+            availableWidth = availableWidth,
+            rainbowWidthAtTextSize = rainbowWidthAtTextSize
+        ) ?: return null
+
+        return TomorrowIndicatorHeaderLayout(
+            dayName = dayName,
+            indicator = TOMORROW_INDICATOR,
+            rainbowTextSize = rainbowTextSize,
+            spacing = spacing
+        )
     }
 
     private fun calculateStartDate(calendar: Calendar): Long {
