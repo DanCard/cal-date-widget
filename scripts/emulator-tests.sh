@@ -144,7 +144,7 @@ else
     fi
 fi
 
-CMD=("${PROJECT_DIR}/gradlew" "${GRADLE_TASK}" "--console=plain")
+CMD=("${PROJECT_DIR}/gradlew" "${GRADLE_TASK}" "--console=plain" "-Pandroid.testInstrumentationRunnerArguments.noUninstall=true")
 if [[ -n "${TEST_CLASS}" ]]; then
     CMD+=("-Pandroid.testInstrumentationRunnerArguments.class=${TEST_CLASS}")
 fi

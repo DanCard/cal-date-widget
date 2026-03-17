@@ -24,7 +24,7 @@ class WidgetDrawerTomorrowIndicatorInstrumentedTest {
     }
 
     @Test
-    fun `buildTomorrowIndicatorHeaderLayout exposes rainbow symbol`() {
+    fun buildTomorrowIndicatorHeaderLayoutExposesRainbowSymbol() {
         val layout = WidgetDrawer.buildTomorrowIndicatorHeaderLayout(
             dayName = "Thu 5",
             dayNameWidth = 120f,
@@ -38,7 +38,7 @@ class WidgetDrawerTomorrowIndicatorInstrumentedTest {
     }
 
     @Test
-    fun `drawHeaderWithTomorrowIndicatorForTest returns true for wide column and false for narrow column`() {
+    fun drawHeaderWithTomorrowIndicatorForTestReturnsTrueForWideColumnAndFalseForNarrowColumn() {
         val wideBitmap = Bitmap.createBitmap(600, 180, Bitmap.Config.ARGB_8888)
         val wideDrawn = WidgetDrawer.drawHeaderWithTomorrowIndicatorForTest(
             canvas = Canvas(wideBitmap),

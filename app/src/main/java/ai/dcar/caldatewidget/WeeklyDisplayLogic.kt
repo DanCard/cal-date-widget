@@ -184,10 +184,15 @@ object WeeklyDisplayLogic {
             if (cluster.size == 1) {
                 cluster[0]
             } else {
+                // Prioritize events that are NOT "less interesting" (i.e. not pending/invited and not declined)
+                // 3 = CalendarContract.Attendees.ATTENDEE_STATUS_INVITED
+                val interestingPool = cluster.filter { it.selfStatus != 3 && !it.isDeclined }
+                val pool = if (interestingPool.isNotEmpty()) interestingPool else cluster
+
                 // Time-based rotation: changes roughly every minute
-                val seed = (currentTimeMillis / 60000 + cluster.sumOf { it.id }) % cluster.size
-                val selected = cluster[seed.toInt()]
-                android.util.Log.d("NearDuplicate", "Selected '${selected.title}' from cluster of ${cluster.size}")
+                val seed = (currentTimeMillis / 60000 + pool.sumOf { it.id }) % pool.size
+                val selected = pool[seed.toInt()]
+                android.util.Log.d("NearDuplicate", "Selected '${selected.title}' from pool of ${pool.size} (cluster of ${cluster.size})")
                 selected
             }
         }

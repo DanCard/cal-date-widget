@@ -651,4 +651,27 @@ class WeeklyDisplayLogicTest {
         // Then: Should NOT be duplicates
         assertEquals(2, result.size)
     }
+
+    @Test
+    fun `filterNearDuplicates prioritizes interesting events over pending ones`() {
+        // Given: Four duplicate events where three are pending (selfStatus=3) and one is accepted (selfStatus=1)
+        val baseTime = 1000000000L
+        val pending1 = CalendarEvent(1, "Daily Sync", baseTime, baseTime + 3600000, 0, false, false, 3)
+        val pending2 = CalendarEvent(2, "Daily Sync", baseTime, baseTime + 3600000, 0, false, false, 3)
+        val accepted = CalendarEvent(3, "Daily Sync", baseTime, baseTime + 3600000, 0, false, false, 1)
+        val pending3 = CalendarEvent(4, "Daily Sync", baseTime, baseTime + 3600000, 0, false, false, 3)
+        
+        val events = listOf(pending1, pending2, accepted, pending3)
+
+        // When
+        // Test multiple times with different seeds to ensure it always picks the accepted one
+        for (i in 0..10) {
+            val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis() + (i * 60000))
+            
+            // Then: It should always pick the accepted one
+            assertEquals(1, result.size)
+            assertEquals(3L, result[0].id)
+            assertEquals(1, result[0].selfStatus)
+        }
+    }
 }
