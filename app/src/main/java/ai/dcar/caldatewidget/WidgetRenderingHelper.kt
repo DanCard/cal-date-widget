@@ -100,6 +100,25 @@ object WidgetRenderingHelper {
                 )
             }
 
+            if (event.isDeclined) {
+                spannable.setSpan(
+                    android.text.style.StrikethroughSpan(),
+                    0,
+                    spannable.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+
+            return spannable
+        }
+        if (event.isDeclined) {
+            val spannable = SpannableString(safeTitle)
+            spannable.setSpan(
+                android.text.style.StrikethroughSpan(),
+                0,
+                spannable.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
             return spannable
         }
         return safeTitle

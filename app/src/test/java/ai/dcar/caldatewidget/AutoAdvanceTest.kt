@@ -23,7 +23,7 @@ class AutoAdvanceTest {
     @Test
     fun `shouldAutoAdvance returns false when there are no events`() {
         val todayEvents = emptyList<CalendarEvent>()
-        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, 1000L, true)
+        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, 1000L)
         assertFalse("Should not advance if no events", result)
     }
 
@@ -34,7 +34,7 @@ class AutoAdvanceTest {
             createEvent("Past Event", now - 100),
             createEvent("Future Event", now + 100)
         )
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, true)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
         assertFalse("Should not advance if future events exist", result)
     }
 
@@ -45,35 +45,32 @@ class AutoAdvanceTest {
             createEvent("Past Event 1", now - 100),
             createEvent("Past Event 2", now - 50)
         )
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, true)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
         assertTrue("Should advance if all events are past", result)
     }
 
     @Test
-    fun `shouldAutoAdvance ignores declined events if showDeclined is false`() {
+    fun `shouldAutoAdvance always ignores declined events`() {
         val now = 1000L
         val events = listOf(
             createEvent("Past Event", now - 100),
             createEvent("Future Declined Event", now + 100, isDeclined = true)
         )
         
-        // showDeclined = false, so the future declined event is ignored
-        // The only valid event is "Past Event", which is in the past -> Advance
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, false)
-        assertTrue("Should advance if only future event is declined and showDeclined=false", result)
+        // Declined events are always ignored, so the only relevant event is "Past Event"
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
+        assertTrue("Should always advance if only future event is declined", result)
     }
 
     @Test
-    fun `shouldAutoAdvance respects declined events if showDeclined is true`() {
+    fun `shouldAutoAdvance returns false when only declined events exist`() {
         val now = 1000L
         val events = listOf(
-            createEvent("Past Event", now - 100),
-            createEvent("Future Declined Event", now + 100, isDeclined = true)
+            createEvent("Past Declined Event", now - 100, isDeclined = true)
         )
         
-        // showDeclined = true, so the future declined event counts
-        // Not all events are past -> Don't advance
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, true)
-        assertFalse("Should not advance if future declined event exists and showDeclined=true", result)
+        // No non-declined events -> don't advance (stay on today to show nothing)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
+        assertFalse("Should not advance if only declined events exist", result)
     }
 }

@@ -22,24 +22,17 @@ object DailyDisplayLogic {
 
     /**
      * Determines if the widget should auto-advance to the next day.
-     * Returns true if there are events today AND all valid events (respecting showDeclined) have ended.
+     * Returns true if there are events today AND all non-declined events have ended.
+     * Declined events are always ignored for this decision.
      */
     fun shouldAutoAdvance(
         todayEvents: List<CalendarEvent>,
-        nowMillis: Long,
-        showDeclined: Boolean
+        nowMillis: Long
     ): Boolean {
-        // Filter valid events based on settings
-        val validEvents = if (!showDeclined) {
-            todayEvents.filter { !it.isDeclined }
-        } else {
-            todayEvents
-        }
+        val validEvents = todayEvents.filter { !it.isDeclined }
 
-        // If no events today, don't auto-advance (stay on today to show "No events")
         if (validEvents.isEmpty()) return false
 
-        // Check if ALL valid events are in the past
         return validEvents.all { it.endTime < nowMillis }
     }
 }

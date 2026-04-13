@@ -24,7 +24,7 @@ class PrefsManager(context: Context) {
         val weekStartDay: Int = 2, // Default Monday
         val startTimeColor: Int = Color.parseColor("#ccccff"),
         val startTimeShadowColor: Int = Color.BLACK,
-        val showDeclinedEvents: Boolean = true,
+        val showDeclinedEvents: Boolean = false,
         val showAmPm: Boolean = false,
         val selectedCalendarIds: Set<Long> = emptySet()
     )
@@ -53,7 +53,7 @@ class PrefsManager(context: Context) {
         val weekStart = prefs.getInt("${KEY_PREFIX}${widgetId}_week_start", 2)
         val startTimeColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_color", Color.parseColor("#ccccff"))
         val startTimeShadowColor = prefs.getInt("${KEY_PREFIX}${widgetId}_start_time_shadow", Color.BLACK)
-        val showDeclined = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_declined", true)
+        val showDeclined = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_declined", false)
         val showAmPm = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_ampm", false)
         val selectedCalendarIds = prefs.getStringSet("${KEY_PREFIX}${widgetId}_calendars", emptySet())
             ?.mapNotNull { it.toLongOrNull() }?.toSet() ?: emptySet()

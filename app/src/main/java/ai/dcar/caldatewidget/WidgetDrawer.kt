@@ -268,7 +268,7 @@ object WidgetDrawer {
                 val todayEvents = repo.getEvents(checkStart, 1, selection)
                 val now = System.currentTimeMillis()
 
-                if (DailyDisplayLogic.shouldAutoAdvance(todayEvents, now, settings.showDeclinedEvents)) {
+                if (DailyDisplayLogic.shouldAutoAdvance(todayEvents, now)) {
                      calendar.add(Calendar.DAY_OF_YEAR, 1)
                      didAutoAdvance = true
                      Log.d("WidgetDrawer", "All events for today are in the past. Auto-advancing to tomorrow.")
