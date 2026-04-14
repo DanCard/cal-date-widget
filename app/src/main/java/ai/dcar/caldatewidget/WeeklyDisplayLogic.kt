@@ -184,9 +184,12 @@ object WeeklyDisplayLogic {
             if (cluster.size == 1) {
                 cluster[0]
             } else {
-                // Prioritize events that are NOT "less interesting" (i.e. not pending/invited and not declined)
+                // Prioritize events that are NOT "less interesting" (i.e. not pending/invited, not tentative, and not declined)
                 // 3 = CalendarContract.Attendees.ATTENDEE_STATUS_INVITED
-                val interestingPool = cluster.filter { it.selfStatus != 3 && !it.isDeclined }
+                // 4 = CalendarContract.Attendees.ATTENDEE_STATUS_TENTATIVE
+                val interestingPool = cluster.filter {
+                    it.selfStatus != 3 && it.selfStatus != 4 && !it.isDeclined
+                }
                 val pool = if (interestingPool.isNotEmpty()) interestingPool else cluster
 
                 // Time-based rotation: changes roughly every minute

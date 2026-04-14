@@ -5,6 +5,7 @@ import android.os.Build
 import android.provider.CalendarContract
 import android.text.TextPaint
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -185,5 +186,18 @@ class WidgetRenderingHelperTest {
         
         // Should have triggered compression
         assertEquals(true, result.second)
+    }
+
+    @Test
+    fun `isLessInteresting returns true for invited, tentative, and declined events`() {
+        val invitedEvent = createEvent("Invited", selfStatus = CalendarContract.Attendees.ATTENDEE_STATUS_INVITED)
+        val tentativeEvent = createEvent("Tentative", selfStatus = CalendarContract.Attendees.ATTENDEE_STATUS_TENTATIVE)
+        val declinedEvent = createEvent("Declined", isDeclined = true)
+        val acceptedEvent = createEvent("Accepted", selfStatus = CalendarContract.Attendees.ATTENDEE_STATUS_ACCEPTED)
+
+        assertTrue(WidgetRenderingHelper.isLessInteresting(invitedEvent))
+        assertTrue(WidgetRenderingHelper.isLessInteresting(tentativeEvent))
+        assertTrue(WidgetRenderingHelper.isLessInteresting(declinedEvent))
+        assertFalse(WidgetRenderingHelper.isLessInteresting(acceptedEvent))
     }
 }

@@ -36,7 +36,9 @@ object WidgetRenderingHelper {
     private val fontScaleCache = LruCache<FontScaleCacheKey, Pair<Float, Boolean>>(100)
 
     fun isLessInteresting(event: CalendarEvent): Boolean {
-        return event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined
+        return event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED ||
+                event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_TENTATIVE ||
+                event.isDeclined
     }
 
     fun createPaints(settings: PrefsManager.WidgetSettings): PaintBundle {

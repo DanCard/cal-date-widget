@@ -674,4 +674,27 @@ class WeeklyDisplayLogicTest {
             assertEquals(1, result[0].selfStatus)
         }
     }
+
+    @Test
+    fun `filterNearDuplicates prioritizes interesting events over tentative ones`() {
+        // Given: Four duplicate events where three are tentative (selfStatus=4) and one is accepted (selfStatus=1)
+        val baseTime = 1000000000L
+        val tentative1 = CalendarEvent(1, "Daily Sync", baseTime, baseTime + 3600000, 0, false, false, 4)
+        val tentative2 = CalendarEvent(2, "Daily Sync", baseTime, baseTime + 3600000, 0, false, false, 4)
+        val accepted = CalendarEvent(3, "Daily Sync", baseTime, baseTime + 3600000, 0, false, false, 1)
+        val tentative3 = CalendarEvent(4, "Daily Sync", baseTime, baseTime + 3600000, 0, false, false, 4)
+
+        val events = listOf(tentative1, tentative2, accepted, tentative3)
+
+        // When
+        // Test multiple times with different seeds to ensure it always picks the accepted one
+        for (i in 0..10) {
+            val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis() + (i * 60000))
+
+            // Then: It should always pick the accepted one
+            assertEquals(1, result.size)
+            assertEquals(3L, result[0].id)
+            assertEquals(1, result[0].selfStatus)
+        }
+    }
 }
