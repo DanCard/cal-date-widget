@@ -1,6 +1,8 @@
 package ai.dcar.caldatewidget
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import java.util.TimeZone
 
 object WeeklyDisplayLogic {
@@ -42,6 +44,58 @@ object WeeklyDisplayLogic {
         val adjustedEnd = localCal.timeInMillis
 
         return adjustedStart < dayEnd && adjustedEnd >= dayStart
+    }
+
+    fun getEffectiveDayMillis(startMillis: Long, columnIndex: Int, todayIndex: Int): Long {
+        val daysOffset = if (columnIndex < todayIndex) columnIndex + 7 else columnIndex
+        return startMillis + daysOffset * 24L * 60 * 60 * 1000
+    }
+
+    /**
+     * Returns a day-header text size scaled to column width, so narrow columns on
+     * small-screen devices don't get overwhelmed by a fixed 80f today-header.
+     * Clamped to sensible bounds so wide columns don't go absurdly large either.
+     */
+    fun getHeaderTextSize(colWidth: Float, isToday: Boolean): Float {
+        return if (isToday) {
+            (colWidth * 0.45f).coerceIn(30f, 80f)
+        } else {
+            (colWidth * 0.5f).coerceIn(20f, 40f)
+        }
+    }
+
+    /**
+     * Chooses the most informative day-header text that fits within colWidth given
+     * the configured textSize on the measureText function. Tries formats in order
+     * (widest/most-informative first) and returns the first one that fits:
+     *   "Mon 29" → "M 29" → "29" → "M"
+     * The date number is kept as long as possible before the weekday is dropped
+     * entirely, because the date is what disambiguates shifted next-week columns
+     * from this-week columns with the same weekday letter.
+     */
+    fun chooseHeaderText(
+        colWidth: Float,
+        dayMillis: Long,
+        targetFraction: Float = 0.9f,
+        measureText: (String) -> Float
+    ): String {
+        val locale = Locale.getDefault()
+        val weekdayShort = SimpleDateFormat("EEE", locale).format(dayMillis)   // "Wed"
+        val date = SimpleDateFormat("d", locale).format(dayMillis)             // "22"
+        // SimpleDateFormat's "EEEEE" is unreliable across JDK versions (often returns full
+        // form rather than narrow), so derive the single-letter form from the short form.
+        val weekdayLetter = weekdayShort.take(1)                               // "W"
+        val candidates = listOf(
+            "$weekdayShort $date",   // "Wed 22"
+            "$weekdayLetter $date",  // "W 22"
+            date,                    // "22"
+            weekdayLetter            // "W"
+        )
+        val budget = colWidth * targetFraction
+        for (text in candidates) {
+            if (measureText(text) <= budget) return text
+        }
+        return candidates.last()
     }
 
     fun getColumnWeights(todayIndex: Int, daysCount: Int): FloatArray {

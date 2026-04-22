@@ -67,7 +67,7 @@ object WidgetDrawer {
                 val repo = CalendarRepository(context)
                 // If no calendars selected, use smart default (personal calendars only)
                 val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
-                events = repo.getEvents(startMillis, 7, selectedIds.ifEmpty { null })
+                events = repo.getEvents(todayMillis, 7, selectedIds.ifEmpty { null })
             }
 
             if (!settings.showDeclinedEvents) {
@@ -88,11 +88,9 @@ object WidgetDrawer {
             for (i in validStart..validEnd) {
                 totalWeight += allWeights[i]
             }
-        
+
             var currentX = 0f
-            val dayFormatEEE = SimpleDateFormat("EEE", Locale.getDefault())
-            val dayFormatEEEd = SimpleDateFormat("EEE d", Locale.getDefault())
-        
+
             val contentTop = 80f
             val bottomPadding = 0f
             val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
@@ -106,21 +104,20 @@ object WidgetDrawer {
                 }
 
                 // Header
-                val dayMillis = startMillis + (i * 24 * 60 * 60 * 1000)
-                val dayName = if (i < todayIndex) {
-                    dayFormatEEE.format(dayMillis)
-                } else {
-                    dayFormatEEEd.format(dayMillis)
-                }
+                val dayMillis = WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndex)
+                val isToday = (i == todayIndex)
 
-                if (i == todayIndex) {
+                if (isToday) {
                     paints.dayHeaderPaint.color = Color.YELLOW
                     paints.dayHeaderPaint.isFakeBoldText = true
-                    paints.dayHeaderPaint.textSize = 80f
                 } else {
                     paints.dayHeaderPaint.color = Color.LTGRAY
                     paints.dayHeaderPaint.isFakeBoldText = false
-                    paints.dayHeaderPaint.textSize = 40f
+                }
+                paints.dayHeaderPaint.textSize = WeeklyDisplayLogic.getHeaderTextSize(colWidth, isToday)
+
+                val dayName = WeeklyDisplayLogic.chooseHeaderText(colWidth, dayMillis) { text ->
+                    paints.dayHeaderPaint.measureText(text)
                 }
 
                 val fm = paints.dayHeaderPaint.fontMetrics

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Cal Date Widget is an Android calendar widget app that displays both a single-date widget and a weekly calendar view. The weekly view renders events from device calendars with intelligent text sizing, adaptive start time display, and equitable event clipping.
+Cal Date Widget is an Android calendar widget app that ships **three** widgets: a single-date widget, a daily (today-only) calendar view, and a weekly calendar view. The weekly view renders events from device calendars with intelligent text sizing, adaptive start time display, equitable event clipping, and automatically shifts past-day columns of the current week to show the same weekday of *next* week so every column displays forward-looking events.
 
 ## Essential Commands
 
@@ -18,22 +18,29 @@ Cal Date Widget is an Android calendar widget app that displays both a single-da
 
 ### Testing on Device
 ```bash
-# Check connected devices
-~/Library/Android/sdk/platform-tools/adb devices
+# Set ADB path based on platform (pick whichever exists on your machine):
+#   macOS: ~/Library/Android/sdk/platform-tools/adb
+#   Linux: ~/.Android/Sdk/platform-tools/adb
+ADB=~/.Android/Sdk/platform-tools/adb
 
-# Force widget update
-~/Library/Android/sdk/platform-tools/adb shell am broadcast -a android.appwidget.action.APPWIDGET_UPDATE -n ai.dcar.caldatewidget/.WeeklyWidgetProvider
+# Check connected devices
+$ADB devices
+
+# Force widget update (may be blocked by platform security on Android 14+
+# when issued from shell; prefer tapping the widget or waiting for the
+# 30-min updatePeriodMillis cycle as a fallback)
+$ADB shell am broadcast -a android.appwidget.action.APPWIDGET_UPDATE -n ai.dcar.caldatewidget/.WeeklyWidgetProvider
 
 # Capture widget screenshot
-~/Library/Android/sdk/platform-tools/adb shell screencap -p /sdcard/screenshot.png
-~/Library/Android/sdk/platform-tools/adb pull /sdcard/screenshot.png /tmp/widget_screenshot.png
+$ADB shell screencap -p /sdcard/screenshot.png
+$ADB pull /sdcard/screenshot.png /tmp/widget_screenshot.png
 
 # Clear logcat and watch widget logs
-~/Library/Android/sdk/platform-tools/adb logcat -c
-~/Library/Android/sdk/platform-tools/adb logcat -s WeeklyWidget:D
+$ADB logcat -c
+$ADB logcat -s WeeklyWidget:D WidgetDrawer:D
 
-# Restart launcher (to refresh widget)
-~/Library/Android/sdk/platform-tools/adb shell "pkill -f com.sec.android.app.launcher && sleep 2"
+# Restart Samsung launcher to force redraw (Fold4 / Samsung-only)
+$ADB shell "pkill -f com.sec.android.app.launcher && sleep 2"
 ```
 
 ## Architecture
@@ -44,8 +51,14 @@ The weekly widget renders a 7-day calendar view as a single bitmap on Canvas:
 
 **Column Sizing:**
 - **Today's column:** 2.0x width weight, larger text scale (default 1.5x from settings)
-- **Past days:** 0.6x width, 1.0x text scale, dimmed if event ended
+- **"Past" day columns (i < todayIndex):** 0.6x width. These columns now show the *same weekday of next week* (not the stale past day), so the narrow width acts as visual de-prioritization for the further-out info rather than signaling "ended."
 - **Future days:** 1.5x to 0.7x width (declining), 1.10x text scale
+
+**Past-Day Shift (Per-Column Next-Week Render):**
+- `WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndex)` returns `startMillis + (i+7)*day` when `i < todayIndex`, else `startMillis + i*day`.
+- Fetch window is `repo.getEvents(todayMillis, 7, …)` — i.e., 7 days from today, which exactly covers every column's effective date regardless of `todayIndex`.
+- All column headers use the `"EEE d"` format ("Mon 29") to disambiguate next-week columns from this-week columns.
+- Past-event dimming (gated on `event.endTime < now`) naturally no-ops for shifted columns since their events are in the future.
 
 **Event Rendering Flow:**
 1. Calculate available vertical space per day column
@@ -95,6 +108,8 @@ Utility object containing testable functions for week display calculations:
 - `shouldDisplayEventOnDay()`: Handles timezone conversion for all-day events
 - `getColumnWeights()`: Returns width weights for past/today/future columns
 - `getStartDate()`: Calculates week start based on configured start day
+- `getEffectiveDayMillis()`: Returns the displayed day-millis for a column, shifting past-day columns forward by 7 days so they show next week's same weekday
+- `filterNearDuplicates()`: Drops near-identical events (same-type, start within 15 min, ≥5 common title words or >60% word overlap) — rotates selection by minute to surface different duplicates over time
 
 ### Settings Management (PrefsManager.kt)
 
@@ -106,12 +121,34 @@ Persists widget settings in SharedPreferences:
 
 ### Widget Types
 
-This project contains TWO distinct widgets:
+This project contains THREE distinct widgets:
 
-1. **DateWidgetProvider.kt** - Single date widget with auto-resizing text
-2. **WeeklyWidgetProvider.kt** - Weekly calendar widget (primary focus)
+1. **DateWidgetProvider.kt** — Single date widget with auto-resizing text.
+   Config: `ConfigActivity.kt`. Info XML: `date_widget_info.xml`.
+   Uses synchronous `RemoteViews` updates (no async IO needed — just formats a `Date`).
 
-Each has its own provider, configuration activity, and settings.
+2. **DailyWidgetProvider.kt** — Single-day calendar view (today's events).
+   Config: `DailyConfigActivity.kt`. Info XML: `daily_widget_info.xml`. Target cells: 2×2.
+   Renders as a bitmap on `R.id.daily_canvas`. Auto-advances to next day when all non-declined
+   events have ended (see `DailyDisplayLogic.shouldAutoAdvance()`).
+
+3. **WeeklyWidgetProvider.kt** — 7-day calendar grid (primary focus).
+   Config: `WeeklyConfigActivity.kt`. Info XML: `weekly_widget_info.xml`. Target cells: 4×2.
+   Renders as a bitmap on `R.id.weekly_canvas`.
+
+Each widget has its own `ConfigActivity` (wired via `android:configure`) and independent
+`PrefsManager` settings keyed by `appWidgetId`.
+
+**Shared rendering infrastructure (Daily + Weekly):**
+- `WidgetDrawer.kt` — `drawDailyCalendar()` / `drawWeeklyCalendar()` bitmap rendering.
+- `WidgetUpdateHelper.kt` — `updateDailyWidget()` / `updateWeeklyWidget()` build `RemoteViews`,
+  set the drawn bitmap, and wire click intents.
+- `WidgetUpdateWorker.kt` — `WorkManager` worker dispatching async updates.
+- `WidgetClickReceiver.kt` — handles widget taps (opens calendar, schedules delayed refresh).
+- `WidgetRenderingHelper.kt` — shared paint/font-scale utilities used by both drawers.
+
+Both Daily and Weekly providers use `goAsync()` + a `Dispatchers.IO` coroutine in `onUpdate()`
+to offload calendar IO off the main thread.
 
 ## Testing Philosophy
 
@@ -151,6 +188,17 @@ Each has its own provider, configuration activity, and settings.
 - No clipping: All events can use up to 10 lines
 
 **Critical Bug Fix:** Added `.setEllipsize(TextUtils.TruncateAt.END)` to make maxLines work correctly.
+
+### Past-Day Columns Show Next Week (Apr 2026)
+
+**Problem:** Columns for days earlier than today in the current week displayed already-happened events — wasted real estate, zero actionability.
+
+**Solution:** `WeeklyDisplayLogic.getEffectiveDayMillis()` shifts past-day columns forward by 7 days. Fetch window changed from `startMillis` to `todayMillis` (still 7 days, since all displayed days fall within `[today, today+6]`). Header format unified to `"EEE d"` across all columns so next-week dates are unambiguous.
+
+**Key Behavior:**
+- Past columns keep 0.6× width (visual de-prioritization, not "staleness" signal).
+- Past-event dimming logic auto-disables for shifted columns (gated on `event.endTime < now`).
+- When today is the week-start day, no shifting happens (behavior identical to pre-change).
 
 ## Development Notes
 
@@ -199,26 +247,49 @@ Weekly widget includes debug logging at lines 229-267, 332-334:
 
 ```
 app/src/main/java/ai/dcar/caldatewidget/
-├── WeeklyWidgetProvider.kt      # Weekly widget renderer (primary)
-├── DateWidgetProvider.kt         # Single date widget
-├── CalendarRepository.kt         # Calendar data access
-├── CalendarEvent.kt              # Event data model
-├── WeeklyDisplayLogic.kt         # Display calculations (testable)
-├── PrefsManager.kt               # Settings persistence
-├── WeeklyConfigActivity.kt       # Weekly widget settings UI
-├── ConfigActivity.kt             # Date widget settings UI
-└── SettingsStateManager.kt       # Undo stack management
+├── WeeklyWidgetProvider.kt      # Weekly widget provider (primary)
+├── DailyWidgetProvider.kt       # Daily (today-only) widget provider
+├── DateWidgetProvider.kt        # Single date widget
+├── CalendarRepository.kt        # Calendar data access
+├── CalendarEvent.kt             # Event data model
+├── WeeklyDisplayLogic.kt        # Weekly display calculations (testable)
+├── DailyDisplayLogic.kt         # Daily display calculations (auto-advance, weights)
+├── WidgetDrawer.kt              # Shared bitmap renderer (Daily + Weekly)
+├── WidgetRenderingHelper.kt     # Shared paint/font-scale utilities
+├── WidgetUpdateHelper.kt        # Shared RemoteViews + click-intent wiring
+├── WidgetUpdateWorker.kt        # WorkManager worker for async updates
+├── WidgetClickReceiver.kt       # Widget tap handler (opens calendar + delayed refresh)
+├── PrefsManager.kt              # Settings persistence
+├── WeeklyConfigActivity.kt      # Weekly widget settings UI
+├── DailyConfigActivity.kt       # Daily widget settings UI
+├── ConfigActivity.kt            # Date widget settings UI
+├── ColorPickerDialog.kt         # Shared color picker
+└── SettingsStateManager.kt      # Undo stack management
 
 app/src/test/java/ai/dcar/caldatewidget/
-├── WeeklyDisplayLogicTest.kt     # Display logic tests
-├── PrefsManagerTest.kt           # Settings persistence tests
-├── SettingsStateManagerTest.kt   # Undo functionality tests
-├── CalendarRepositoryTest.kt     # Calendar data tests
-└── EventFilterTest.kt            # Event filtering tests
+├── WeeklyDisplayLogicTest.kt             # Weekly display logic (includes getEffectiveDayMillis)
+├── WeeklyWidgetProviderTest.kt           # Weekly provider integration
+├── WeeklyWidgetResizingTest.kt           # Column-sizing behavior
+├── WeeklyConfigActivityTest.kt           # Config UI
+├── WidgetDrawerTest.kt                   # Drawer-level rendering checks
+├── WidgetDrawerTomorrowIndicatorRobolectricTest.kt  # Robolectric UI test
+├── WidgetRenderingHelperTest.kt          # Shared render helper
+├── ConfigActivityTest.kt                 # Date widget config
+├── DateFormatTest.kt                     # Date formatting
+├── AutoAdvanceTest.kt                    # Daily auto-advance logic
+├── TextOverlapTest.kt                    # Text-layout regression guard
+├── PrefsManagerTest.kt                   # Settings persistence
+├── SettingsStateManagerTest.kt           # Undo functionality
+├── CalendarRepositoryTest.kt             # Calendar data
+└── EventFilterTest.kt                    # Event filtering
 ```
+
+Note: `DailyDisplayLogic` is currently not covered by a dedicated unit-test file — `AutoAdvanceTest.kt` exercises its `shouldAutoAdvance()` path but `getColumnWeights()` is not unit-tested.
 
 ## Target Device
 
 Primary development device: **SM-F936U1** (Samsung Galaxy Z Fold4)
 
-ADB path: `~/Library/Android/sdk/platform-tools/adb`
+ADB path:
+- macOS: `~/Library/Android/sdk/platform-tools/adb`
+- Linux: `~/.Android/Sdk/platform-tools/adb`

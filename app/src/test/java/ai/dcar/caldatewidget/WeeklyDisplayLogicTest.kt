@@ -697,4 +697,204 @@ class WeeklyDisplayLogicTest {
             assertEquals(1, result[0].selfStatus)
         }
     }
+
+    // ===== getEffectiveDayMillis =====
+
+    private val dayMs = 24L * 60 * 60 * 1000
+
+    @Test
+    fun `getEffectiveDayMillis returns unchanged offsets when today is week start`() {
+        val start = 1_700_000_000_000L
+        val todayIndex = 0
+
+        for (i in 0..6) {
+            val expected = start + i * dayMs
+            assertEquals("col $i", expected, WeeklyDisplayLogic.getEffectiveDayMillis(start, i, todayIndex))
+        }
+    }
+
+    @Test
+    fun `getEffectiveDayMillis shifts past columns forward by 7 days when today is midweek`() {
+        val start = 1_700_000_000_000L
+        val todayIndex = 3 // e.g., Wed with Sun-start
+
+        // Past columns (0, 1, 2) shifted by +7
+        assertEquals(start + (0 + 7) * dayMs, WeeklyDisplayLogic.getEffectiveDayMillis(start, 0, todayIndex))
+        assertEquals(start + (1 + 7) * dayMs, WeeklyDisplayLogic.getEffectiveDayMillis(start, 1, todayIndex))
+        assertEquals(start + (2 + 7) * dayMs, WeeklyDisplayLogic.getEffectiveDayMillis(start, 2, todayIndex))
+
+        // Today and future columns (3..6) unchanged
+        assertEquals(start + 3 * dayMs, WeeklyDisplayLogic.getEffectiveDayMillis(start, 3, todayIndex))
+        assertEquals(start + 4 * dayMs, WeeklyDisplayLogic.getEffectiveDayMillis(start, 4, todayIndex))
+        assertEquals(start + 5 * dayMs, WeeklyDisplayLogic.getEffectiveDayMillis(start, 5, todayIndex))
+        assertEquals(start + 6 * dayMs, WeeklyDisplayLogic.getEffectiveDayMillis(start, 6, todayIndex))
+    }
+
+    @Test
+    fun `getEffectiveDayMillis shifts all past columns when today is end of week`() {
+        val start = 1_700_000_000_000L
+        val todayIndex = 6 // e.g., Sat with Sun-start
+
+        // All prior columns (0..5) shift +7 days
+        for (i in 0..5) {
+            val expected = start + (i + 7) * dayMs
+            assertEquals("col $i", expected, WeeklyDisplayLogic.getEffectiveDayMillis(start, i, todayIndex))
+        }
+        // Today's column (6) unchanged
+        assertEquals(start + 6 * dayMs, WeeklyDisplayLogic.getEffectiveDayMillis(start, 6, todayIndex))
+    }
+
+    @Test
+    fun `getEffectiveDayMillis shifts col 0 by exactly one week when today is after it`() {
+        val start = 1_700_000_000_000L
+        val result = WeeklyDisplayLogic.getEffectiveDayMillis(start, 0, 1)
+        assertEquals(start + 7 * dayMs, result)
+    }
+
+    @Test
+    fun `getEffectiveDayMillis fits all shifted columns within 7 days from today`() {
+        // Verifies the design invariant: every displayed day falls within [today, today+6],
+        // which is what allows fetching 7 days from todayMillis to cover all columns.
+        val start = 1_700_000_000_000L
+
+        for (todayIndex in 0..6) {
+            val todayMillis = start + todayIndex * dayMs
+            for (i in 0..6) {
+                val effective = WeeklyDisplayLogic.getEffectiveDayMillis(start, i, todayIndex)
+                val offsetFromToday = (effective - todayMillis) / dayMs
+                assertTrue(
+                    "col $i on todayIndex=$todayIndex had offset=$offsetFromToday, expected 0..6",
+                    offsetFromToday in 0..6
+                )
+            }
+        }
+    }
+
+    // ===== getHeaderTextSize =====
+
+    @Test
+    fun `getHeaderTextSize today clamps to 80 max on very wide columns`() {
+        assertEquals(80f, WeeklyDisplayLogic.getHeaderTextSize(500f, isToday = true), 0.01f)
+    }
+
+    @Test
+    fun `getHeaderTextSize today clamps to 30 min on very narrow columns`() {
+        assertEquals(30f, WeeklyDisplayLogic.getHeaderTextSize(10f, isToday = true), 0.01f)
+    }
+
+    @Test
+    fun `getHeaderTextSize today scales linearly in the middle`() {
+        // 100 * 0.45 = 45 — within [30, 80]
+        assertEquals(45f, WeeklyDisplayLogic.getHeaderTextSize(100f, isToday = true), 0.01f)
+    }
+
+    @Test
+    fun `getHeaderTextSize non-today clamps to 40 max on wide columns`() {
+        assertEquals(40f, WeeklyDisplayLogic.getHeaderTextSize(200f, isToday = false), 0.01f)
+    }
+
+    @Test
+    fun `getHeaderTextSize non-today clamps to 20 min on narrow columns`() {
+        assertEquals(20f, WeeklyDisplayLogic.getHeaderTextSize(10f, isToday = false), 0.01f)
+    }
+
+    @Test
+    fun `getHeaderTextSize non-today scales linearly in the middle`() {
+        // 50 * 0.5 = 25 — within [20, 40]
+        assertEquals(25f, WeeklyDisplayLogic.getHeaderTextSize(50f, isToday = false), 0.01f)
+    }
+
+    // ===== chooseHeaderText =====
+    // Uses a synthetic 10-pixels-per-character measurer so tests are deterministic
+    // regardless of device fonts / locale.
+
+    private val tenPxPerChar: (String) -> Float = { it.length * 10f }
+
+    private fun wedApril22_2026Millis(): Long {
+        val cal = Calendar.getInstance()
+        cal.set(2026, Calendar.APRIL, 22, 12, 0, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
+    }
+
+    @Test
+    fun `chooseHeaderText picks full EEE d format when column is wide enough`() {
+        // "Wed 22" = 6 chars = 60px. Budget = 100 * 0.9 = 90. Fits.
+        val result = WeeklyDisplayLogic.chooseHeaderText(
+            colWidth = 100f,
+            dayMillis = wedApril22_2026Millis(),
+            measureText = tenPxPerChar
+        )
+        assertEquals("Wed 22", result)
+    }
+
+    @Test
+    fun `chooseHeaderText falls back to single-letter weekday plus date when cramped`() {
+        // "Wed 22" = 60px, "W 22" = 40px. Budget = 50 * 0.9 = 45. EEEd doesn't fit, EEEEE d does.
+        val result = WeeklyDisplayLogic.chooseHeaderText(
+            colWidth = 50f,
+            dayMillis = wedApril22_2026Millis(),
+            measureText = tenPxPerChar
+        )
+        assertEquals("W 22", result)
+    }
+
+    @Test
+    fun `chooseHeaderText drops weekday before date on extreme narrowness`() {
+        // "W 22" = 40px, "22" = 20px. Budget = 25 * 0.9 = 22.5. Only "22" fits.
+        val result = WeeklyDisplayLogic.chooseHeaderText(
+            colWidth = 25f,
+            dayMillis = wedApril22_2026Millis(),
+            measureText = tenPxPerChar
+        )
+        assertEquals("22", result)
+    }
+
+    @Test
+    fun `chooseHeaderText returns single letter as last resort`() {
+        // "22" = 20px. Budget = 15 * 0.9 = 13.5. Only "W" (10px) fits.
+        val result = WeeklyDisplayLogic.chooseHeaderText(
+            colWidth = 15f,
+            dayMillis = wedApril22_2026Millis(),
+            measureText = tenPxPerChar
+        )
+        assertEquals("W", result)
+    }
+
+    @Test
+    fun `chooseHeaderText returns shortest candidate even when nothing technically fits`() {
+        // Budget = 1px. Nothing fits. Should still return something (the shortest candidate).
+        val result = WeeklyDisplayLogic.chooseHeaderText(
+            colWidth = 1f,
+            dayMillis = wedApril22_2026Millis(),
+            measureText = tenPxPerChar
+        )
+        // The last candidate in the list is "EEEEE" = "W" for Wednesday
+        assertEquals("W", result)
+    }
+
+    @Test
+    fun `chooseHeaderText preserves date signal as columns narrow`() {
+        // Scans a range of widths and confirms we drop the weekday before dropping
+        // the date — this is the load-bearing property for shifted next-week columns.
+        val dayMillis = wedApril22_2026Millis()
+        val budgets = listOf(200f, 100f, 50f, 30f, 20f, 10f)
+        for (budget in budgets) {
+            val result = WeeklyDisplayLogic.chooseHeaderText(
+                colWidth = budget,
+                dayMillis = dayMillis,
+                measureText = tenPxPerChar
+            )
+            // If the weekday has been dropped (result == "22"), the date must still be there.
+            // If a weekday-only form appears ("W"), budget is so tight that date didn't fit either.
+            // The forbidden outcome is: some weekday-only form while width would have fit "22".
+            if (result == "W") {
+                val twoCharWidth = tenPxPerChar("22")
+                assertTrue(
+                    "At colWidth=$budget, result was 'W' but '22' ($twoCharWidth px) should have fit in budget ${budget * 0.9f}",
+                    twoCharWidth > budget * 0.9f
+                )
+            }
+        }
+    }
 }
