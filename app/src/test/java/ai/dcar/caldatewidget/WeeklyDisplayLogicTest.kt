@@ -415,6 +415,24 @@ class WeeklyDisplayLogicTest {
     }
 
     @Test
+    fun `filterNearDuplicates keeps all instances of a recurring series`() {
+        // Mirror Android Instances semantics: every instance of a recurring event
+        // shares the parent EVENT_ID but has a distinct BEGIN. Five weekday rows
+        // 24h apart must all survive — they are NOT near-duplicates of each other.
+        val mondayBase = 1000000000L
+        val day = 24L * 60 * 60 * 1000L
+        val events = (0..4).map { dayOffset ->
+            createEvent(338L, "Dad take Sophia to school", mondayBase + dayOffset * day)
+        }
+
+        val result = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+        assertEquals(5, result.size)
+        val dayOffsets = result.map { (it.startTime - mondayBase) / day }.toSet()
+        assertEquals(setOf(0L, 1L, 2L, 3L, 4L), dayOffsets)
+    }
+
+    @Test
     fun `filterNearDuplicates hides event with same start time and title`() {
         // Given: Two events at same time with identical titles
         val baseTime = 1000000000L

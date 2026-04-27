@@ -207,23 +207,28 @@ object WeeklyDisplayLogic {
             android.util.Log.d("NearDuplicate", "Event $index: '${event.title}' at $timeStr (id=${event.id}, allDay=${event.isAllDay})")
         }
 
-        val processedIds = mutableSetOf<Long>()
+        // Track by list index, not event.id: recurring-series instances share an
+        // EVENT_ID, so an id-keyed set would silently drop every instance after the
+        // first one before areNearDuplicates() ever runs.
+        val processedIndices = mutableSetOf<Int>()
         val clusters = mutableListOf<List<CalendarEvent>>()
 
         // Group events into duplicate clusters
-        for (event in events) {
-            if (event.id in processedIds) continue
+        for (i in events.indices) {
+            if (i in processedIndices) continue
 
+            val event = events[i]
             val cluster = mutableListOf(event)
-            processedIds.add(event.id)
+            processedIndices.add(i)
 
             // Find all duplicates of this event
-            for (other in events) {
-                if (other.id in processedIds) continue
+            for (j in events.indices) {
+                if (j in processedIndices) continue
+                val other = events[j]
                 if (areNearDuplicates(event, other)) {
                     android.util.Log.d("NearDuplicate", "Found duplicate: '${event.title}' matches '${other.title}'")
                     cluster.add(other)
-                    processedIds.add(other.id)
+                    processedIndices.add(j)
                 }
             }
 
