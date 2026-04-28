@@ -6,6 +6,8 @@ import java.util.Locale
 import java.util.TimeZone
 
 object WeeklyDisplayLogic {
+    private const val HEADER_FIT_FRACTION = 1.05f
+
     fun getStartDate(calendar: Calendar, weekStartDay: Int): Long {
         val cal = calendar.clone() as Calendar
         // Ensure we are at start of day
@@ -76,7 +78,7 @@ object WeeklyDisplayLogic {
     fun chooseHeaderText(
         colWidth: Float,
         dayMillis: Long,
-        targetFraction: Float = 0.9f,
+        targetFraction: Float = HEADER_FIT_FRACTION,
         measureText: (String) -> Float
     ): String {
         val locale = Locale.getDefault()

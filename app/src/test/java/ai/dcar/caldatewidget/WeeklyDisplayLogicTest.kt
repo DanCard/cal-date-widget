@@ -7,10 +7,64 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.util.Calendar
+import java.util.GregorianCalendar
+import java.util.Locale
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class WeeklyDisplayLogicTest {
+
+    @Test
+    fun `chooseHeaderText keeps short weekday plus date when text is slightly wider than column`() {
+        val previousLocale = Locale.getDefault()
+        Locale.setDefault(Locale.US)
+        try {
+            val dayMillis = GregorianCalendar(2026, Calendar.MAY, 4).timeInMillis
+
+            val result = WeeklyDisplayLogic.chooseHeaderText(
+                colWidth = 100f,
+                dayMillis = dayMillis
+            ) { text ->
+                when (text) {
+                    "Mon 4" -> 103f
+                    "M 4" -> 60f
+                    "4" -> 20f
+                    "M" -> 15f
+                    else -> error("Unexpected header: $text")
+                }
+            }
+
+            assertEquals("Mon 4", result)
+        } finally {
+            Locale.setDefault(previousLocale)
+        }
+    }
+
+    @Test
+    fun `chooseHeaderText still abbreviates when short weekday plus date is far too wide`() {
+        val previousLocale = Locale.getDefault()
+        Locale.setDefault(Locale.US)
+        try {
+            val dayMillis = GregorianCalendar(2026, Calendar.MAY, 4).timeInMillis
+
+            val result = WeeklyDisplayLogic.chooseHeaderText(
+                colWidth = 100f,
+                dayMillis = dayMillis
+            ) { text ->
+                when (text) {
+                    "Mon 4" -> 112f
+                    "M 4" -> 60f
+                    "4" -> 20f
+                    "M" -> 15f
+                    else -> error("Unexpected header: $text")
+                }
+            }
+
+            assertEquals("M 4", result)
+        } finally {
+            Locale.setDefault(previousLocale)
+        }
+    }
 
     @Test
     fun `getStartDate returns today if today matches start day`() {
