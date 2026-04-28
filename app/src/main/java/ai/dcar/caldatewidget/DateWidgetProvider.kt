@@ -22,6 +22,18 @@ class DateWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    override fun onReceive(context: Context, intent: Intent) {
+        super.onReceive(context, intent)
+
+        if (WidgetRefreshCoordinator.shouldRefreshForAction(intent.action)) {
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val appWidgetIds = WidgetRefreshCoordinator.getWidgetIdsForProvider(context, DateWidgetProvider::class.java)
+            if (appWidgetIds.isNotEmpty()) {
+                onUpdate(context, appWidgetManager, appWidgetIds)
+            }
+        }
+    }
+
     override fun onAppWidgetOptionsChanged(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, newOptions: android.os.Bundle?) {
         updateAppWidget(context, appWidgetManager, appWidgetId)
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
