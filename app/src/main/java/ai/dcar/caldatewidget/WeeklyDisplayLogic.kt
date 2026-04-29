@@ -7,6 +7,9 @@ import java.util.TimeZone
 
 object WeeklyDisplayLogic {
     private const val HEADER_FIT_FRACTION = 1.05f
+    private const val HEADER_SHRINK_SCALE = 0.85f
+
+    data class HeaderText(val text: String, val scale: Float)
 
     fun getStartDate(calendar: Calendar, weekStartDay: Int): Long {
         val cal = calendar.clone() as Calendar
@@ -70,7 +73,9 @@ object WeeklyDisplayLogic {
      * Chooses the most informative day-header text that fits within colWidth given
      * the configured textSize on the measureText function. Tries formats in order
      * (widest/most-informative first) and returns the first one that fits:
-     *   "Mon 29" → "M 29" → "29" → "M"
+     *   "Mon 29" → "Mon 29" @ shrunk → "M 29" → "29" → "M"
+     * The shrink rung lets the full weekday survive on devices where the column is
+     * just slightly too narrow for it at full font size (e.g. Pixel-class today column).
      * The date number is kept as long as possible before the weekday is dropped
      * entirely, because the date is what disambiguates shifted next-week columns
      * from this-week columns with the same weekday letter.
@@ -80,22 +85,24 @@ object WeeklyDisplayLogic {
         dayMillis: Long,
         targetFraction: Float = HEADER_FIT_FRACTION,
         measureText: (String) -> Float
-    ): String {
+    ): HeaderText {
         val locale = Locale.getDefault()
         val weekdayShort = SimpleDateFormat("EEE", locale).format(dayMillis)   // "Wed"
         val date = SimpleDateFormat("d", locale).format(dayMillis)             // "22"
         // SimpleDateFormat's "EEEEE" is unreliable across JDK versions (often returns full
         // form rather than narrow), so derive the single-letter form from the short form.
         val weekdayLetter = weekdayShort.take(1)                               // "W"
+        val full = "$weekdayShort $date"                                       // "Wed 22"
         val candidates = listOf(
-            "$weekdayShort $date",   // "Wed 22"
-            "$weekdayLetter $date",  // "W 22"
-            date,                    // "22"
-            weekdayLetter            // "W"
+            HeaderText(full, 1.0f),
+            HeaderText(full, HEADER_SHRINK_SCALE),
+            HeaderText("$weekdayLetter $date", 1.0f),
+            HeaderText(date, 1.0f),
+            HeaderText(weekdayLetter, 1.0f)
         )
         val budget = colWidth * targetFraction
-        for (text in candidates) {
-            if (measureText(text) <= budget) return text
+        for (candidate in candidates) {
+            if (measureText(candidate.text) * candidate.scale <= budget) return candidate
         }
         return candidates.last()
     }

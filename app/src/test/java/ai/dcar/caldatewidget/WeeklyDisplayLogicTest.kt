@@ -34,7 +34,8 @@ class WeeklyDisplayLogicTest {
                 }
             }
 
-            assertEquals("Mon 4", result)
+            assertEquals("Mon 4", result.text)
+            assertEquals(1.0f, result.scale, 0.001f)
         } finally {
             Locale.setDefault(previousLocale)
         }
@@ -47,12 +48,14 @@ class WeeklyDisplayLogicTest {
         try {
             val dayMillis = GregorianCalendar(2026, Calendar.MAY, 4).timeInMillis
 
+            // "Mon 4" at 1.0x = 140px > 105 budget; at 0.85x = 119px > 105 budget too.
+            // Forces fallthrough to the next ladder rung ("M 4").
             val result = WeeklyDisplayLogic.chooseHeaderText(
                 colWidth = 100f,
                 dayMillis = dayMillis
             ) { text ->
                 when (text) {
-                    "Mon 4" -> 112f
+                    "Mon 4" -> 140f
                     "M 4" -> 60f
                     "4" -> 20f
                     "M" -> 15f
@@ -60,7 +63,8 @@ class WeeklyDisplayLogicTest {
                 }
             }
 
-            assertEquals("M 4", result)
+            assertEquals("M 4", result.text)
+            assertEquals(1.0f, result.scale, 0.001f)
         } finally {
             Locale.setDefault(previousLocale)
         }
@@ -891,58 +895,74 @@ class WeeklyDisplayLogicTest {
 
     @Test
     fun `chooseHeaderText picks full EEE d format when column is wide enough`() {
-        // "Wed 22" = 6 chars = 60px. Budget = 100 * 0.9 = 90. Fits.
+        // "Wed 22" = 60px. Budget = 100 * 1.05 = 105. Fits at 1.0x.
         val result = WeeklyDisplayLogic.chooseHeaderText(
             colWidth = 100f,
             dayMillis = wedApril22_2026Millis(),
             measureText = tenPxPerChar
         )
-        assertEquals("Wed 22", result)
+        assertEquals("Wed 22", result.text)
+        assertEquals(1.0f, result.scale, 0.001f)
     }
 
     @Test
-    fun `chooseHeaderText falls back to single-letter weekday plus date when cramped`() {
-        // "Wed 22" = 60px, "W 22" = 40px. Budget = 50 * 0.9 = 45. EEEd doesn't fit, EEEEE d does.
+    fun `chooseHeaderText shrinks full form before falling back to abbreviation`() {
+        // colWidth=65, budget=68.25. "Wed 22"@1.0=60 fits → no shrink needed.
+        // colWidth=55, budget=57.75. "Wed 22"@1.0=60 doesn't fit; @0.85=51 does.
         val result = WeeklyDisplayLogic.chooseHeaderText(
-            colWidth = 50f,
+            colWidth = 55f,
             dayMillis = wedApril22_2026Millis(),
             measureText = tenPxPerChar
         )
-        assertEquals("W 22", result)
+        assertEquals("Wed 22", result.text)
+        assertEquals(0.85f, result.scale, 0.001f)
+    }
+
+    @Test
+    fun `chooseHeaderText falls back to single-letter weekday plus date when even shrunk full form doesnt fit`() {
+        // colWidth=45, budget=47.25. "Wed 22"@1.0=60 no; @0.85=51 no. "W 22"@1.0=40 yes.
+        val result = WeeklyDisplayLogic.chooseHeaderText(
+            colWidth = 45f,
+            dayMillis = wedApril22_2026Millis(),
+            measureText = tenPxPerChar
+        )
+        assertEquals("W 22", result.text)
+        assertEquals(1.0f, result.scale, 0.001f)
     }
 
     @Test
     fun `chooseHeaderText drops weekday before date on extreme narrowness`() {
-        // "W 22" = 40px, "22" = 20px. Budget = 25 * 0.9 = 22.5. Only "22" fits.
+        // "W 22"@1.0=40, "22"@1.0=20. Budget = 25 * 1.05 = 26.25. Only "22" fits.
         val result = WeeklyDisplayLogic.chooseHeaderText(
             colWidth = 25f,
             dayMillis = wedApril22_2026Millis(),
             measureText = tenPxPerChar
         )
-        assertEquals("22", result)
+        assertEquals("22", result.text)
+        assertEquals(1.0f, result.scale, 0.001f)
     }
 
     @Test
     fun `chooseHeaderText returns single letter as last resort`() {
-        // "22" = 20px. Budget = 15 * 0.9 = 13.5. Only "W" (10px) fits.
+        // "22"@1.0=20. Budget = 15 * 1.05 = 15.75. Only "W"@1.0=10 fits.
         val result = WeeklyDisplayLogic.chooseHeaderText(
             colWidth = 15f,
             dayMillis = wedApril22_2026Millis(),
             measureText = tenPxPerChar
         )
-        assertEquals("W", result)
+        assertEquals("W", result.text)
+        assertEquals(1.0f, result.scale, 0.001f)
     }
 
     @Test
     fun `chooseHeaderText returns shortest candidate even when nothing technically fits`() {
-        // Budget = 1px. Nothing fits. Should still return something (the shortest candidate).
+        // Budget = 1.05. Nothing fits. Should still return the shortest candidate.
         val result = WeeklyDisplayLogic.chooseHeaderText(
             colWidth = 1f,
             dayMillis = wedApril22_2026Millis(),
             measureText = tenPxPerChar
         )
-        // The last candidate in the list is "EEEEE" = "W" for Wednesday
-        assertEquals("W", result)
+        assertEquals("W", result.text)
     }
 
     @Test
@@ -957,14 +977,14 @@ class WeeklyDisplayLogicTest {
                 dayMillis = dayMillis,
                 measureText = tenPxPerChar
             )
-            // If the weekday has been dropped (result == "22"), the date must still be there.
-            // If a weekday-only form appears ("W"), budget is so tight that date didn't fit either.
-            // The forbidden outcome is: some weekday-only form while width would have fit "22".
-            if (result == "W") {
+            // If a weekday-only form ("W") appears, budget must be so tight that "22" didn't fit either.
+            // The forbidden outcome is: weekday-only form while width would have fit "22".
+            if (result.text == "W") {
                 val twoCharWidth = tenPxPerChar("22")
+                val effectiveBudget = budget * 1.05f
                 assertTrue(
-                    "At colWidth=$budget, result was 'W' but '22' ($twoCharWidth px) should have fit in budget ${budget * 0.9f}",
-                    twoCharWidth > budget * 0.9f
+                    "At colWidth=$budget, result was 'W' but '22' ($twoCharWidth px) should have fit in budget $effectiveBudget",
+                    twoCharWidth > effectiveBudget
                 )
             }
         }

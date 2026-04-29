@@ -116,13 +116,14 @@ object WidgetDrawer {
                 }
                 paints.dayHeaderPaint.textSize = WeeklyDisplayLogic.getHeaderTextSize(colWidth, isToday)
 
-                val dayName = WeeklyDisplayLogic.chooseHeaderText(colWidth, dayMillis) { text ->
+                val header = WeeklyDisplayLogic.chooseHeaderText(colWidth, dayMillis) { text ->
                     paints.dayHeaderPaint.measureText(text)
                 }
+                paints.dayHeaderPaint.textSize *= header.scale
 
                 val fm = paints.dayHeaderPaint.fontMetrics
                 val headerBaseline = (contentTop / 2f) - (fm.ascent + fm.descent) / 2f
-                canvas.drawText(dayName, currentX + colWidth / 2, headerBaseline, paints.dayHeaderPaint)
+                canvas.drawText(header.text, currentX + colWidth / 2, headerBaseline, paints.dayHeaderPaint)
 
                 // Events
                 val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
