@@ -47,6 +47,13 @@ class DailyWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        for (appWidgetId in appWidgetIds) {
+            DailyAutoAdvanceScheduler.cancel(context, appWidgetId)
+        }
+        super.onDeleted(context, appWidgetIds)
+    }
+
     private fun refreshWidgetsAsync(context: Context, appWidgetIds: IntArray) {
         val pendingResult = goAsync()
         val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())

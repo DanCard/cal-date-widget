@@ -263,13 +263,21 @@ object WidgetDrawer {
                 
                 // Auto-advance logic: If we have events today and they are ALL in the past, skip today
                 val checkStart = calculateStartDate(calendar)
-                val todayEvents = repo.getEvents(checkStart, 1, selection)
+                val todayEnd = checkStart + (24L * 60 * 60 * 1000)
+                val todayEvents = repo.getEvents(checkStart, 1, selection).filter {
+                    WeeklyDisplayLogic.shouldDisplayEventOnDay(it, checkStart, todayEnd)
+                }
                 val now = System.currentTimeMillis()
 
                 if (DailyDisplayLogic.shouldAutoAdvance(todayEvents, now)) {
                      calendar.add(Calendar.DAY_OF_YEAR, 1)
                      didAutoAdvance = true
                      Log.d("WidgetDrawer", "All events for today are in the past. Auto-advancing to tomorrow.")
+                } else {
+                    Log.d(
+                        "WidgetDrawer",
+                        "Daily widget stays on today. now=$now todayEvents=${todayEvents.size} titles=${todayEvents.joinToString { it.title }}"
+                    )
                 }
 
                 // Final start date

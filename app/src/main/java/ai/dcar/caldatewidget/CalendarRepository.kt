@@ -3,6 +3,7 @@ package ai.dcar.caldatewidget
 import android.content.ContentUris
 import android.content.Context
 import android.provider.CalendarContract
+import android.util.Log
 import java.util.Calendar
 
 data class CalendarInfo(
@@ -32,12 +33,16 @@ class CalendarRepository(private val context: Context) {
 
         // End of the range
         val endMillis = startMillis + (numDays.toLong() * 24 * 60 * 60 * 1000)
+        val queryStartMillis = startMillis - (24L * 60 * 60 * 1000)
+        val queryEndMillis = endMillis + (24L * 60 * 60 * 1000)
 
         val projection = arrayOf(
             CalendarContract.Instances.EVENT_ID,
             CalendarContract.Instances.TITLE,
             CalendarContract.Instances.BEGIN,
             CalendarContract.Instances.END,
+            CalendarContract.Instances.START_DAY,
+            CalendarContract.Instances.END_DAY,
             CalendarContract.Instances.DISPLAY_COLOR,
             CalendarContract.Instances.ALL_DAY,
             CalendarContract.Instances.SELF_ATTENDEE_STATUS
@@ -52,7 +57,7 @@ class CalendarRepository(private val context: Context) {
         }
         calendarSelection.append(")")
 
-        val selection = "${CalendarContract.Instances.BEGIN} >= ? AND ${CalendarContract.Instances.BEGIN} <= ? AND $calendarSelection"
+        val selection = "${CalendarContract.Instances.END} > ? AND ${CalendarContract.Instances.BEGIN} < ? AND $calendarSelection"
         
         val argsList = mutableListOf<String>()
         argsList.add(startMillis.toString())
@@ -63,8 +68,13 @@ class CalendarRepository(private val context: Context) {
         
         // Construct the URI for the instance table range
         val builder = CalendarContract.Instances.CONTENT_URI.buildUpon()
-        ContentUris.appendId(builder, startMillis)
-        ContentUris.appendId(builder, endMillis)
+        ContentUris.appendId(builder, queryStartMillis)
+        ContentUris.appendId(builder, queryEndMillis)
+
+        Log.d(
+            "CalendarRepository",
+            "getEvents displayRange=[$startMillis,$endMillis) queryRange=[$queryStartMillis,$queryEndMillis) numDays=$numDays calendars=${visibleCalendarIds.size}"
+        )
 
         try {
             val cursor = context.contentResolver.query(
@@ -80,6 +90,8 @@ class CalendarRepository(private val context: Context) {
                 val titleIdx = it.getColumnIndex(CalendarContract.Instances.TITLE)
                 val beginIdx = it.getColumnIndex(CalendarContract.Instances.BEGIN)
                 val endIdx = it.getColumnIndex(CalendarContract.Instances.END)
+                val startDayIdx = it.getColumnIndex(CalendarContract.Instances.START_DAY)
+                val endDayIdx = it.getColumnIndex(CalendarContract.Instances.END_DAY)
                 val colorIdx = it.getColumnIndex(CalendarContract.Instances.DISPLAY_COLOR)
                 val allDayIdx = it.getColumnIndex(CalendarContract.Instances.ALL_DAY)
                 val selfStatusIdx = it.getColumnIndex(CalendarContract.Instances.SELF_ATTENDEE_STATUS)
@@ -98,9 +110,18 @@ class CalendarRepository(private val context: Context) {
                             if (colorIdx >= 0) it.getInt(colorIdx) else 0xFF000000.toInt(),
                             allDay,
                             isDeclined,
-                            selfStatus
+                            selfStatus,
+                            if (startDayIdx >= 0) it.getInt(startDayIdx) else null,
+                            if (endDayIdx >= 0) it.getInt(endDayIdx) else null
                         )
                     )
+
+                    if (allDay) {
+                        Log.d(
+                            "CalendarRepository",
+                            "allDay row title='${it.getString(titleIdx) ?: "No Title"}' begin=${it.getLong(beginIdx)} end=${it.getLong(endIdx)} startDay=${if (startDayIdx >= 0) it.getInt(startDayIdx) else null} endDay=${if (endDayIdx >= 0) it.getInt(endDayIdx) else null} eventId=${it.getLong(idIdx)}"
+                        )
+                    }
                 }
             }
         } catch (e: SecurityException) {

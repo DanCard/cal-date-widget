@@ -22,19 +22,21 @@ class WidgetUpdateWorker(
         val type = inputData.getString("type")
 
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID || type == null) {
+            Log.e("WidgetUpdateWorker", "Invalid work request appWidgetId=$appWidgetId type=$type")
             return@withContext Result.failure()
         }
 
         val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
 
         try {
+            Log.d("WidgetUpdateWorker", "Running widget refresh for appWidgetId=$appWidgetId type=$type")
             when (type) {
                 "WEEKLY" -> WidgetUpdateHelper.updateWeeklyWidget(applicationContext, appWidgetManager, appWidgetId)
                 "DAILY" -> WidgetUpdateHelper.updateDailyWidget(applicationContext, appWidgetManager, appWidgetId)
             }
             Result.success()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("WidgetUpdateWorker", "Widget refresh failed for appWidgetId=$appWidgetId type=$type", e)
             Result.failure()
         }
     }

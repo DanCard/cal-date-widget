@@ -8,6 +8,8 @@ import java.util.TimeZone
 object WeeklyDisplayLogic {
     private const val HEADER_FIT_FRACTION = 1.05f
     private const val HEADER_SHRINK_SCALE = 0.85f
+    private const val JULIAN_DAY_OF_EPOCH = 2440588
+    private const val DAY_MILLIS = 24L * 60 * 60 * 1000
 
     data class HeaderText(val text: String, val scale: Float)
 
@@ -34,6 +36,18 @@ object WeeklyDisplayLogic {
             return event.startTime < dayEnd && event.endTime >= dayStart
         }
 
+        if (event.startDay != null && event.endDay != null) {
+            val dayJulian = getLocalJulianDay(dayStart)
+            val matches = dayJulian >= event.startDay && dayJulian <= event.endDay
+            if (event.title == "Children with Dad") {
+                safeDebugLog(
+                    "EventDayFilter",
+                    "provider-day match title='${event.title}' dayJulian=$dayJulian startDay=${event.startDay} endDay=${event.endDay} matches=$matches"
+                )
+            }
+            return matches
+        }
+
         // For All-Day events, start/end are in UTC. We map them to Local dates.
         val utcCal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
         utcCal.timeInMillis = event.startTime
@@ -48,7 +62,27 @@ object WeeklyDisplayLogic {
         localCal.set(Calendar.MILLISECOND, 0)
         val adjustedEnd = localCal.timeInMillis
 
-        return adjustedStart < dayEnd && adjustedEnd >= dayStart
+        val matches = adjustedStart < dayEnd && adjustedEnd > dayStart
+        if (event.title == "Children with Dad") {
+            safeDebugLog(
+                "EventDayFilter",
+                "fallback match title='${event.title}' adjustedStart=$adjustedStart adjustedEnd=$adjustedEnd dayStart=$dayStart dayEnd=$dayEnd matches=$matches"
+            )
+        }
+        return matches
+    }
+
+    private fun safeDebugLog(tag: String, message: String) {
+        try {
+            android.util.Log.d(tag, message)
+        } catch (_: RuntimeException) {
+            // Allow plain JVM tests to call this helper without Android logging.
+        }
+    }
+
+    private fun getLocalJulianDay(timeMillis: Long): Int {
+        val offsetMillis = TimeZone.getDefault().getOffset(timeMillis).toLong()
+        return Math.floorDiv(timeMillis + offsetMillis, DAY_MILLIS).toInt() + JULIAN_DAY_OF_EPOCH
     }
 
     fun getEffectiveDayMillis(startMillis: Long, columnIndex: Int, todayIndex: Int): Long {

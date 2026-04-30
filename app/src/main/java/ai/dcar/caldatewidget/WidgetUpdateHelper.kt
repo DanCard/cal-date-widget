@@ -68,5 +68,6 @@ object WidgetUpdateHelper {
         views.setOnClickPendingIntent(R.id.daily_canvas, pendingIntent)
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
+        DailyAutoAdvanceScheduler.scheduleNextRefresh(context, appWidgetId)
     }
 }
