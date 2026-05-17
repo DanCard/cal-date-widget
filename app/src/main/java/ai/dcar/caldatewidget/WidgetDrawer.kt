@@ -27,6 +27,14 @@ object WidgetDrawer {
 
     internal const val TOMORROW_INDICATOR = "🌈"
 
+    private const val CONTENT_TOP = 80f
+    private const val BASE_TEXT_SIZE = 48f
+    private const val LEFT_PADDING = 5f
+    private const val COL_WIDTH_PADDING = 10f
+    private const val EMPTY_COLUMN_WEIGHT_FACTOR = 0.65f
+    private const val DEFAULT_BG_COLOR = 0x4D000000.toInt()
+    private const val DAY_MILLIS = 24L * 60 * 60 * 1000
+
     fun drawWeeklyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
         try {
             Log.d("WidgetDrawer", "Starting drawWeeklyCalendar for ID: $appWidgetId")
@@ -43,7 +51,7 @@ object WidgetDrawer {
             if (settings.bgColor != Color.TRANSPARENT) {
                 canvas.drawColor(settings.bgColor)
             } else {
-                canvas.drawColor(0x4D000000.toInt())
+                canvas.drawColor(DEFAULT_BG_COLOR)
             }
 
             val paints = WidgetRenderingHelper.createPaints(settings)
@@ -76,7 +84,7 @@ object WidgetDrawer {
             // Filter near-duplicate events
             events = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
 
-            val diff = (todayMillis - startMillis) / (24 * 60 * 60 * 1000)
+            val diff = (todayMillis - startMillis) / DAY_MILLIS
             val todayIndex = diff.toInt()
         
             val validStart = 0
@@ -85,10 +93,10 @@ object WidgetDrawer {
             val allWeights = WeeklyDisplayLogic.getColumnWeights(todayIndex, 7)
             for (i in validStart..validEnd) {
                 val dayMillis = WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndex)
-                val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
+                val dayEnd = dayMillis + DAY_MILLIS
                 val hasEvents = events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
                 if (!hasEvents) {
-                    allWeights[i] *= 0.65f
+                    allWeights[i] *= EMPTY_COLUMN_WEIGHT_FACTOR
                 }
             }
 
@@ -99,7 +107,7 @@ object WidgetDrawer {
 
             var currentX = 0f
 
-            val contentTop = 80f
+            val contentTop = CONTENT_TOP
             val bottomPadding = 0f
             val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
             val now = System.currentTimeMillis()
@@ -134,10 +142,10 @@ object WidgetDrawer {
                 canvas.drawText(header.text, currentX + colWidth / 2, headerBaseline, paints.dayHeaderPaint)
 
                 // Events
-                val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
+                val dayEnd = dayMillis + DAY_MILLIS
                 val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
 
-                val textWidth = (colWidth - 10f).toInt()
+                val textWidth = (colWidth - COL_WIDTH_PADDING).toInt()
                 val availableHeight = height - (contentTop + bottomPadding)
 
                 val (optimalFontScale, compressDeclined) = WidgetRenderingHelper.calculateOptimalFontScale(
@@ -177,7 +185,7 @@ object WidgetDrawer {
                     val minEventScale = if (isLessInteresting) 0.5f else 0.7f
                     if (eventScale < minEventScale) eventScale = minEventScale
                     
-                    paints.textPaint.textSize = 48f * eventScale
+                    paints.textPaint.textSize = BASE_TEXT_SIZE * eventScale
 
                     val hasFutureEvents = dayEvents.any { it.endTime >= now }
                     val isPastTodayEvent = (i == todayIndex && event.endTime < now)
@@ -206,9 +214,9 @@ object WidgetDrawer {
 
                             val layout = builder.build()
 
-                            canvas.translate(currentX + 5f, yPos)
+                            canvas.translate(currentX + LEFT_PADDING, yPos)
                             layout.draw(canvas)
-                            canvas.translate(-(currentX + 5f), -yPos)
+                            canvas.translate(-(currentX + LEFT_PADDING), -yPos)
 
                             val spacing = if (i == todayIndex) paints.textPaint.textSize * 0.1f else paints.textPaint.textSize * 0.2f
                             val consumedHeight = layout.height.toFloat() + spacing
@@ -243,7 +251,7 @@ object WidgetDrawer {
             if (settings.bgColor != Color.TRANSPARENT) {
                 canvas.drawColor(settings.bgColor)
             } else {
-                canvas.drawColor(0x4D000000.toInt())
+                canvas.drawColor(DEFAULT_BG_COLOR)
             }
 
             val paints = WidgetRenderingHelper.createPaints(settings)
@@ -265,13 +273,11 @@ object WidgetDrawer {
 
             if (hasPermission) {
                 val repo = CalendarRepository(context)
-                // If no calendars selected, use smart default (personal calendars only)
                 val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
                 val selection = selectedIds.ifEmpty { null }
                 
-                // Auto-advance logic: If we have events today and they are ALL in the past, skip today
                 val checkStart = calculateStartDate(calendar)
-                val todayEnd = checkStart + (24L * 60 * 60 * 1000)
+                val todayEnd = checkStart + DAY_MILLIS
                 val todayEvents = repo.getEvents(checkStart, 1, selection).filter {
                     WeeklyDisplayLogic.shouldDisplayEventOnDay(it, checkStart, todayEnd)
                 }
@@ -313,8 +319,8 @@ object WidgetDrawer {
                 var maxEventsOnAnyDay = 0
                 
                 for (i in 0 until baselineDays) {
-                    val dayMillis = startMillis + (i * 24L * 60 * 60 * 1000)
-                    val dayEnd = dayMillis + (24L * 60 * 60 * 1000)
+                    val dayMillis = startMillis + (i * DAY_MILLIS)
+                    val dayEnd = dayMillis + DAY_MILLIS
                     val dayEventCount = events.count { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
                     
                     if (dayEventCount == 0) emptyDays++
@@ -328,7 +334,7 @@ object WidgetDrawer {
                 }
             }
 
-            val diff = (todayMillis - startMillis) / (24 * 60 * 60 * 1000)
+            val diff = (todayMillis - startMillis) / DAY_MILLIS
             val todayIndex = diff.toInt()
 
             val validStart = 0
@@ -336,11 +342,11 @@ object WidgetDrawer {
 
             val allWeights = DailyDisplayLogic.getColumnWeights(todayIndex, numDays)
             for (i in validStart..validEnd) {
-                val dayMillis = startMillis + (i * 24L * 60 * 60 * 1000)
-                val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
+                val dayMillis = startMillis + (i * DAY_MILLIS)
+                val dayEnd = dayMillis + DAY_MILLIS
                 val hasEvents = events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
                 if (!hasEvents) {
-                    allWeights[i] *= 0.65f
+                    allWeights[i] *= EMPTY_COLUMN_WEIGHT_FACTOR
                 }
             }
 
@@ -353,7 +359,7 @@ object WidgetDrawer {
             val dayFormatEEE = SimpleDateFormat("EEE", Locale.getDefault())
             val dayFormatEEEd = SimpleDateFormat("EEE d", Locale.getDefault())
 
-            val contentTop = 80f
+            val contentTop = CONTENT_TOP
             val bottomPadding = 0f
             val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
             val now = System.currentTimeMillis()
@@ -365,7 +371,7 @@ object WidgetDrawer {
                     canvas.drawLine(currentX, 0f, currentX, height.toFloat(), paints.linePaint)
                 }
 
-                val dayMillis = startMillis + (i * 24 * 60 * 60 * 1000)
+                val dayMillis = startMillis + (i * DAY_MILLIS)
                 val dayName = if (i < todayIndex) {
                     dayFormatEEE.format(dayMillis)
                 } else {
@@ -411,10 +417,10 @@ object WidgetDrawer {
                     canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
                 }
 
-                val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
+                val dayEnd = dayMillis + DAY_MILLIS
                 val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
 
-                val textWidth = (colWidth - 10f).toInt()
+                val textWidth = (colWidth - COL_WIDTH_PADDING).toInt()
                 val availableHeight = height - (contentTop + bottomPadding)
 
                 val (optimalFontScale, compressDeclined) = WidgetRenderingHelper.calculateOptimalFontScale(
@@ -453,7 +459,7 @@ object WidgetDrawer {
                     val minEventScale = if (isLessInteresting) 0.5f else 0.7f
                     if (eventScale < minEventScale) eventScale = minEventScale
 
-                    paints.textPaint.textSize = 48f * eventScale
+                    paints.textPaint.textSize = BASE_TEXT_SIZE * eventScale
 
                     val hasFutureEvents = dayEvents.any { it.endTime >= now }
                     val isPastTodayEvent = (i == todayIndex && event.endTime < now)
@@ -480,9 +486,9 @@ object WidgetDrawer {
 
                             val layout = builder.build()
 
-                            canvas.translate(currentX + 5f, yPos)
+                            canvas.translate(currentX + LEFT_PADDING, yPos)
                             layout.draw(canvas)
-                            canvas.translate(-(currentX + 5f), -yPos)
+                            canvas.translate(-(currentX + LEFT_PADDING), -yPos)
 
                             val spacing = if (i == todayIndex) paints.textPaint.textSize * 0.1f else paints.textPaint.textSize * 0.2f
                             val consumedHeight = layout.height.toFloat() + spacing
