@@ -84,6 +84,16 @@ object WidgetDrawer {
             val validEnd = 6
         
             val allWeights = WeeklyDisplayLogic.getColumnWeights(todayIndex, 7)
+            for (i in validStart..validEnd) {
+                if (i == todayIndex) continue
+                val dayMillis = WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndex)
+                val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
+                val hasEvents = events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
+                if (!hasEvents) {
+                    allWeights[i] *= 0.65f
+                }
+            }
+
             var totalWeight = 0f
             for (i in validStart..validEnd) {
                 totalWeight += allWeights[i]
@@ -301,6 +311,16 @@ object WidgetDrawer {
             val validEnd = numDays - 1
 
             val allWeights = DailyDisplayLogic.getColumnWeights(todayIndex, numDays)
+            for (i in validStart..validEnd) {
+                if (i == todayIndex) continue
+                val dayMillis = startMillis + (i * 24L * 60 * 60 * 1000)
+                val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
+                val hasEvents = events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
+                if (!hasEvents) {
+                    allWeights[i] *= 0.65f
+                }
+            }
+
             var totalWeight = 0f
             for (i in validStart..validEnd) {
                 totalWeight += allWeights[i]
