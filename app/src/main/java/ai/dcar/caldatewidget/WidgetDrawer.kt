@@ -43,12 +43,12 @@ object WidgetDrawer {
     )
 
     fun drawWeeklyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
+        val size = calculateWidgetSize(context, appWidgetManager, appWidgetId)
         try {
             Log.d("WidgetDrawer", "Starting drawWeeklyCalendar for ID: $appWidgetId")
             val prefsManager = PrefsManager(context)
             val settings = prefsManager.loadSettings(appWidgetId)
 
-            val size = calculateWidgetSize(context, appWidgetManager, appWidgetId)
             val bitmap = Bitmap.createBitmap(size.widthPx, size.heightPx, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
 
@@ -108,17 +108,17 @@ object WidgetDrawer {
 
             return bitmap
         } catch (e: Exception) {
-            return createErrorBitmap(e)
+            return createErrorBitmap(e, size.widthPx, size.heightPx)
         }
     }
 
     fun drawDailyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
+        val size = calculateWidgetSize(context, appWidgetManager, appWidgetId)
         try {
             Log.d("WidgetDrawer", "Starting drawDailyCalendar for ID: $appWidgetId")
             val prefsManager = PrefsManager(context)
             val settings = prefsManager.loadSettings(appWidgetId)
 
-            val size = calculateWidgetSize(context, appWidgetManager, appWidgetId)
             val bitmap = Bitmap.createBitmap(size.widthPx, size.heightPx, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
 
@@ -272,7 +272,7 @@ object WidgetDrawer {
             return bitmap
         } catch (e: Exception) {
             Log.e("WidgetDrawer", "Error drawing daily widget", e)
-            return createErrorBitmap(e)
+            return createErrorBitmap(e, size.widthPx, size.heightPx)
         }
     }
 
@@ -660,8 +660,8 @@ object WidgetDrawer {
         return cal.timeInMillis
     }
 
-    private fun createErrorBitmap(e: Exception): Bitmap {
-        val errorBitmap = Bitmap.createBitmap(800, 400, Bitmap.Config.ARGB_8888)
+    private fun createErrorBitmap(e: Exception, width: Int = 800, height: Int = 400): Bitmap {
+        val errorBitmap = Bitmap.createBitmap(width.coerceAtLeast(1), height.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
         val c = Canvas(errorBitmap)
         val p = Paint().apply { color = Color.RED; textSize = 40f }
         c.drawText("Error: ${e.localizedMessage}", 50f, 200f, p)
