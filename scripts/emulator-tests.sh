@@ -450,7 +450,7 @@ if [ -z "${EMULATOR_TESTS_TARGET_SERIAL:-}" ] && [ "$EMULATOR_NAME_EXPLICIT" = f
             local run_duration=$((run_end - run_start))
 
             $ADB_BIN -s "$serial" shell am broadcast \
-                -a android.appwidget.action.APPWIDGET_UPDATE -n "$PACKAGE/.WeeklyWidgetProvider" >/dev/null 2>&1 || true
+                -a ai.dcar.caldatewidget.ACTION_REFRESH -p "$PACKAGE" >/dev/null 2>&1 || true
 
             # Parse summary from am instrument output
             local total failed errors
@@ -1025,9 +1025,11 @@ fi
 
 # Recover widget state after tests (pre-test cleanup stops app/workers)
 if [ "$VERBOSE_MODE" = true ]; then
-    echo -e "${BLUE}Triggering widget refresh to recover UI...${NC}"
+    echo -e "${BLUE}Triggering widget refresh to recover UI state...${NC}"
 fi
-$ADB_BIN -s "$EMULATOR_SERIAL" shell am broadcast -a android.appwidget.action.APPWIDGET_UPDATE -n "$PACKAGE/.WeeklyWidgetProvider" >/dev/null 2>&1 || true
+# Use custom ACTION_REFRESH broadcast which all our providers now listen to.
+# This ensures Weekly, Daily, and Date widgets are all redrawn by their providers.
+$ADB_BIN -s "$EMULATOR_SERIAL" shell am broadcast -a ai.dcar.caldatewidget.ACTION_REFRESH -p "$PACKAGE" >/dev/null 2>&1 || true
 
 # Return appropriate exit code
 if [ "$TEST_SUCCESS" = true ]; then

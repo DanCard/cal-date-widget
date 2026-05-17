@@ -92,6 +92,13 @@ prefix_output() {
     done
 }
 
+echo -e "${BLUE}Building project before running tests...${NC}"
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+if ! ./gradlew assembleDebug assembleDebugAndroidTest --console=plain; then
+    echo -e "${RED}Initial build failed${NC}"
+    exit 1
+fi
+
 echo -e "${BLUE}Starting unit tests and emulator tests in parallel${NC}"
 
 set -o pipefail
