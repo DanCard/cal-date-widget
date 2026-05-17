@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.provider.CalendarContract
 import android.content.pm.PackageManager
 import android.util.Log
 import android.util.TypedValue
@@ -85,7 +84,6 @@ object WidgetDrawer {
         
             val allWeights = WeeklyDisplayLogic.getColumnWeights(todayIndex, 7)
             for (i in validStart..validEnd) {
-                if (i == todayIndex) continue
                 val dayMillis = WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndex)
                 val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
                 val hasEvents = events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
@@ -338,7 +336,6 @@ object WidgetDrawer {
 
             val allWeights = DailyDisplayLogic.getColumnWeights(todayIndex, numDays)
             for (i in validStart..validEnd) {
-                if (i == todayIndex) continue
                 val dayMillis = startMillis + (i * 24L * 60 * 60 * 1000)
                 val dayEnd = dayMillis + (24 * 60 * 60 * 1000)
                 val hasEvents = events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
