@@ -18,5 +18,7 @@ build
 # Local log files
 *.log
 
+crap/
+
 # Emulator configuration
 emulator_*.txt
