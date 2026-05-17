@@ -6,6 +6,11 @@ object DailyDisplayLogic {
     private const val AUTO_ADVANCE_CUTOFF_HOUR = 15
     private const val AUTO_ADVANCE_EVENT_END_BUFFER_MILLIS = 1_000L
 
+    fun getHeaderTextSize(colWidth: Float, isToday: Boolean): Float {
+        val ratio = if (isToday) 0.3f else 0.25f
+        return (colWidth * ratio).coerceIn(30f, 70f)
+    }
+
     fun getColumnWeights(todayIndex: Int, daysCount: Int): FloatArray {
         val weights = FloatArray(daysCount)
         for (i in 0 until daysCount) {

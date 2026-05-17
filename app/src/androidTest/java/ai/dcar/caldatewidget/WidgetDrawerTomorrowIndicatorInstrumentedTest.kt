@@ -38,9 +38,9 @@ class WidgetDrawerTomorrowIndicatorInstrumentedTest {
     }
 
     @Test
-    fun drawHeaderWithTomorrowIndicatorForTestReturnsTrueForWideColumnAndFalseForNarrowColumn() {
+    fun drawHeaderWithTomorrowIndicatorReturnsTrueForWideColumnAndFalseForNarrowColumn() {
         val wideBitmap = Bitmap.createBitmap(600, 180, Bitmap.Config.ARGB_8888)
-        val wideDrawn = WidgetDrawer.drawHeaderWithTomorrowIndicatorForTest(
+        val wideDrawn = WidgetDrawer.drawHeaderWithTomorrowIndicator(
             canvas = Canvas(wideBitmap),
             dayName = "Thu 5",
             centerX = 300f,
@@ -51,7 +51,7 @@ class WidgetDrawerTomorrowIndicatorInstrumentedTest {
         assertTrue(wideDrawn)
 
         val narrowBitmap = Bitmap.createBitmap(160, 180, Bitmap.Config.ARGB_8888)
-        val narrowDrawn = WidgetDrawer.drawHeaderWithTomorrowIndicatorForTest(
+        val narrowDrawn = WidgetDrawer.drawHeaderWithTomorrowIndicator(
             canvas = Canvas(narrowBitmap),
             dayName = "Thu 5",
             centerX = 80f,

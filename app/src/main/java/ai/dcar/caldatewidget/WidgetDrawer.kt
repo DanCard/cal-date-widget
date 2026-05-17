@@ -12,6 +12,9 @@ import android.util.TypedValue
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Locale
 
@@ -28,12 +31,12 @@ object WidgetDrawer {
     internal const val TOMORROW_INDICATOR = "🌈"
 
     private const val CONTENT_TOP = 80f
-    private const val BASE_TEXT_SIZE = 48f
     private const val LEFT_PADDING = 5f
     private const val COL_WIDTH_PADDING = 10f
     private const val EMPTY_COLUMN_WEIGHT_FACTOR = 0.65f
     private const val DEFAULT_BG_COLOR = 0x4D000000.toInt()
     private const val DAY_MILLIS = 24L * 60 * 60 * 1000
+    private const val DEBUG_TAG = "WidgetDebug"
 
     internal data class ColumnRenderConfig(
         val pastEventScaleFactor: Float,
@@ -58,11 +61,10 @@ object WidgetDrawer {
             val todayMillis = startOfDayMillis()
             val startMillis = WeeklyDisplayLogic.getStartDate(Calendar.getInstance(), settings.weekStartDay)
 
-            val events = fetchFilteredEvents(context, settings, todayMillis, 7)
-
-            val todayIndex = ((todayMillis - startMillis) / DAY_MILLIS).toInt().coerceIn(0, 6)
-
             val numDays = 7
+            val events = fetchAndFilterEvents(context, settings, todayMillis, numDays)
+            val todayIndex = daysBetween(startMillis, todayMillis).coerceIn(0, numDays - 1)
+
             val dayMillisList = (0 until numDays).map { i ->
                 WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndex)
             }
@@ -94,20 +96,25 @@ object WidgetDrawer {
                     paints.dayHeaderPaint.color = Color.LTGRAY
                     paints.dayHeaderPaint.isFakeBoldText = false
                 }
-                paints.dayHeaderPaint.textSize = WeeklyDisplayLogic.getHeaderTextSize(colWidth, isToday)
+                val baseHeaderSize = WeeklyDisplayLogic.getHeaderTextSize(colWidth, isToday)
+                paints.dayHeaderPaint.textSize = baseHeaderSize
 
                 val header = WeeklyDisplayLogic.chooseHeaderText(colWidth, dayMillis) { text ->
                     paints.dayHeaderPaint.measureText(text)
                 }
-                paints.dayHeaderPaint.textSize *= header.scale
+                paints.dayHeaderPaint.textSize = baseHeaderSize * header.scale
 
-                val fm = paints.dayHeaderPaint.fontMetrics
-                val headerBaseline = (CONTENT_TOP / 2f) - (fm.ascent + fm.descent) / 2f
-                canvas.drawText(header.text, currentX + colWidth / 2, headerBaseline, paints.dayHeaderPaint)
+                canvas.drawText(
+                    header.text,
+                    currentX + colWidth / 2,
+                    verticallyCenterBaseline(paints.dayHeaderPaint, CONTENT_TOP / 2f),
+                    paints.dayHeaderPaint
+                )
             }
 
             return bitmap
         } catch (e: Exception) {
+            Log.e("WidgetDrawer", "Error drawing weekly widget", e)
             return createErrorBitmap(e, size.widthPx, size.heightPx)
         }
     }
@@ -126,13 +133,15 @@ object WidgetDrawer {
             val paints = WidgetRenderingHelper.createPaints(settings)
 
             val todayMillis = startOfDayMillis()
-
             var numDays = calculateNumberOfDays(context, size.widthPx, size.heightPx)
 
-            var events = emptyList<CalendarEvent>()
+            val startCalendar = Calendar.getInstance()
             var didAutoAdvance = false
-            var startCalendar = Calendar.getInstance()
-            val hasPermission = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
+
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.READ_CALENDAR
+            ) == PackageManager.PERMISSION_GRANTED
             Log.d("WidgetDrawer", "Permission Check (Daily): $hasPermission")
 
             if (hasPermission) {
@@ -148,28 +157,28 @@ object WidgetDrawer {
                 val now = System.currentTimeMillis()
 
                 if (DailyDisplayLogic.shouldAutoAdvance(todayEvents, now)) {
-                     startCalendar.add(Calendar.DAY_OF_YEAR, 1)
-                     didAutoAdvance = true
-                     Log.d("WidgetDrawer", "All events for today are in the past. Auto-advancing to tomorrow.")
+                    startCalendar.add(Calendar.DAY_OF_YEAR, 1)
+                    didAutoAdvance = true
+                    Log.d("WidgetDrawer", "All events for today are in the past. Auto-advancing to tomorrow.")
                 } else {
                     Log.d(
                         "WidgetDrawer",
                         "Daily widget stays on today. now=$now todayEvents=${todayEvents.size} titles=${todayEvents.joinToString { it.title }}"
                     )
                 }
-
-                val startMillis = calculateStartDate(startCalendar)
-                val maxFetchDays = (numDays + 1).coerceAtMost(7)
-                events = repo.getEvents(startMillis, maxFetchDays, selection)
             }
 
             val startMillis = calculateStartDate(startCalendar)
 
-            if (!settings.showDeclinedEvents) {
-                events = events.filter { !it.isDeclined }
+            // maxFetchDays must cover the post-expansion window. The dynamic-expansion block
+            // below grows numDays by at most +1 (to maxPossibleDays = baselineDays + 1), so
+            // fetching baselineDays + 1 here is sufficient.
+            val maxFetchDays = (numDays + 1).coerceAtMost(7)
+            val events = if (hasPermission) {
+                fetchAndFilterEvents(context, settings, startMillis, maxFetchDays)
+            } else {
+                emptyList()
             }
-
-            events = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
 
             val dm = context.resources.displayMetrics
             val heightDp = size.heightPx / dm.density
@@ -195,7 +204,9 @@ object WidgetDrawer {
                 }
             }
 
-            val todayIndex = ((todayMillis - startMillis) / DAY_MILLIS).toInt().coerceIn(0, numDays - 1)
+            // After auto-advance, startMillis > todayMillis; this clamps the "highlight" column to 0
+            // so the first visible (= tomorrow) column is treated as the primary/today column.
+            val todayIndex = daysBetween(startMillis, todayMillis).coerceIn(0, numDays - 1)
 
             val dayMillisList = (0 until numDays).map { i ->
                 startMillis + (i * DAY_MILLIS)
@@ -229,27 +240,18 @@ object WidgetDrawer {
                     dayFormatEEEd.format(dayMillis)
                 }
 
-                val headerTextSize = if (isToday) {
-                    colWidth * 0.3f
-                } else {
-                    colWidth * 0.25f
-                }.coerceIn(30f, 70f)
-
+                paints.dayHeaderPaint.textSize = DailyDisplayLogic.getHeaderTextSize(colWidth, isToday)
                 if (isToday) {
                     paints.dayHeaderPaint.color = Color.YELLOW
                     paints.dayHeaderPaint.isFakeBoldText = true
-                    paints.dayHeaderPaint.textSize = headerTextSize
                 } else {
                     paints.dayHeaderPaint.color = Color.LTGRAY
                     paints.dayHeaderPaint.isFakeBoldText = false
-                    paints.dayHeaderPaint.textSize = headerTextSize
                 }
 
-                val fm = paints.dayHeaderPaint.fontMetrics
-                val headerBaseline = (CONTENT_TOP / 2f) - (fm.ascent + fm.descent) / 2f
+                val headerBaseline = verticallyCenterBaseline(paints.dayHeaderPaint, CONTENT_TOP / 2f)
                 val centerX = currentX + colWidth / 2f
-                val shouldDrawIndicator = shouldDrawTomorrowIndicator(didAutoAdvance, colIndex, 0)
-                if (shouldDrawIndicator) {
+                if (shouldDrawTomorrowIndicator(didAutoAdvance, colIndex)) {
                     val indicatorDrawn = drawHeaderWithTomorrowIndicator(
                         canvas = canvas,
                         dayName = dayName,
@@ -294,7 +296,7 @@ object WidgetDrawer {
         var totalWeight = 0f
         for (weight in weights) totalWeight += weight
 
-        val eventsByDay = dayMillisList.mapIndexed { _, dayMillis ->
+        val eventsByDay = dayMillisList.map { dayMillis ->
             val dayEnd = dayMillis + DAY_MILLIS
             events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
         }
@@ -314,28 +316,29 @@ object WidgetDrawer {
             drawHeader(i, dayMillis, isToday, currentX, colWidth)
 
             val dayEvents = eventsByDay[i]
-
             val textWidth = (colWidth - COL_WIDTH_PADDING).toInt()
             val availableHeight = height - CONTENT_TOP
 
-            val (optimalFontScale, compressDeclined) = WidgetRenderingHelper.calculateOptimalFontScale(
-                dayEvents = dayEvents,
-                textWidth = textWidth,
-                availableHeight = availableHeight,
-                basePaint = paints.textPaint,
-                settings = settings,
-                timeFormat = timeFormat,
-                currentTimeMillis = now,
-                todayIndex = todayIndex,
-                currentDayIndex = i,
-                pastEventScaleFactor = config.pastEventScaleFactor
-            )
+            if (textWidth > 0) {
+                val (optimalFontScale, compressDeclined) = WidgetRenderingHelper.calculateOptimalFontScale(
+                    dayEvents = dayEvents,
+                    textWidth = textWidth,
+                    availableHeight = availableHeight,
+                    basePaint = paints.textPaint,
+                    settings = settings,
+                    timeFormat = timeFormat,
+                    currentTimeMillis = now,
+                    todayIndex = todayIndex,
+                    currentDayIndex = i,
+                    pastEventScaleFactor = config.pastEventScaleFactor
+                )
 
-            renderColumnEvents(
-                canvas, dayEvents, optimalFontScale, compressDeclined,
-                paints, settings, timeFormat, currentX, colWidth, height,
-                todayIndex, i, now, config
-            )
+                renderColumnEvents(
+                    canvas, dayEvents, optimalFontScale, compressDeclined,
+                    paints, settings, timeFormat, currentX, colWidth, textWidth, height,
+                    todayIndex, i, now, config
+                )
+            }
 
             currentX += colWidth
         }
@@ -351,6 +354,7 @@ object WidgetDrawer {
         timeFormat: java.text.DateFormat,
         currentX: Float,
         colWidth: Float,
+        textWidth: Int,
         height: Int,
         todayIndex: Int,
         dayIndex: Int,
@@ -358,7 +362,9 @@ object WidgetDrawer {
         config: ColumnRenderConfig
     ) {
         var yPos = CONTENT_TOP
+        val isTodayColumn = dayIndex == todayIndex
         val hasFutureEvents = dayEvents.any { it.endTime >= now }
+        val verboseDebug = Log.isLoggable(DEBUG_TAG, Log.VERBOSE)
 
         for (event in dayEvents) {
             canvas.save()
@@ -366,65 +372,70 @@ object WidgetDrawer {
 
             paints.textPaint.color = settings.textColor
 
-            val isLessInteresting = WidgetRenderingHelper.isLessInteresting(event)
-            Log.d("WidgetDebug", "${config.widgetTag} Event: '${event.title}', status=${event.selfStatus}, declined=${event.isDeclined}, lessInteresting=$isLessInteresting")
+            val isPastTodayEvent = isTodayColumn && event.endTime < now
+            val decision = WidgetRenderingHelper.decideEventLayout(
+                event = event,
+                optimalScale = optimalFontScale,
+                isPastTodayEvent = isPastTodayEvent,
+                hasFutureEvents = hasFutureEvents,
+                compressDeclined = compressDeclined,
+                pastEventScaleFactor = config.pastEventScaleFactor,
+                useTimeScaleForPast = config.useTimeScaleForPast
+            )
 
-            var eventScale = if (dayIndex == todayIndex && event.endTime < now) {
-                optimalFontScale * config.pastEventScaleFactor
-            } else if (isLessInteresting) {
-                val invScale = (0.8f - 0.2f * optimalFontScale).coerceIn(0.5f, 0.7f)
-                optimalFontScale * invScale
-            } else {
-                optimalFontScale
+            if (verboseDebug) {
+                Log.v(
+                    DEBUG_TAG,
+                    "${config.widgetTag} Event: '${event.title}', status=${event.selfStatus}, declined=${event.isDeclined}, lessInteresting=${decision.isLessInteresting}"
+                )
             }
 
-            val minEventScale = if (isLessInteresting) 0.5f else 0.7f
-            if (eventScale < minEventScale) eventScale = minEventScale
+            paints.textPaint.textSize = WidgetRenderingHelper.BASE_TEXT_SIZE * decision.eventScale
 
-            paints.textPaint.textSize = BASE_TEXT_SIZE * eventScale
+            val dynamicMaxLines = when {
+                decision.forceOneLine -> 1
+                config.useCompressDeclinedMaxLines && compressDeclined -> 3
+                else -> 0
+            }
 
-            val isPastTodayEvent = (dayIndex == todayIndex && event.endTime < now)
-            val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isLessInteresting)
+            val finalText = WidgetRenderingHelper.buildEventText(
+                event, true, settings, timeFormat, decision.timeScale
+            )
 
-            val dynamicMaxLines = if (forceOneLine) 1 else if (config.useCompressDeclinedMaxLines && compressDeclined) 3 else 0
+            try {
+                val builder = android.text.StaticLayout.Builder.obtain(
+                    finalText, 0, finalText.length, paints.textPaint, textWidth
+                )
+                    .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
+                    .setLineSpacing(0f, 1f)
+                    .setIncludePad(false)
 
-            val textWidth = (colWidth - COL_WIDTH_PADDING).toInt()
-
-            if (textWidth > 0) {
-                val timeScale = if (config.useTimeScaleForPast && isPastTodayEvent) 0.5f else 1f
-                val finalText = WidgetRenderingHelper.buildEventText(event, true, settings, timeFormat, timeScale)
-
-                try {
-                    val builder = android.text.StaticLayout.Builder.obtain(
-                        finalText, 0, finalText.length, paints.textPaint, textWidth
-                    )
-                        .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
-                        .setLineSpacing(0f, 1f)
-                        .setIncludePad(false)
-
-                    if (dynamicMaxLines > 0) {
-                        builder.setMaxLines(dynamicMaxLines)
-                        builder.setEllipsize(android.text.TextUtils.TruncateAt.END)
-                    } else {
-                        builder.setEllipsize(null)
-                    }
-
-                    val layout = builder.build()
-
-                    canvas.translate(currentX + LEFT_PADDING, yPos)
-                    layout.draw(canvas)
-                    canvas.translate(-(currentX + LEFT_PADDING), -yPos)
-
-                    val spacing = if (dayIndex == todayIndex) paints.textPaint.textSize * 0.1f else paints.textPaint.textSize * 0.2f
-                    val consumedHeight = layout.height.toFloat() + spacing
-                    yPos += consumedHeight
-                } catch (e: Exception) {
-                    Log.e("WidgetDrawer", "StaticLayout crash: title='${event.title}', width=$textWidth", e)
+                if (dynamicMaxLines > 0) {
+                    builder.setMaxLines(dynamicMaxLines)
+                    builder.setEllipsize(android.text.TextUtils.TruncateAt.END)
+                } else {
+                    builder.setEllipsize(null)
                 }
+
+                val layout = builder.build()
+
+                canvas.translate(currentX + LEFT_PADDING, yPos)
+                layout.draw(canvas)
+
+                val consumedHeight = layout.height.toFloat() +
+                        WidgetRenderingHelper.eventSpacing(paints.textPaint.textSize, isTodayColumn)
+                yPos += consumedHeight
+            } catch (e: Exception) {
+                Log.e("WidgetDrawer", "StaticLayout crash: title='${event.title}', width=$textWidth", e)
             }
 
             canvas.restore()
         }
+    }
+
+    private fun verticallyCenterBaseline(paint: Paint, centerY: Float): Float {
+        val fm = paint.fontMetrics
+        return centerY - (fm.ascent + fm.descent) / 2f
     }
 
     private fun drawBackground(canvas: Canvas, settings: PrefsManager.WidgetSettings) {
@@ -444,13 +455,28 @@ object WidgetDrawer {
         return cal.timeInMillis
     }
 
-    private fun fetchFilteredEvents(
+    /**
+     * DST-safe whole-day count between two local-midnight epoch millis. Using
+     * (to-from)/DAY_MILLIS silently produces N-1 or N+1 across a DST transition
+     * because local midnight-to-midnight is 23h or 25h on those days.
+     */
+    private fun daysBetween(fromMillis: Long, toMillis: Long): Int {
+        val zone = ZoneId.systemDefault()
+        val from = Instant.ofEpochMilli(fromMillis).atZone(zone).toLocalDate()
+        val to = Instant.ofEpochMilli(toMillis).atZone(zone).toLocalDate()
+        return ChronoUnit.DAYS.between(from, to).toInt()
+    }
+
+    private fun fetchAndFilterEvents(
         context: Context,
         settings: PrefsManager.WidgetSettings,
         startMillis: Long,
         days: Int
     ): List<CalendarEvent> {
-        val hasPermission = ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.READ_CALENDAR
+        ) == PackageManager.PERMISSION_GRANTED
         if (!hasPermission) return emptyList()
 
         val repo = CalendarRepository(context)
@@ -545,13 +571,13 @@ object WidgetDrawer {
     @VisibleForTesting
     internal fun shouldDrawTomorrowIndicator(
         didAutoAdvance: Boolean,
-        currentColumn: Int,
-        firstVisibleColumn: Int
+        currentColumn: Int
     ): Boolean {
-        return didAutoAdvance && currentColumn == firstVisibleColumn
+        return didAutoAdvance && currentColumn == 0
     }
 
-    private fun drawHeaderWithTomorrowIndicator(
+    @VisibleForTesting
+    internal fun drawHeaderWithTomorrowIndicator(
         canvas: Canvas,
         dayName: String,
         centerX: Float,
@@ -583,26 +609,12 @@ object WidgetDrawer {
         val baseCenterX = leftX + (baseTextWidth / 2f)
         val rainbowCenterX = leftX + baseTextWidth + layout.spacing + (rainbowWidth / 2f)
 
-        val baseFm = basePaint.fontMetrics
-        val baseBaseline = centerY - (baseFm.ascent + baseFm.descent) / 2f
-        val rainbowFm = rainbowPaint.fontMetrics
-        val rainbowBaseline = centerY - (rainbowFm.ascent + rainbowFm.descent) / 2f
+        val baseBaseline = verticallyCenterBaseline(basePaint, centerY)
+        val rainbowBaseline = verticallyCenterBaseline(rainbowPaint, centerY)
 
         canvas.drawText(dayName, baseCenterX, baseBaseline, basePaint)
         canvas.drawText(layout.indicator, rainbowCenterX, rainbowBaseline, rainbowPaint)
         return true
-    }
-
-    @VisibleForTesting
-    internal fun drawHeaderWithTomorrowIndicatorForTest(
-        canvas: Canvas,
-        dayName: String,
-        centerX: Float,
-        centerY: Float,
-        colWidth: Float,
-        basePaint: Paint
-    ): Boolean {
-        return drawHeaderWithTomorrowIndicator(canvas, dayName, centerX, centerY, colWidth, basePaint)
     }
 
     internal fun calculateRainbowIndicatorTextSize(
@@ -661,7 +673,7 @@ object WidgetDrawer {
         return cal.timeInMillis
     }
 
-    private fun createErrorBitmap(e: Exception, width: Int = 800, height: Int = 400): Bitmap {
+    private fun createErrorBitmap(e: Exception, width: Int, height: Int): Bitmap {
         val errorBitmap = Bitmap.createBitmap(width.coerceAtLeast(1), height.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
         val c = Canvas(errorBitmap)
         val p = Paint().apply { color = Color.RED; textSize = 40f }

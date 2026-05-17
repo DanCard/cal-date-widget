@@ -35,11 +35,50 @@ object WidgetRenderingHelper {
     // Size 100 should be enough for a few widgets * 7 days
     private val fontScaleCache = LruCache<FontScaleCacheKey, Pair<Float, Boolean>>(100)
 
+    const val BASE_TEXT_SIZE = 48f
+
+    data class EventLayoutDecision(
+        val eventScale: Float,
+        val forceOneLine: Boolean,
+        val timeScale: Float,
+        val isLessInteresting: Boolean
+    )
+
     fun isLessInteresting(event: CalendarEvent): Boolean {
         return event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED ||
                 event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_TENTATIVE ||
                 event.isDeclined
     }
+
+    fun decideEventLayout(
+        event: CalendarEvent,
+        optimalScale: Float,
+        isPastTodayEvent: Boolean,
+        hasFutureEvents: Boolean,
+        compressDeclined: Boolean,
+        pastEventScaleFactor: Float,
+        useTimeScaleForPast: Boolean = true
+    ): EventLayoutDecision {
+        val isLessInteresting = isLessInteresting(event)
+        var scale = when {
+            isPastTodayEvent -> optimalScale * pastEventScaleFactor
+            isLessInteresting -> {
+                val invScale = (0.8f - 0.2f * optimalScale).coerceIn(0.5f, 0.7f)
+                optimalScale * invScale
+            }
+            else -> optimalScale
+        }
+        val minScale = if (isLessInteresting) 0.5f else 0.7f
+        if (scale < minScale) scale = minScale
+
+        val forceOneLine = (isPastTodayEvent && hasFutureEvents) ||
+                (compressDeclined && isLessInteresting)
+        val timeScale = if (useTimeScaleForPast && isPastTodayEvent) 0.5f else 1f
+        return EventLayoutDecision(scale, forceOneLine, timeScale, isLessInteresting)
+    }
+
+    fun eventSpacing(textSize: Float, isToday: Boolean): Float =
+        textSize * if (isToday) 0.1f else 0.2f
 
     fun createPaints(settings: PrefsManager.WidgetSettings): PaintBundle {
         val textPaint = android.text.TextPaint().apply {
@@ -197,20 +236,12 @@ object WidgetRenderingHelper {
             return optimalScale
         }
 
-        // Pass 1: Try normal (no compression)
-        var result = Pair(0.5f, false)
         val normalScale = findScale(false)
-        if (normalScale != -1.0f) {
-            result = Pair(normalScale, false)
+        val result = if (normalScale != -1.0f) {
+            Pair(normalScale, false)
         } else {
-            // Pass 2: Try compressed
             val compressedScale = findScale(true)
-            if (compressedScale != -1.0f) {
-                result = Pair(compressedScale, true)
-            } else {
-                // Fallback: Minimum scale with compression
-                result = Pair(0.7f, true)
-            }
+            if (compressedScale != -1.0f) Pair(compressedScale, true) else Pair(0.7f, true)
         }
 
         // Save to Cache
@@ -231,43 +262,36 @@ object WidgetRenderingHelper {
         compressDeclined: Boolean,
         pastEventScaleFactor: Float
     ): Float {
+        val isTodayColumn = currentDayIndex == todayIndex
+        val hasFutureEvents = dayEvents.any { it.endTime >= currentTimeMillis }
         var totalHeight = 0f
-        for (event in dayEvents) {
-            val isDeclinedOrInvited = event.selfStatus == CalendarContract.Attendees.ATTENDEE_STATUS_INVITED || event.isDeclined
-            
-            var eventScale = if (currentDayIndex == todayIndex && event.endTime < currentTimeMillis) {
-                scale * pastEventScaleFactor
-            } else if (isDeclinedOrInvited) {
-                val invScale = (0.8f - 0.2f * scale).coerceIn(0.5f, 0.7f)
-                scale * invScale
-            } else {
-                scale
-            }
 
-            // Enforce minimum sizes
-            val minEventScale = if (isDeclinedOrInvited) 0.5f else 0.7f
-            if (eventScale < minEventScale) eventScale = minEventScale
+        for (event in dayEvents) {
+            val isPastTodayEvent = isTodayColumn && event.endTime < currentTimeMillis
+            val decision = decideEventLayout(
+                event = event,
+                optimalScale = scale,
+                isPastTodayEvent = isPastTodayEvent,
+                hasFutureEvents = hasFutureEvents,
+                compressDeclined = compressDeclined,
+                pastEventScaleFactor = pastEventScaleFactor
+            )
 
             val measurePaint = android.text.TextPaint(basePaint)
-            measurePaint.textSize = 48f * eventScale
+            measurePaint.textSize = BASE_TEXT_SIZE * decision.eventScale
 
-            val hasFutureEvents = dayEvents.any { it.endTime >= currentTimeMillis }
-            val isPastTodayEvent = currentDayIndex == todayIndex && event.endTime < currentTimeMillis
-            val forceOneLine = (isPastTodayEvent && hasFutureEvents) || (compressDeclined && isDeclinedOrInvited)
-            
-            val timeScale = if (isPastTodayEvent) 0.5f else 1f
-            val eventText = buildEventText(event, true, settings, timeFormat, timeScale)
+            val eventText = buildEventText(event, true, settings, timeFormat, decision.timeScale)
             val layout = android.text.StaticLayout.Builder.obtain(
                 eventText, 0, eventText.length, measurePaint, textWidth
             )
                 .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
                 .setLineSpacing(0f, 1f)
                 .setIncludePad(false)
-                .setMaxLines(if (forceOneLine) 1 else 10)
-                .setEllipsize(if (forceOneLine) android.text.TextUtils.TruncateAt.END else null)
+                .setMaxLines(if (decision.forceOneLine) 1 else 10)
+                .setEllipsize(if (decision.forceOneLine) android.text.TextUtils.TruncateAt.END else null)
                 .build()
 
-            if (!forceOneLine) {
+            if (!decision.forceOneLine) {
                 val safeTitle = event.title
                     .replace("\u2026", "")
                     .replace("...", "")
@@ -284,8 +308,7 @@ object WidgetRenderingHelper {
                 }
             }
 
-            val spacing = if (currentDayIndex == todayIndex) measurePaint.textSize * 0.1f else measurePaint.textSize * 0.2f
-            totalHeight += layout.height + spacing
+            totalHeight += layout.height + eventSpacing(measurePaint.textSize, isTodayColumn)
         }
         return totalHeight
     }

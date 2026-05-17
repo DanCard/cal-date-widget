@@ -28,10 +28,10 @@ class WidgetDrawerTomorrowIndicatorRobolectricTest {
     }
 
     @Test
-    fun `shouldDrawTomorrowIndicator returns true only for first visible column when auto advanced`() {
-        assertTrue(WidgetDrawer.shouldDrawTomorrowIndicator(true, 0, 0))
-        assertFalse(WidgetDrawer.shouldDrawTomorrowIndicator(true, 1, 0))
-        assertFalse(WidgetDrawer.shouldDrawTomorrowIndicator(false, 0, 0))
+    fun `shouldDrawTomorrowIndicator returns true only for first column when auto advanced`() {
+        assertTrue(WidgetDrawer.shouldDrawTomorrowIndicator(true, 0))
+        assertFalse(WidgetDrawer.shouldDrawTomorrowIndicator(true, 1))
+        assertFalse(WidgetDrawer.shouldDrawTomorrowIndicator(false, 0))
     }
 
     @Test
@@ -64,12 +64,12 @@ class WidgetDrawerTomorrowIndicatorRobolectricTest {
     }
 
     @Test
-    fun `drawHeaderWithTomorrowIndicatorForTest returns true when width allows`() {
+    fun `drawHeaderWithTomorrowIndicator returns true when width allows`() {
         val bitmap = Bitmap.createBitmap(600, 180, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val paint = createHeaderPaint()
 
-        val drawn = WidgetDrawer.drawHeaderWithTomorrowIndicatorForTest(
+        val drawn = WidgetDrawer.drawHeaderWithTomorrowIndicator(
             canvas = canvas,
             dayName = "Thu 5",
             centerX = 300f,
