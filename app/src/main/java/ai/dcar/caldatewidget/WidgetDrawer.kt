@@ -464,7 +464,8 @@ object WidgetDrawer {
         return WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
     }
 
-    private fun computeAdjustedWeights(
+    @VisibleForTesting
+    internal fun computeAdjustedWeights(
         events: List<CalendarEvent>,
         weights: FloatArray,
         dayMillisList: List<Long>
