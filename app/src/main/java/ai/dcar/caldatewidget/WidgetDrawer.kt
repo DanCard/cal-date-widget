@@ -60,7 +60,7 @@ object WidgetDrawer {
 
             val events = fetchFilteredEvents(context, settings, todayMillis, 7)
 
-            val todayIndex = ((todayMillis - startMillis) / DAY_MILLIS).toInt()
+            val todayIndex = ((todayMillis - startMillis) / DAY_MILLIS).toInt().coerceIn(0, 6)
 
             val numDays = 7
             val dayMillisList = (0 until numDays).map { i ->
@@ -195,7 +195,7 @@ object WidgetDrawer {
                 }
             }
 
-            val todayIndex = ((todayMillis - startMillis) / DAY_MILLIS).toInt()
+            val todayIndex = ((todayMillis - startMillis) / DAY_MILLIS).toInt().coerceIn(0, numDays - 1)
 
             val dayMillisList = (0 until numDays).map { i ->
                 startMillis + (i * DAY_MILLIS)
