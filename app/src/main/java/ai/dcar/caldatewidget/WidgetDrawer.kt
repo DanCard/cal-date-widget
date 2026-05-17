@@ -522,21 +522,21 @@ object WidgetDrawer {
         // Try to use appWidgetSizes (Android 12+) for accurate current size
         var widthDp = 250f
         var heightDp = 110f
+        var usedAppWidgetSizes = false
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             @Suppress("DEPRECATION")
             val sizes = options.getParcelableArrayList<android.util.SizeF>("appWidgetSizes")
             if (!sizes.isNullOrEmpty()) {
-                // First entry is portrait size, which is what we want
                 val portraitSize = sizes[0]
                 widthDp = portraitSize.width
                 heightDp = portraitSize.height
+                usedAppWidgetSizes = true
                 Log.d("WidgetSize", "Widget $appWidgetId: Using appWidgetSizes[0] = ${widthDp}x${heightDp}dp")
             }
         }
 
-        // Fallback to min/max if appWidgetSizes not available
-        if (widthDp == 250f && heightDp == 110f) {
+        if (!usedAppWidgetSizes) {
             val minWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250)
             val minHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110)
             val maxHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, minHeightDp)
