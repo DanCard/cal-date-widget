@@ -258,7 +258,7 @@ object WidgetDrawer {
             todayCal.set(Calendar.MILLISECOND, 0)
             val todayMillis = todayCal.timeInMillis
 
-            val numDays = calculateNumberOfDays(context, size.widthPx, size.heightPx)
+            var numDays = calculateNumberOfDays(context, size.widthPx, size.heightPx)
 
             var events = emptyList<CalendarEvent>()
             var didAutoAdvance = false
@@ -292,7 +292,8 @@ object WidgetDrawer {
 
                 // Final start date
                 val startMillis = calculateStartDate(calendar)
-                events = repo.getEvents(startMillis, numDays, selection)
+                val maxFetchDays = (numDays + 1).coerceAtMost(7)
+                events = repo.getEvents(startMillis, maxFetchDays, selection)
             }
 
             val startMillis = calculateStartDate(calendar) // Ensure startMillis matches the potentially advanced calendar
@@ -303,6 +304,31 @@ object WidgetDrawer {
 
             // Filter near-duplicate events
             events = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+
+            // Dynamic days logic: Only for widgets at least 2 rows high (~100dp)
+            val dm = context.resources.displayMetrics
+            val heightDp = size.heightPx / dm.density
+            val baselineDays = numDays
+            
+            if (heightDp >= 100f) {
+                var emptyDays = 0
+                var maxEventsOnAnyDay = 0
+                
+                for (i in 0 until baselineDays) {
+                    val dayMillis = startMillis + (i * 24L * 60 * 60 * 1000)
+                    val dayEnd = dayMillis + (24L * 60 * 60 * 1000)
+                    val dayEventCount = events.count { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
+                    
+                    if (dayEventCount == 0) emptyDays++
+                    if (dayEventCount > maxEventsOnAnyDay) maxEventsOnAnyDay = dayEventCount
+                }
+
+                val maxPossibleDays = (baselineDays + 1).coerceAtMost(7)
+                if (emptyDays >= 1 && maxEventsOnAnyDay <= 1 && baselineDays < maxPossibleDays) {
+                    Log.d("WidgetSize", "Dynamic expansion: emptyDays=$emptyDays, maxEvents=$maxEventsOnAnyDay, heightDp=$heightDp. Expanding numDays from $baselineDays to $maxPossibleDays.")
+                    numDays = maxPossibleDays
+                }
+            }
 
             val diff = (todayMillis - startMillis) / (24 * 60 * 60 * 1000)
             val todayIndex = diff.toInt()
@@ -540,6 +566,7 @@ object WidgetDrawer {
 
         val cellWidthDp = 92f // Fixed cell width
         val numDays = ((widthDp / cellWidthDp) + 0.5f).toInt().coerceIn(1, 7)
+        Log.d("WidgetSize", "calculateNumberOfDays: px=$widthPx, density=${dm.density}, dp=$widthDp, cellWidth=$cellWidthDp -> numDays=$numDays")
         return numDays
     }
 
