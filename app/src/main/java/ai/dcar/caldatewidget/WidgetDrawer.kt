@@ -294,6 +294,11 @@ object WidgetDrawer {
         var totalWeight = 0f
         for (weight in weights) totalWeight += weight
 
+        val eventsByDay = dayMillisList.mapIndexed { _, dayMillis ->
+            val dayEnd = dayMillis + DAY_MILLIS
+            events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
+        }
+
         var currentX = 0f
 
         for (i in dayMillisList.indices) {
@@ -308,8 +313,7 @@ object WidgetDrawer {
 
             drawHeader(i, dayMillis, isToday, currentX, colWidth)
 
-            val dayEnd = dayMillis + DAY_MILLIS
-            val dayEvents = events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
+            val dayEvents = eventsByDay[i]
 
             val textWidth = (colWidth - COL_WIDTH_PADDING).toInt()
             val availableHeight = height - CONTENT_TOP
