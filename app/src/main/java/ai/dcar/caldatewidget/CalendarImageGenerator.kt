@@ -89,27 +89,7 @@ object CalendarImageGenerator {
                 canvas, size.widthPx, size.heightPx, paints, settings, events,
                 weights, todayIndex, dayMillisList, config, timeFormat, now
             ) { _, dayMillis, isToday, currentX, colWidth ->
-                if (isToday) {
-                    paints.dayHeaderPaint.color = Color.YELLOW
-                    paints.dayHeaderPaint.isFakeBoldText = true
-                } else {
-                    paints.dayHeaderPaint.color = Color.LTGRAY
-                    paints.dayHeaderPaint.isFakeBoldText = false
-                }
-                val baseHeaderSize = WeeklyDisplayLogic.getHeaderTextSize(colWidth, isToday)
-                paints.dayHeaderPaint.textSize = baseHeaderSize
-
-                val header = WeeklyDisplayLogic.chooseHeaderText(colWidth, dayMillis) { text ->
-                    paints.dayHeaderPaint.measureText(text)
-                }
-                paints.dayHeaderPaint.textSize = baseHeaderSize * header.scale
-
-                canvas.drawText(
-                    header.text,
-                    currentX + colWidth / 2,
-                    verticallyCenterBaseline(paints.dayHeaderPaint, CONTENT_TOP / 2f),
-                    paints.dayHeaderPaint
-                )
+                drawWeeklyDayHeader(canvas, paints, dayMillis, isToday, currentX, colWidth)
             }
 
             return bitmap
@@ -117,6 +97,37 @@ object CalendarImageGenerator {
             Log.e("CalendarImageGenerator", "Error drawing weekly widget", e)
             return createErrorBitmap(e, size.widthPx, size.heightPx)
         }
+    }
+
+    internal fun drawWeeklyDayHeader(
+        canvas: Canvas,
+        paints: WidgetRenderingHelper.PaintBundle,
+        dayMillis: Long,
+        isToday: Boolean,
+        currentX: Float,
+        colWidth: Float
+    ) {
+        if (isToday) {
+            paints.dayHeaderPaint.color = Color.YELLOW
+            paints.dayHeaderPaint.isFakeBoldText = true
+        } else {
+            paints.dayHeaderPaint.color = Color.LTGRAY
+            paints.dayHeaderPaint.isFakeBoldText = false
+        }
+        val baseHeaderSize = WeeklyDisplayLogic.getHeaderTextSize(colWidth, isToday)
+        paints.dayHeaderPaint.textSize = baseHeaderSize
+
+        val header = WeeklyDisplayLogic.chooseHeaderText(colWidth, dayMillis) { text ->
+            paints.dayHeaderPaint.measureText(text)
+        }
+        paints.dayHeaderPaint.textSize = baseHeaderSize * header.scale
+
+        canvas.drawText(
+            header.text,
+            currentX + colWidth / 2,
+            verticallyCenterBaseline(paints.dayHeaderPaint, CONTENT_TOP / 2f),
+            paints.dayHeaderPaint
+        )
     }
 
     fun drawDailyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
@@ -239,36 +250,10 @@ object CalendarImageGenerator {
                 } else {
                     dayFormatEEEd.format(dayMillis)
                 }
-
-                paints.dayHeaderPaint.textSize = DailyDisplayLogic.getHeaderTextSize(colWidth, isToday)
-                if (isToday) {
-                    paints.dayHeaderPaint.color = Color.YELLOW
-                    paints.dayHeaderPaint.isFakeBoldText = true
-                } else {
-                    paints.dayHeaderPaint.color = Color.LTGRAY
-                    paints.dayHeaderPaint.isFakeBoldText = false
-                }
-
-                val headerBaseline = verticallyCenterBaseline(paints.dayHeaderPaint, CONTENT_TOP / 2f)
-                val centerX = currentX + colWidth / 2f
-                if (shouldDrawTomorrowIndicator(didAutoAdvance, colIndex)) {
-                    val indicatorDrawn = drawHeaderWithTomorrowIndicator(
-                        canvas = canvas,
-                        dayName = dayName,
-                        centerX = centerX,
-                        centerY = CONTENT_TOP / 2f,
-                        colWidth = colWidth,
-                        basePaint = paints.dayHeaderPaint
-                    )
-                    if (indicatorDrawn) {
-                        Log.d("CalendarImageGenerator", "Drawing tomorrow indicator for daily widget $appWidgetId")
-                    } else {
-                        canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
-                        Log.d("CalendarImageGenerator", "Skipped tomorrow indicator due to narrow column for widget $appWidgetId")
-                    }
-                } else {
-                    canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
-                }
+                drawDailyDayHeader(
+                    canvas, paints, appWidgetId, colIndex, isToday, currentX, colWidth,
+                    didAutoAdvance, dayName
+                )
             }
 
             return bitmap
@@ -303,6 +288,8 @@ object CalendarImageGenerator {
 
         var currentX = 0f
 
+        val actualTodayMillis = startOfDayMillis()
+
         for (i in dayMillisList.indices) {
             val colWidth = (width * (weights[i] / totalWeight))
 
@@ -311,7 +298,7 @@ object CalendarImageGenerator {
             }
 
             val dayMillis = dayMillisList[i]
-            val isToday = (i == todayIndex)
+            val isToday = (dayMillis == actualTodayMillis)
 
             drawHeader(i, dayMillis, isToday, currentX, colWidth)
 
@@ -568,6 +555,48 @@ object CalendarImageGenerator {
         return numDays
     }
 
+    internal fun drawDailyDayHeader(
+        canvas: Canvas,
+        paints: WidgetRenderingHelper.PaintBundle,
+        appWidgetId: Int,
+        colIndex: Int,
+        isToday: Boolean,
+        currentX: Float,
+        colWidth: Float,
+        didAutoAdvance: Boolean,
+        dayName: String
+    ) {
+        paints.dayHeaderPaint.textSize = DailyDisplayLogic.getHeaderTextSize(colWidth, isToday)
+        if (isToday) {
+            paints.dayHeaderPaint.color = Color.YELLOW
+            paints.dayHeaderPaint.isFakeBoldText = true
+        } else {
+            paints.dayHeaderPaint.color = Color.LTGRAY
+            paints.dayHeaderPaint.isFakeBoldText = false
+        }
+
+        val headerBaseline = verticallyCenterBaseline(paints.dayHeaderPaint, CONTENT_TOP / 2f)
+        val centerX = currentX + colWidth / 2f
+        if (shouldDrawTomorrowIndicator(didAutoAdvance, colIndex)) {
+            val indicatorDrawn = drawHeaderWithTomorrowIndicator(
+                canvas = canvas,
+                dayName = dayName,
+                centerX = centerX,
+                centerY = CONTENT_TOP / 2f,
+                colWidth = colWidth,
+                basePaint = paints.dayHeaderPaint
+            )
+            if (indicatorDrawn) {
+                Log.d("CalendarImageGenerator", "Drawing tomorrow indicator for daily widget $appWidgetId")
+            } else {
+                canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
+                Log.d("CalendarImageGenerator", "Skipped tomorrow indicator due to narrow column for widget $appWidgetId")
+            }
+        } else {
+            canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
+        }
+    }
+
     @VisibleForTesting
     internal fun shouldDrawTomorrowIndicator(
         didAutoAdvance: Boolean,
@@ -587,12 +616,9 @@ object CalendarImageGenerator {
     ): Boolean {
         val horizontalPadding = 10f
         val availableWidth = (colWidth - horizontalPadding).coerceAtLeast(1f)
-        val baseTextWidth = basePaint.measureText(dayName)
-        if (baseTextWidth >= availableWidth) {
-            return false
-        }
-
-        val layout = buildTomorrowIndicatorHeaderLayout(
+        
+        var baseTextWidth = basePaint.measureText(dayName)
+        var layout = buildTomorrowIndicatorHeaderLayout(
             dayName = dayName,
             dayNameWidth = baseTextWidth,
             baseTextSize = basePaint.textSize,
@@ -600,7 +626,27 @@ object CalendarImageGenerator {
         ) { candidateTextSize ->
             val rainbowPaint = Paint(basePaint).apply { textSize = candidateTextSize }
             rainbowPaint.measureText(TOMORROW_INDICATOR)
-        } ?: return false
+        }
+
+        var scaleDownCount = 0
+        while ((layout == null || baseTextWidth >= availableWidth) && basePaint.textSize > 10f && scaleDownCount < 20) {
+            basePaint.textSize *= 0.9f
+            baseTextWidth = basePaint.measureText(dayName)
+            layout = buildTomorrowIndicatorHeaderLayout(
+                dayName = dayName,
+                dayNameWidth = baseTextWidth,
+                baseTextSize = basePaint.textSize,
+                availableWidth = availableWidth
+            ) { candidateTextSize ->
+                val rainbowPaint = Paint(basePaint).apply { textSize = candidateTextSize }
+                rainbowPaint.measureText(TOMORROW_INDICATOR)
+            }
+            scaleDownCount++
+        }
+
+        if (layout == null || baseTextWidth >= availableWidth) {
+            return false
+        }
 
         val rainbowPaint = Paint(basePaint).apply { textSize = layout.rainbowTextSize }
         val rainbowWidth = rainbowPaint.measureText(layout.indicator)
