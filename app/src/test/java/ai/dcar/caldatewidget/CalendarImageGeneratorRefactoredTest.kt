@@ -62,13 +62,14 @@ class CalendarImageGeneratorRefactoredTest {
         val result = CalendarImageGenerator.computeAdjustedWeights(events, originalWeights, dayMillisList)
 
         // Then - days 1, 2, 4, 5, 6 should be reduced
+        val f = CalendarImageGenerator.EMPTY_COLUMN_WEIGHT_FACTOR
         assertEquals(1.0f, result[0], 0.001f)
-        assertEquals(0.5f, result[1], 0.001f)
-        assertEquals(0.5f, result[2], 0.001f)
+        assertEquals(1.0f * f, result[1], 0.001f)
+        assertEquals(1.0f * f, result[2], 0.001f)
         assertEquals(1.0f, result[3], 0.001f)
-        assertEquals(0.5f, result[4], 0.001f)
-        assertEquals(0.5f, result[5], 0.001f)
-        assertEquals(0.5f, result[6], 0.001f)
+        assertEquals(1.0f * f, result[4], 0.001f)
+        assertEquals(1.0f * f, result[5], 0.001f)
+        assertEquals(1.0f * f, result[6], 0.001f)
     }
 
     @Test
@@ -98,7 +99,7 @@ class CalendarImageGeneratorRefactoredTest {
 
         // Then - all should be reduced
         for (i in result.indices) {
-            assertEquals(originalWeights[i] * 0.5f, result[i], 0.001f)
+            assertEquals(originalWeights[i] * CalendarImageGenerator.EMPTY_COLUMN_WEIGHT_FACTOR, result[i], 0.001f)
         }
     }
 

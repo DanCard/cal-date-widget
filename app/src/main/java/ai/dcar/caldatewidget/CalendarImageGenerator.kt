@@ -33,7 +33,7 @@ object CalendarImageGenerator {
     private const val CONTENT_TOP = 80f
     private const val LEFT_PADDING = 5f
     private const val COL_WIDTH_PADDING = 10f
-    private const val EMPTY_COLUMN_WEIGHT_FACTOR = 0.5f
+    internal const val EMPTY_COLUMN_WEIGHT_FACTOR = 0.35f
     private const val DEFAULT_BG_COLOR = 0x4D000000.toInt()
     private const val DAY_MILLIS = 24L * 60 * 60 * 1000
     private const val DEBUG_TAG = "WidgetDebug"
