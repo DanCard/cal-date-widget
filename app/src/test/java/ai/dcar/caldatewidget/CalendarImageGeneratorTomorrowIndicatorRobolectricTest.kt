@@ -16,7 +16,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE])
-class WidgetDrawerTomorrowIndicatorRobolectricTest {
+class CalendarImageGeneratorTomorrowIndicatorRobolectricTest {
 
     private fun createHeaderPaint(): Paint {
         return Paint().apply {
@@ -29,14 +29,14 @@ class WidgetDrawerTomorrowIndicatorRobolectricTest {
 
     @Test
     fun `shouldDrawTomorrowIndicator returns true only for first column when auto advanced`() {
-        assertTrue(WidgetDrawer.shouldDrawTomorrowIndicator(true, 0))
-        assertFalse(WidgetDrawer.shouldDrawTomorrowIndicator(true, 1))
-        assertFalse(WidgetDrawer.shouldDrawTomorrowIndicator(false, 0))
+        assertTrue(CalendarImageGenerator.shouldDrawTomorrowIndicator(true, 0))
+        assertFalse(CalendarImageGenerator.shouldDrawTomorrowIndicator(true, 1))
+        assertFalse(CalendarImageGenerator.shouldDrawTomorrowIndicator(false, 0))
     }
 
     @Test
     fun `buildTomorrowIndicatorHeaderLayout includes rainbow symbol when width allows`() {
-        val layout = WidgetDrawer.buildTomorrowIndicatorHeaderLayout(
+        val layout = CalendarImageGenerator.buildTomorrowIndicatorHeaderLayout(
             dayName = "Thu 5",
             dayNameWidth = 120f,
             baseTextSize = 52f,
@@ -46,14 +46,14 @@ class WidgetDrawerTomorrowIndicatorRobolectricTest {
         assertTrue(layout != null)
         assertEquals("Thu 5", layout!!.dayName)
         assertEquals("🌈", layout.indicator)
-        assertEquals(WidgetDrawer.TOMORROW_INDICATOR, layout.indicator)
+        assertEquals(CalendarImageGenerator.TOMORROW_INDICATOR, layout.indicator)
         assertTrue(layout.rainbowTextSize > 0f)
         assertTrue(layout.spacing >= 2f)
     }
 
     @Test
     fun `buildTomorrowIndicatorHeaderLayout returns null when column is too narrow`() {
-        val layout = WidgetDrawer.buildTomorrowIndicatorHeaderLayout(
+        val layout = CalendarImageGenerator.buildTomorrowIndicatorHeaderLayout(
             dayName = "Thu 5",
             dayNameWidth = 120f,
             baseTextSize = 52f,
@@ -69,7 +69,7 @@ class WidgetDrawerTomorrowIndicatorRobolectricTest {
         val canvas = Canvas(bitmap)
         val paint = createHeaderPaint()
 
-        val drawn = WidgetDrawer.drawHeaderWithTomorrowIndicator(
+        val drawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
             canvas = canvas,
             dayName = "Thu 5",
             centerX = 300f,

@@ -5,7 +5,7 @@ import org.junit.Test
 import java.util.Calendar
 import java.util.GregorianCalendar
 
-class WidgetDrawerRefactoredTest {
+class CalendarImageGeneratorRefactoredTest {
 
     private val day0 = GregorianCalendar(2026, Calendar.MAY, 11).apply {
         set(Calendar.HOUR_OF_DAY, 0)
@@ -43,7 +43,7 @@ class WidgetDrawerRefactoredTest {
         val originalWeights = floatArrayOf(2.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.6f, 0.6f)
 
         // When
-        val result = WidgetDrawer.computeAdjustedWeights(events, originalWeights, dayMillisList)
+        val result = CalendarImageGenerator.computeAdjustedWeights(events, originalWeights, dayMillisList)
 
         // Then
         assertEquals(originalWeights.toList(), result.toList())
@@ -59,16 +59,16 @@ class WidgetDrawerRefactoredTest {
         val originalWeights = floatArrayOf(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f)
 
         // When
-        val result = WidgetDrawer.computeAdjustedWeights(events, originalWeights, dayMillisList)
+        val result = CalendarImageGenerator.computeAdjustedWeights(events, originalWeights, dayMillisList)
 
         // Then - days 1, 2, 4, 5, 6 should be reduced
         assertEquals(1.0f, result[0], 0.001f)
-        assertEquals(0.65f, result[1], 0.001f)
-        assertEquals(0.65f, result[2], 0.001f)
+        assertEquals(0.5f, result[1], 0.001f)
+        assertEquals(0.5f, result[2], 0.001f)
         assertEquals(1.0f, result[3], 0.001f)
-        assertEquals(0.65f, result[4], 0.001f)
-        assertEquals(0.65f, result[5], 0.001f)
-        assertEquals(0.65f, result[6], 0.001f)
+        assertEquals(0.5f, result[4], 0.001f)
+        assertEquals(0.5f, result[5], 0.001f)
+        assertEquals(0.5f, result[6], 0.001f)
     }
 
     @Test
@@ -80,7 +80,7 @@ class WidgetDrawerRefactoredTest {
         val originalWeights = floatArrayOf(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f)
 
         // When
-        WidgetDrawer.computeAdjustedWeights(events, originalWeights, dayMillisList)
+        CalendarImageGenerator.computeAdjustedWeights(events, originalWeights, dayMillisList)
 
         // Then - original should be unchanged
         assertEquals(1.0f, originalWeights[0], 0.001f)
@@ -94,17 +94,17 @@ class WidgetDrawerRefactoredTest {
         val originalWeights = floatArrayOf(2.0f, 1.5f, 1.0f, 1.0f, 1.0f, 0.7f, 0.7f)
 
         // When
-        val result = WidgetDrawer.computeAdjustedWeights(events, originalWeights, dayMillisList)
+        val result = CalendarImageGenerator.computeAdjustedWeights(events, originalWeights, dayMillisList)
 
         // Then - all should be reduced
         for (i in result.indices) {
-            assertEquals(originalWeights[i] * 0.65f, result[i], 0.001f)
+            assertEquals(originalWeights[i] * 0.5f, result[i], 0.001f)
         }
     }
 
     @Test
     fun `ColumnRenderConfig weekly has correct pastEventScaleFactor`() {
-        val config = WidgetDrawer.ColumnRenderConfig(
+        val config = CalendarImageGenerator.ColumnRenderConfig(
             pastEventScaleFactor = 0.7f,
             useCompressDeclinedMaxLines = true,
             useTimeScaleForPast = true,
@@ -115,7 +115,7 @@ class WidgetDrawerRefactoredTest {
 
     @Test
     fun `ColumnRenderConfig daily has correct pastEventScaleFactor`() {
-        val config = WidgetDrawer.ColumnRenderConfig(
+        val config = CalendarImageGenerator.ColumnRenderConfig(
             pastEventScaleFactor = 0.8f,
             useCompressDeclinedMaxLines = true,
             useTimeScaleForPast = true,

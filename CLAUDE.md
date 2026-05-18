@@ -37,7 +37,7 @@ $ADB pull /sdcard/screenshot.png /tmp/widget_screenshot.png
 
 # Clear logcat and watch widget logs
 $ADB logcat -c
-$ADB logcat -s WeeklyWidget:D WidgetDrawer:D
+$ADB logcat -s WeeklyWidget:D CalendarImageGenerator:D
 
 # Restart Samsung launcher to force redraw (Fold4 / Samsung-only)
 $ADB shell "pkill -f com.sec.android.app.launcher && sleep 2"
@@ -140,7 +140,7 @@ Each widget has its own `ConfigActivity` (wired via `android:configure`) and ind
 `PrefsManager` settings keyed by `appWidgetId`.
 
 **Shared rendering infrastructure (Daily + Weekly):**
-- `WidgetDrawer.kt` — `drawDailyCalendar()` / `drawWeeklyCalendar()` bitmap rendering.
+- `CalendarImageGenerator.kt` — `drawDailyCalendar()` / `drawWeeklyCalendar()` bitmap rendering.
 - `WidgetUpdateHelper.kt` — `updateDailyWidget()` / `updateWeeklyWidget()` build `RemoteViews`,
   set the drawn bitmap, and wire click intents.
 - `WidgetUpdateWorker.kt` — `WorkManager` worker dispatching async updates.
@@ -254,7 +254,7 @@ app/src/main/java/ai/dcar/caldatewidget/
 ├── CalendarEvent.kt             # Event data model
 ├── WeeklyDisplayLogic.kt        # Weekly display calculations (testable)
 ├── DailyDisplayLogic.kt         # Daily display calculations (auto-advance, weights)
-├── WidgetDrawer.kt              # Shared bitmap renderer (Daily + Weekly)
+├── CalendarImageGenerator.kt              # Shared bitmap renderer (Daily + Weekly)
 ├── WidgetRenderingHelper.kt     # Shared paint/font-scale utilities
 ├── WidgetUpdateHelper.kt        # Shared RemoteViews + click-intent wiring
 ├── WidgetUpdateWorker.kt        # WorkManager worker for async updates
@@ -271,8 +271,8 @@ app/src/test/java/ai/dcar/caldatewidget/
 ├── WeeklyWidgetProviderTest.kt           # Weekly provider integration
 ├── WeeklyWidgetResizingTest.kt           # Column-sizing behavior
 ├── WeeklyConfigActivityTest.kt           # Config UI
-├── WidgetDrawerTest.kt                   # Drawer-level rendering checks
-├── WidgetDrawerTomorrowIndicatorRobolectricTest.kt  # Robolectric UI test
+├── CalendarImageGeneratorTest.kt                   # Drawer-level rendering checks
+├── CalendarImageGeneratorTomorrowIndicatorRobolectricTest.kt  # Robolectric UI test
 ├── WidgetRenderingHelperTest.kt          # Shared render helper
 ├── ConfigActivityTest.kt                 # Date widget config
 ├── DateFormatTest.kt                     # Date formatting

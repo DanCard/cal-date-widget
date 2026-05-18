@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-class WidgetDrawerTest {
+class CalendarImageGeneratorTest {
 
     @Test
     fun `calculateRainbowIndicatorTextSize returns default scaled size when there is enough width`() {
@@ -14,7 +14,7 @@ class WidgetDrawerTest {
         val availableWidth = 200f
 
         // When
-        val result = WidgetDrawer.calculateRainbowIndicatorTextSize(
+        val result = CalendarImageGenerator.calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
             availableWidth = availableWidth
@@ -32,7 +32,7 @@ class WidgetDrawerTest {
         val availableWidth = 110f
 
         // When
-        val result = WidgetDrawer.calculateRainbowIndicatorTextSize(
+        val result = CalendarImageGenerator.calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
             availableWidth = availableWidth
@@ -50,7 +50,7 @@ class WidgetDrawerTest {
         val availableWidth = 260f
 
         // When
-        val result = WidgetDrawer.calculateRainbowIndicatorTextSize(
+        val result = CalendarImageGenerator.calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
             availableWidth = availableWidth
@@ -68,7 +68,7 @@ class WidgetDrawerTest {
         val availableWidth = 110f
 
         // When
-        val result = WidgetDrawer.calculateRainbowIndicatorTextSize(
+        val result = CalendarImageGenerator.calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
             availableWidth = availableWidth

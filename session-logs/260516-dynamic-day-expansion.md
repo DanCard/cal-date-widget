@@ -12,7 +12,7 @@ In this session, we optimized the horizontal space usage of the Daily and Weekly
 **Strategic Intent:** Apply a 0.65x width multiplier to days without events in the weekly and daily widgets to optimize screen space for busy days.
 
 **Implementation:**
-- Modified `WidgetDrawer.kt` to calculate event counts per day *before* finalizing column weights.
+- Modified `CalendarImageGenerator.kt` to calculate event counts per day *before* finalizing column weights.
 - Applied a `0.65f` multiplier to the baseline weight of any day that has no events (excluding the current day).
 - Verified that "Today" remains prominent and un-narrowed.
 
@@ -38,11 +38,11 @@ In this session, we optimized the horizontal space usage of the Daily and Weekly
     - Fetches `baseline + 1` days.
     - Evaluates the baseline window for `emptyDays >= 1` and `maxEventsOnAnyDay <= 1`.
     - If criteria are met, `numDays` is incremented by 1.
-- Updated `WidgetDrawer.kt` with this logic and added debug logging for visibility into the decision-making process.
+- Updated `CalendarImageGenerator.kt` with this logic and added debug logging for visibility into the decision-making process.
 
 ## Technical Details
 
-### Key Code Changes (`WidgetDrawer.kt`)
+### Key Code Changes (`CalendarImageGenerator.kt`)
 
 #### Empty Day Narrowing (Weekly & Daily)
 ```kotlin

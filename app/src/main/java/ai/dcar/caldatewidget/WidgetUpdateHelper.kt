@@ -12,7 +12,7 @@ object WidgetUpdateHelper {
         val views = RemoteViews(context.packageName, R.layout.widget_weekly)
 
         // Draw Bitmap (Heavy Operation)
-        val bitmap = WidgetDrawer.drawWeeklyCalendar(context, appWidgetManager, appWidgetId)
+        val bitmap = CalendarImageGenerator.drawWeeklyCalendar(context, appWidgetManager, appWidgetId)
         views.setImageViewBitmap(R.id.weekly_canvas, bitmap)
 
         // Config Intent
@@ -43,7 +43,7 @@ object WidgetUpdateHelper {
         val views = RemoteViews(context.packageName, R.layout.widget_daily)
 
         // Draw Bitmap (Heavy Operation)
-        val bitmap = WidgetDrawer.drawDailyCalendar(context, appWidgetManager, appWidgetId)
+        val bitmap = CalendarImageGenerator.drawDailyCalendar(context, appWidgetManager, appWidgetId)
         views.setImageViewBitmap(R.id.daily_canvas, bitmap)
 
         // Config Intent

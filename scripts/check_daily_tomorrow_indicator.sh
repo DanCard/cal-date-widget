@@ -3,7 +3,7 @@ set -euo pipefail
 
 PACKAGE_NAME="ai.dcar.caldatewidget"
 PROVIDER_COMPONENT="${PACKAGE_NAME}/.DailyWidgetProvider"
-LOG_TAG="WidgetDrawer"
+LOG_TAG="CalendarImageGenerator"
 WAIT_SECONDS=3
 SERIAL=""
 SCENARIO=""

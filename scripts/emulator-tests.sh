@@ -118,7 +118,7 @@ if [ "$SHOW_HELP" = true ]; then
     echo "  -v             Verbose output (default: condensed)"
     echo "  -u             Allow APK uninstall after tests (default: preserve installed APKs)"
     echo "  -e EMULATOR    Use specific emulator (default: $DEFAULT_EMULATOR)"
-    echo "  -c CLASS       Run specific test class (e.g., ai.dcar.caldatewidget.WidgetDrawerTomorrowIndicatorInstrumentedTest)"
+    echo "  -c CLASS       Run specific test class (e.g., ai.dcar.caldatewidget.CalendarImageGeneratorTomorrowIndicatorInstrumentedTest)"
     echo "  -d DURATION    Test timeout (default: ${TEST_TIMEOUT}s; accepts 300, 90s, 10m, 1h)"
     echo "  -b             Boot only: exit once emulator is ready (no tests)"
     echo "  --no-retry     Exit 2 on ASM errors instead of retrying (for parallel orchestration)"
@@ -129,7 +129,7 @@ if [ "$SHOW_HELP" = true ]; then
     echo "  $(basename "$0") -q                           # Headless mode (no GUI window)"
     echo "  $(basename "$0") -b                           # Boot emulator and exit"
     echo "  $(basename "$0") -e Medium_Phone_API_36       # Use phone emulator"
-    echo "  $(basename "$0") -c WidgetDrawerTomorrowIndicatorInstrumentedTest  # Run specific test class"
+    echo "  $(basename "$0") -c CalendarImageGeneratorTomorrowIndicatorInstrumentedTest  # Run specific test class"
     echo "  $(basename "$0") -d 15m                       # Allow up to 15 minutes for tests"
     exit 0
 fi

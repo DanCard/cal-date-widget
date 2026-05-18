@@ -1,6 +1,6 @@
-# Session Log: WidgetDrawer.kt Code Review & Refactor
+# Session Log: CalendarImageGenerator.kt Code Review & Refactor
 **Date:** Sunday, May 17, 2026
-**Objective:** Code review `WidgetDrawer.kt` and implement all findings — eliminate duplication, fix bugs, improve performance, and add tests.
+**Objective:** Code review `CalendarImageGenerator.kt` and implement all findings — eliminate duplication, fix bugs, improve performance, and add tests.
 
 ## Review Findings
 
@@ -23,20 +23,20 @@
 ## Implementation (8 commits)
 
 ### Commit 1: `ad4981b` — Remove unused CalendarContract import
-- **File:** `WidgetDrawer.kt`
+- **File:** `CalendarImageGenerator.kt`
 - Removed unused `import android.provider.CalendarContract` (line 9 old)
 
 ### Commit 2: `c80d2a7` — Extract magic numbers to named constants
-- **File:** `WidgetDrawer.kt`
+- **File:** `CalendarImageGenerator.kt`
 - Added companion object constants: `CONTENT_TOP` (80f), `BASE_TEXT_SIZE` (48f), `LEFT_PADDING` (5f), `COL_WIDTH_PADDING` (10f), `EMPTY_COLUMN_WEIGHT_FACTOR` (0.65f), `DEFAULT_BG_COLOR` (0x4D000000), `DAY_MILLIS` (24L*60*60*1000)
 - Replaced all raw occurrences across both draw methods
 
 ### Commit 3: `c17e89e` — Fix calculateWidgetSize fallback detection
-- **File:** `WidgetDrawer.kt`
+- **File:** `CalendarImageGenerator.kt`
 - Replaced `widthDp == 250f && heightDp == 110f` magic-value check with `usedAppWidgetSizes` boolean flag
 
 ### Commit 4: `0ae30d5` — Full refactor: extract shared column rendering
-- **File:** `WidgetDrawer.kt` (major rewrite: -307 lines, +271 lines)
+- **File:** `CalendarImageGenerator.kt` (major rewrite: -307 lines, +271 lines)
 - **New data class:** `ColumnRenderConfig` — parameterizes differences between weekly and daily widgets:
   - `pastEventScaleFactor` (0.7f weekly, 0.8f daily — intentional difference)
   - `useCompressDeclinedMaxLines` (now `true` for both — fixes bug)
@@ -57,22 +57,22 @@
 - **Caught and fixed during implementation:** Auto-advance calendar mutation was initially lost in refactor (creating new `Calendar.getInstance()` instead of mutating shared instance). Fixed by using mutable `startCalendar` variable.
 
 ### Commit 5: `0a042f4` — Add todayIndex bounds clamping
-- **File:** `WidgetDrawer.kt`
+- **File:** `CalendarImageGenerator.kt`
 - Weekly: `.coerceIn(0, 6)` on todayIndex calculation
 - Daily: `.coerceIn(0, numDays - 1)` on todayIndex calculation
 
 ### Commit 6: `5671a17` — Pre-group events by day
-- **File:** `WidgetDrawer.kt`
+- **File:** `CalendarImageGenerator.kt`
 - In `renderDayColumns`, added `eventsByDay` pre-computation: maps each day to its filtered events upfront
 - Eliminates repeated O(n) `events.filter { shouldDisplayEventOnDay(...) }` per column
 
 ### Commit 7: `f8f58b0` — Dynamic error bitmap size
-- **File:** `WidgetDrawer.kt`
+- **File:** `CalendarImageGenerator.kt`
 - Moved `calculateWidgetSize` before try block in both draw methods so `size` is available in catch
 - Updated `createErrorBitmap` to accept optional `width` and `height` parameters (defaults 800x400)
 
 ### Commit 8: `bc7f1cc` — Add tests
-- **File:** `WidgetDrawerRefactoredTest.kt` (new, 8 tests)
+- **File:** `CalendarImageGeneratorRefactoredTest.kt` (new, 8 tests)
 - Tests for `computeAdjustedWeights`:
   - No modification when all days have events
   - Reduces weight for empty days by 0.65x factor
@@ -88,8 +88,8 @@
 - Made `computeAdjustedWeights` `@VisibleForTesting internal` to enable direct testing
 
 ## Files Modified
-- `app/src/main/java/ai/dcar/caldatewidget/WidgetDrawer.kt` (all 7 code commits)
-- `app/src/test/java/ai/dcar/caldatewidget/WidgetDrawerRefactoredTest.kt` (new)
+- `app/src/main/java/ai/dcar/caldatewidget/CalendarImageGenerator.kt` (all 7 code commits)
+- `app/src/test/java/ai/dcar/caldatewidget/CalendarImageGeneratorRefactoredTest.kt` (new)
 
 ## Verification
 All commits verified with `./gradlew testDebugUnitTest` — BUILD SUCCESSFUL after each phase.

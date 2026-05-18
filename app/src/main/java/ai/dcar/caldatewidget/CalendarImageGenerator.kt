@@ -18,7 +18,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Locale
 
-object WidgetDrawer {
+object CalendarImageGenerator {
 
     data class WidgetSize(val widthPx: Int, val heightPx: Int)
     internal data class TomorrowIndicatorHeaderLayout(
@@ -33,7 +33,7 @@ object WidgetDrawer {
     private const val CONTENT_TOP = 80f
     private const val LEFT_PADDING = 5f
     private const val COL_WIDTH_PADDING = 10f
-    private const val EMPTY_COLUMN_WEIGHT_FACTOR = 0.65f
+    private const val EMPTY_COLUMN_WEIGHT_FACTOR = 0.5f
     private const val DEFAULT_BG_COLOR = 0x4D000000.toInt()
     private const val DAY_MILLIS = 24L * 60 * 60 * 1000
     private const val DEBUG_TAG = "WidgetDebug"
@@ -48,7 +48,7 @@ object WidgetDrawer {
     fun drawWeeklyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
         val size = calculateWidgetSize(context, appWidgetManager, appWidgetId)
         try {
-            Log.d("WidgetDrawer", "Starting drawWeeklyCalendar for ID: $appWidgetId")
+            Log.d("CalendarImageGenerator", "Starting drawWeeklyCalendar for ID: $appWidgetId")
             val prefsManager = PrefsManager(context)
             val settings = prefsManager.loadSettings(appWidgetId)
 
@@ -114,7 +114,7 @@ object WidgetDrawer {
 
             return bitmap
         } catch (e: Exception) {
-            Log.e("WidgetDrawer", "Error drawing weekly widget", e)
+            Log.e("CalendarImageGenerator", "Error drawing weekly widget", e)
             return createErrorBitmap(e, size.widthPx, size.heightPx)
         }
     }
@@ -122,7 +122,7 @@ object WidgetDrawer {
     fun drawDailyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
         val size = calculateWidgetSize(context, appWidgetManager, appWidgetId)
         try {
-            Log.d("WidgetDrawer", "Starting drawDailyCalendar for ID: $appWidgetId")
+            Log.d("CalendarImageGenerator", "Starting drawDailyCalendar for ID: $appWidgetId")
             val prefsManager = PrefsManager(context)
             val settings = prefsManager.loadSettings(appWidgetId)
 
@@ -142,7 +142,7 @@ object WidgetDrawer {
                 context,
                 android.Manifest.permission.READ_CALENDAR
             ) == PackageManager.PERMISSION_GRANTED
-            Log.d("WidgetDrawer", "Permission Check (Daily): $hasPermission")
+            Log.d("CalendarImageGenerator", "Permission Check (Daily): $hasPermission")
 
             if (hasPermission) {
                 val repo = CalendarRepository(context)
@@ -159,10 +159,10 @@ object WidgetDrawer {
                 if (DailyDisplayLogic.shouldAutoAdvance(todayEvents, now)) {
                     startCalendar.add(Calendar.DAY_OF_YEAR, 1)
                     didAutoAdvance = true
-                    Log.d("WidgetDrawer", "All events for today are in the past. Auto-advancing to tomorrow.")
+                    Log.d("CalendarImageGenerator", "All events for today are in the past. Auto-advancing to tomorrow.")
                 } else {
                     Log.d(
-                        "WidgetDrawer",
+                        "CalendarImageGenerator",
                         "Daily widget stays on today. now=$now todayEvents=${todayEvents.size} titles=${todayEvents.joinToString { it.title }}"
                     )
                 }
@@ -261,10 +261,10 @@ object WidgetDrawer {
                         basePaint = paints.dayHeaderPaint
                     )
                     if (indicatorDrawn) {
-                        Log.d("WidgetDrawer", "Drawing tomorrow indicator for daily widget $appWidgetId")
+                        Log.d("CalendarImageGenerator", "Drawing tomorrow indicator for daily widget $appWidgetId")
                     } else {
                         canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
-                        Log.d("WidgetDrawer", "Skipped tomorrow indicator due to narrow column for widget $appWidgetId")
+                        Log.d("CalendarImageGenerator", "Skipped tomorrow indicator due to narrow column for widget $appWidgetId")
                     }
                 } else {
                     canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
@@ -273,7 +273,7 @@ object WidgetDrawer {
 
             return bitmap
         } catch (e: Exception) {
-            Log.e("WidgetDrawer", "Error drawing daily widget", e)
+            Log.e("CalendarImageGenerator", "Error drawing daily widget", e)
             return createErrorBitmap(e, size.widthPx, size.heightPx)
         }
     }
@@ -426,7 +426,7 @@ object WidgetDrawer {
                         WidgetRenderingHelper.eventSpacing(paints.textPaint.textSize, isTodayColumn)
                 yPos += consumedHeight
             } catch (e: Exception) {
-                Log.e("WidgetDrawer", "StaticLayout crash: title='${event.title}', width=$textWidth", e)
+                Log.e("CalendarImageGenerator", "StaticLayout crash: title='${event.title}', width=$textWidth", e)
             }
 
             canvas.restore()

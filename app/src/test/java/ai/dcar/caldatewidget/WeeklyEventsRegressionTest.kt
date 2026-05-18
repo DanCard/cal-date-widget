@@ -50,7 +50,7 @@ class WeeklyEventsRegressionTest {
             makeEvent("Sat Event", localMidnight(2026, Calendar.MAY, 16) + 10 * 3600000, localMidnight(2026, Calendar.MAY, 16) + 11 * 3600000)
         )
 
-        // Simulation of WidgetDrawer.drawWeeklyCalendar logic
+        // Simulation of CalendarImageGenerator.drawWeeklyCalendar logic
         val dayMillisList = (0 until 7).map { i ->
             WeeklyDisplayLogic.getEffectiveDayMillis(weekStart, i, todayIndex)
         }

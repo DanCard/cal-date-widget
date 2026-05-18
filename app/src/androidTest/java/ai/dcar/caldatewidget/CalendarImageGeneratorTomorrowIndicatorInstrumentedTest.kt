@@ -12,7 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class WidgetDrawerTomorrowIndicatorInstrumentedTest {
+class CalendarImageGeneratorTomorrowIndicatorInstrumentedTest {
 
     private fun createHeaderPaint(): Paint {
         return Paint().apply {
@@ -25,7 +25,7 @@ class WidgetDrawerTomorrowIndicatorInstrumentedTest {
 
     @Test
     fun buildTomorrowIndicatorHeaderLayoutExposesRainbowSymbol() {
-        val layout = WidgetDrawer.buildTomorrowIndicatorHeaderLayout(
+        val layout = CalendarImageGenerator.buildTomorrowIndicatorHeaderLayout(
             dayName = "Thu 5",
             dayNameWidth = 120f,
             baseTextSize = 52f,
@@ -34,13 +34,13 @@ class WidgetDrawerTomorrowIndicatorInstrumentedTest {
 
         assertTrue(layout != null)
         assertEquals("🌈", layout!!.indicator)
-        assertEquals(WidgetDrawer.TOMORROW_INDICATOR, layout.indicator)
+        assertEquals(CalendarImageGenerator.TOMORROW_INDICATOR, layout.indicator)
     }
 
     @Test
     fun drawHeaderWithTomorrowIndicatorReturnsTrueForWideColumnAndFalseForNarrowColumn() {
         val wideBitmap = Bitmap.createBitmap(600, 180, Bitmap.Config.ARGB_8888)
-        val wideDrawn = WidgetDrawer.drawHeaderWithTomorrowIndicator(
+        val wideDrawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
             canvas = Canvas(wideBitmap),
             dayName = "Thu 5",
             centerX = 300f,
@@ -51,7 +51,7 @@ class WidgetDrawerTomorrowIndicatorInstrumentedTest {
         assertTrue(wideDrawn)
 
         val narrowBitmap = Bitmap.createBitmap(160, 180, Bitmap.Config.ARGB_8888)
-        val narrowDrawn = WidgetDrawer.drawHeaderWithTomorrowIndicator(
+        val narrowDrawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
             canvas = Canvas(narrowBitmap),
             dayName = "Thu 5",
             centerX = 80f,

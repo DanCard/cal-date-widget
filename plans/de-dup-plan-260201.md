@@ -20,7 +20,7 @@ Add new function in `WeeklyDisplayLogic.kt` (pure Kotlin, easily testable):
 fun filterNearDuplicates(events: List<CalendarEvent>, dayOfYear: Int): List<CalendarEvent>
 ```
 
-Call from `WidgetDrawer.kt` after declined event filtering:
+Call from `CalendarImageGenerator.kt` after declined event filtering:
 ```kotlin
 // Line 64-66 (current declined filter)
 if (!settings.showDeclinedEvents) {
@@ -75,8 +75,8 @@ private fun areNearDuplicates(a: CalendarEvent, b: CalendarEvent): Boolean {
 - Add `areNearDuplicates()` private helper function
 - Follow existing code style (object with pure functions, no Android dependencies)
 
-### 2. WidgetDrawer.kt
-**Location**: `/home/dcar/projects/cal-date-widget/app/src/main/java/ai/dcar/caldatewidget/WidgetDrawer.kt`
+### 2. CalendarImageGenerator.kt
+**Location**: `/home/dcar/projects/cal-date-widget/app/src/main/java/ai/dcar/caldatewidget/CalendarImageGenerator.kt`
 
 **Changes**:
 - Add near-duplicate filter call after line 66 (after declined event filter)

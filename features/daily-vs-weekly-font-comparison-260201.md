@@ -33,7 +33,7 @@ Both widgets use `WidgetRenderingHelper.calculateOptimalFontScale()` which:
 The daily widget calculates the number of columns dynamically:
 
 ```kotlin
-// WidgetDrawer.kt:481-488
+// CalendarImageGenerator.kt:481-488
 val cellWidthDp = 92f
 val numDays = ((widthDp / cellWidthDp) + 0.5f).toInt().coerceIn(1, 7)
 ```
@@ -49,7 +49,7 @@ With fewer columns:
 Past events (already ended) get an additional scale reduction:
 
 ```kotlin
-// WidgetDrawer.kt
+// CalendarImageGenerator.kt
 // Weekly (line 152-153):
 optimalFontScale * 0.7f  // 70% of optimal
 
@@ -61,7 +61,7 @@ optimalFontScale * 0.8f  // 80% of optimal
 
 **Weekly** uses fixed sizes regardless of column width:
 ```kotlin
-// WidgetDrawer.kt:107-114
+// CalendarImageGenerator.kt:107-114
 if (i == todayIndex) {
     paints.dayHeaderPaint.textSize = 80f
 } else {
@@ -71,7 +71,7 @@ if (i == todayIndex) {
 
 **Daily** scales headers with column width:
 ```kotlin
-// WidgetDrawer.kt:315-319
+// CalendarImageGenerator.kt:315-319
 val headerTextSize = if (i == todayIndex) {
     colWidth * 0.3f
 } else {
@@ -117,7 +117,7 @@ For a 400dp wide widget:
 Both widgets enforce minimum event scales:
 
 ```kotlin
-// WidgetDrawer.kt (both widgets)
+// CalendarImageGenerator.kt (both widgets)
 val minEventScale = if (isLessInteresting) 0.5f else 0.7f
 if (eventScale < minEventScale) eventScale = minEventScale
 ```
@@ -130,7 +130,7 @@ if (eventScale < minEventScale) eventScale = minEventScale
 
 | File | Purpose |
 |------|---------|
-| `WidgetDrawer.kt` | Renders both widgets, applies font scales |
+| `CalendarImageGenerator.kt` | Renders both widgets, applies font scales |
 | `WidgetRenderingHelper.kt` | Binary search algorithm, height measurement |
 | `WeeklyDisplayLogic.kt` | Weekly-specific column weights and logic |
 | `DailyDisplayLogic.kt` | Daily-specific column weights and auto-advance |
