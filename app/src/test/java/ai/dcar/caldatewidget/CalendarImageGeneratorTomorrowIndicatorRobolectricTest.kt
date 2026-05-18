@@ -80,4 +80,41 @@ class CalendarImageGeneratorTomorrowIndicatorRobolectricTest {
 
         assertTrue(drawn)
     }
+
+    class TestPaint : Paint() {
+        init {
+            color = Color.WHITE
+            textSize = 52f
+            isAntiAlias = true
+            textAlign = Paint.Align.CENTER
+        }
+        
+        override fun measureText(text: String?): Float {
+            if (text == null) return 0f
+            return text.length * textSize * 0.5f
+        }
+    }
+
+    @Test
+    fun `drawHeaderWithTomorrowIndicator scales down text when column is narrow`() {
+        val bitmap = Bitmap.createBitmap(600, 180, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        val paint = TestPaint()
+        val originalTextSize = paint.textSize
+
+        // Original text size = 52f. Width of "Thu 5" = 5 * 26 = 130f.
+        // We set available width to 100f (colWidth = 110f). 
+        // It must scale down to fit.
+        val drawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
+            canvas = canvas,
+            dayName = "Thu 5",
+            centerX = 40f,
+            centerY = 40f,
+            colWidth = 110f,
+            basePaint = paint
+        )
+
+        assertTrue("Should return true, indicating it fit after scaling", drawn)
+        assertTrue("Paint text size should be scaled down", paint.textSize < originalTextSize)
+    }
 }
