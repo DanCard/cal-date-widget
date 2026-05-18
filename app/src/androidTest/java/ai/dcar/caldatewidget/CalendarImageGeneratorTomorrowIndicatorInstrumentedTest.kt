@@ -38,27 +38,31 @@ class CalendarImageGeneratorTomorrowIndicatorInstrumentedTest {
     }
 
     @Test
-    fun drawHeaderWithTomorrowIndicatorReturnsTrueForWideColumnAndFalseForNarrowColumn() {
+    fun drawHeaderWithTomorrowIndicatorScalesTextForNarrowColumn() {
         val wideBitmap = Bitmap.createBitmap(600, 180, Bitmap.Config.ARGB_8888)
+        val widePaint = createHeaderPaint()
         val wideDrawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
             canvas = Canvas(wideBitmap),
             dayName = "Thu 5",
             centerX = 300f,
             centerY = 40f,
             colWidth = 420f,
-            basePaint = createHeaderPaint()
+            basePaint = widePaint
         )
         assertTrue(wideDrawn)
+        assertEquals(52f, widePaint.textSize)
 
         val narrowBitmap = Bitmap.createBitmap(160, 180, Bitmap.Config.ARGB_8888)
+        val narrowPaint = createHeaderPaint()
         val narrowDrawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
             canvas = Canvas(narrowBitmap),
             dayName = "Thu 5",
             centerX = 80f,
             centerY = 40f,
             colWidth = 90f,
-            basePaint = createHeaderPaint()
+            basePaint = narrowPaint
         )
-        assertFalse(narrowDrawn)
+        assertTrue("Indicator should be drawn by scaling down text", narrowDrawn)
+        assertTrue("Text size should be scaled down", narrowPaint.textSize < 52f)
     }
 }
