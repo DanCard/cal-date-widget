@@ -44,7 +44,11 @@ object DailyAutoAdvanceScheduler {
             WeeklyDisplayLogic.shouldDisplayEventOnDay(it, todayStart, todayEnd)
         }
         val now = System.currentTimeMillis()
-        val nextCheckTime = DailyDisplayLogic.getNextAutoAdvanceCheckTime(todayEvents, now)
+        val nextCheckTime = DailyDisplayLogic.getNextAutoAdvanceCheckTime(
+            todayEvents,
+            now,
+            settings.dailyAutoAdvanceCutoffMinuteOfDay
+        )
 
         Log.d(
             "DailyAutoAdvance",

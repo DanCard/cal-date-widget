@@ -31,6 +31,10 @@ class AutoAdvanceTest {
         }.timeInMillis
     }
 
+    private fun cutoffMinuteOfDay(hourOfDay: Int, minute: Int = 0): Int {
+        return (hourOfDay * 60) + minute
+    }
+
     @Test
     fun `shouldAutoAdvance returns false when there are no events before cutoff`() {
         val todayEvents = emptyList<CalendarEvent>()
@@ -43,6 +47,21 @@ class AutoAdvanceTest {
         val todayEvents = emptyList<CalendarEvent>()
         val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(15, 0))
         assertTrue("Should advance at cutoff when there are no events", result)
+    }
+
+    @Test
+    fun `shouldAutoAdvance uses custom cutoff for empty days`() {
+        val todayEvents = emptyList<CalendarEvent>()
+        val cutoff = cutoffMinuteOfDay(18, 30)
+
+        assertFalse(
+            "Should not advance before custom cutoff when there are no events",
+            DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(18, 29), cutoff)
+        )
+        assertTrue(
+            "Should advance at custom cutoff when there are no events",
+            DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(18, 30), cutoff)
+        )
     }
 
     @Test
@@ -71,7 +90,7 @@ class AutoAdvanceTest {
     fun `shouldAutoAdvance returns true at 1pm when last event ended at noon`() {
         val now = timeMillis(13, 0)
         val events = listOf(createEvent("Lunch", endMillis = timeMillis(12, 0)))
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, cutoffMinuteOfDay(18, 30))
         assertTrue("Should advance once last event ends, even before 3 PM cutoff", result)
     }
 
@@ -143,6 +162,19 @@ class AutoAdvanceTest {
         val result = DailyDisplayLogic.getNextAutoAdvanceCheckTime(emptyList(), now)
 
         assertEquals(timeMillis(15, 0), result)
+    }
+
+    @Test
+    fun `getNextAutoAdvanceCheckTime returns custom cutoff for empty day before cutoff`() {
+        val now = timeMillis(18, 29)
+
+        val result = DailyDisplayLogic.getNextAutoAdvanceCheckTime(
+            emptyList(),
+            now,
+            cutoffMinuteOfDay(18, 30)
+        )
+
+        assertEquals(timeMillis(18, 30), result)
     }
 
     @Test

@@ -43,7 +43,8 @@ class PrefsManagerTest {
             dateFormat = "yyyy-MM-dd",
             textColor = 0xFF0000,
             shadowColor = 0x00FF00,
-            bgColor = 0x0000FF
+            bgColor = 0x0000FF,
+            dailyAutoAdvanceCutoffMinuteOfDay = 18 * 60 + 30
         )
 
         prefsManager.saveSettings(widgetId, settings)
@@ -52,6 +53,7 @@ class PrefsManagerTest {
         verify { editor.putInt("widget_123_text_color", 0xFF0000) }
         verify { editor.putInt("widget_123_shadow_color", 0x00FF00) }
         verify { editor.putInt("widget_123_bg_color", 0x0000FF) }
+        verify { editor.putInt("widget_123_daily_auto_advance_cutoff", 1110) }
         verify { editor.apply() }
     }
 
@@ -59,9 +61,35 @@ class PrefsManagerTest {
     fun `loadSettings returns defaults when missing`() {
         val widgetId = 456
         every { prefs.getString("widget_456_format", any()) } returns null
+        every {
+            prefs.getInt(
+                "widget_456_daily_auto_advance_cutoff",
+                PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
+            )
+        } returns PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
         
         val settings = prefsManager.loadSettings(widgetId)
         
         assertEquals(PrefsManager.DEFAULT_DATE_FORMAT, settings.dateFormat)
+        assertEquals(
+            PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY,
+            settings.dailyAutoAdvanceCutoffMinuteOfDay
+        )
+    }
+
+    @Test
+    fun `loadSettings returns saved daily auto advance cutoff`() {
+        val widgetId = 789
+        every { prefs.getString("widget_789_format", any()) } returns null
+        every {
+            prefs.getInt(
+                "widget_789_daily_auto_advance_cutoff",
+                PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
+            )
+        } returns 1110
+
+        val settings = prefsManager.loadSettings(widgetId)
+
+        assertEquals(1110, settings.dailyAutoAdvanceCutoffMinuteOfDay)
     }
 }

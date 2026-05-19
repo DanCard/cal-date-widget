@@ -4,7 +4,9 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
 
 object WidgetUpdateHelper {
 
@@ -14,6 +16,11 @@ object WidgetUpdateHelper {
         // Draw Bitmap (Heavy Operation)
         val bitmap = CalendarImageGenerator.drawWeeklyCalendar(context, appWidgetManager, appWidgetId)
         views.setImageViewBitmap(R.id.weekly_canvas, bitmap)
+
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.READ_CALENDAR
+        ) == PackageManager.PERMISSION_GRANTED
 
         // Config Intent
         val configIntent = Intent(context, WeeklyConfigActivity::class.java).apply {
@@ -25,15 +32,21 @@ object WidgetUpdateHelper {
         )
         views.setOnClickPendingIntent(R.id.weekly_config_btn, configPendingIntent)
 
-        // Widget Click Intent - opens calendar and schedules delayed refresh
-        val clickIntent = Intent(context, WidgetClickReceiver::class.java).apply {
-            action = WidgetClickReceiver.ACTION_WIDGET_CLICK
-            putExtra(WidgetClickReceiver.EXTRA_WIDGET_ID, appWidgetId)
-            putExtra(WidgetClickReceiver.EXTRA_WIDGET_TYPE, "WEEKLY")
+        // Widget Click Intent
+        val pendingIntent = if (hasPermission) {
+            // opens calendar and schedules delayed refresh
+            val clickIntent = Intent(context, WidgetClickReceiver::class.java).apply {
+                action = WidgetClickReceiver.ACTION_WIDGET_CLICK
+                putExtra(WidgetClickReceiver.EXTRA_WIDGET_ID, appWidgetId)
+                putExtra(WidgetClickReceiver.EXTRA_WIDGET_TYPE, "WEEKLY")
+            }
+            PendingIntent.getBroadcast(
+                context, appWidgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        } else {
+            // Redirect to config activity to grant permission
+            configPendingIntent
         }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context, appWidgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
         views.setOnClickPendingIntent(R.id.weekly_canvas, pendingIntent)
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -46,6 +59,11 @@ object WidgetUpdateHelper {
         val bitmap = CalendarImageGenerator.drawDailyCalendar(context, appWidgetManager, appWidgetId)
         views.setImageViewBitmap(R.id.daily_canvas, bitmap)
 
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.READ_CALENDAR
+        ) == PackageManager.PERMISSION_GRANTED
+
         // Config Intent
         val configIntent = Intent(context, DailyConfigActivity::class.java).apply {
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -56,15 +74,21 @@ object WidgetUpdateHelper {
         )
         views.setOnClickPendingIntent(R.id.daily_config_btn, configPendingIntent)
 
-        // Widget Click Intent - opens calendar and schedules delayed refresh
-        val clickIntent = Intent(context, WidgetClickReceiver::class.java).apply {
-            action = WidgetClickReceiver.ACTION_WIDGET_CLICK
-            putExtra(WidgetClickReceiver.EXTRA_WIDGET_ID, appWidgetId)
-            putExtra(WidgetClickReceiver.EXTRA_WIDGET_TYPE, "DAILY")
+        // Widget Click Intent
+        val pendingIntent = if (hasPermission) {
+            // opens calendar and schedules delayed refresh
+            val clickIntent = Intent(context, WidgetClickReceiver::class.java).apply {
+                action = WidgetClickReceiver.ACTION_WIDGET_CLICK
+                putExtra(WidgetClickReceiver.EXTRA_WIDGET_ID, appWidgetId)
+                putExtra(WidgetClickReceiver.EXTRA_WIDGET_TYPE, "DAILY")
+            }
+            PendingIntent.getBroadcast(
+                context, appWidgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        } else {
+            // Redirect to config activity to grant permission
+            configPendingIntent
         }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context, appWidgetId, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
         views.setOnClickPendingIntent(R.id.daily_canvas, pendingIntent)
 
         appWidgetManager.updateAppWidget(appWidgetId, views)

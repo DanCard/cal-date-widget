@@ -56,6 +56,17 @@ object CalendarImageGenerator {
             val canvas = Canvas(bitmap)
 
             drawBackground(canvas, settings)
+
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.READ_CALENDAR
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!hasPermission) {
+                drawPermissionRequired(canvas, size, settings)
+                return bitmap
+            }
+
             val paints = WidgetRenderingHelper.createPaints(settings)
 
             val todayMillis = startOfDayMillis()
@@ -141,6 +152,17 @@ object CalendarImageGenerator {
             val canvas = Canvas(bitmap)
 
             drawBackground(canvas, settings)
+
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.READ_CALENDAR
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!hasPermission) {
+                drawPermissionRequired(canvas, size, settings)
+                return bitmap
+            }
+
             val paints = WidgetRenderingHelper.createPaints(settings)
 
             val todayMillis = startOfDayMillis()
@@ -149,10 +171,6 @@ object CalendarImageGenerator {
             val startCalendar = Calendar.getInstance()
             var didAutoAdvance = false
 
-            val hasPermission = ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.READ_CALENDAR
-            ) == PackageManager.PERMISSION_GRANTED
             Log.d("CalendarImageGenerator", "Permission Check (Daily): $hasPermission")
 
             if (hasPermission) {
@@ -167,7 +185,12 @@ object CalendarImageGenerator {
                 }
                 val now = System.currentTimeMillis()
 
-                if (DailyDisplayLogic.shouldAutoAdvance(todayEvents, now)) {
+                if (DailyDisplayLogic.shouldAutoAdvance(
+                        todayEvents,
+                        now,
+                        settings.dailyAutoAdvanceCutoffMinuteOfDay
+                    )
+                ) {
                     startCalendar.add(Calendar.DAY_OF_YEAR, 1)
                     didAutoAdvance = true
                     Log.d("CalendarImageGenerator", "All events for today are in the past. Auto-advancing to tomorrow.")
@@ -464,17 +487,25 @@ object CalendarImageGenerator {
             context,
             android.Manifest.permission.READ_CALENDAR
         ) == PackageManager.PERMISSION_GRANTED
+        Log.d("CalendarImageGenerator", "fetchAndFilterEvents permission: $hasPermission")
         if (!hasPermission) return emptyList()
 
         val repo = CalendarRepository(context)
         val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
+        Log.d("CalendarImageGenerator", "fetchAndFilterEvents selectedIds: $selectedIds")
+        
         var events = repo.getEvents(startMillis, days, selectedIds.ifEmpty { null })
+        Log.d("CalendarImageGenerator", "fetchAndFilterEvents rawCount: ${events.size}")
 
         if (!settings.showDeclinedEvents) {
+            val countBefore = events.size
             events = events.filter { !it.isDeclined }
+            Log.d("CalendarImageGenerator", "fetchAndFilterEvents afterDeclinedFilter: ${events.size} (removed ${countBefore - events.size})")
         }
 
-        return WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+        val filtered = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
+        Log.d("CalendarImageGenerator", "fetchAndFilterEvents finalCount: ${filtered.size}")
+        return filtered
     }
 
     @VisibleForTesting
@@ -717,6 +748,25 @@ object CalendarImageGenerator {
         cal.set(Calendar.MILLISECOND, 0)
 
         return cal.timeInMillis
+    }
+
+    private fun drawPermissionRequired(canvas: Canvas, size: WidgetSize, settings: PrefsManager.WidgetSettings) {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = settings.textColor
+            textAlign = Paint.Align.CENTER
+            textSize = 14f * canvas.density
+        }
+        val text = "Permission Required\nTap to grant"
+        val lines = text.split("\n")
+        val yStart = size.heightPx / 2f - (lines.size - 1) * paint.textSize / 2f
+        lines.forEachIndexed { index, line ->
+            canvas.drawText(
+                line,
+                size.widthPx / 2f,
+                yStart + index * paint.textSize,
+                paint
+            )
+        }
     }
 
     private fun createErrorBitmap(e: Exception, width: Int, height: Int): Bitmap {

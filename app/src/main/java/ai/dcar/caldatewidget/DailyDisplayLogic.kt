@@ -3,7 +3,6 @@ package ai.dcar.caldatewidget
 import java.util.Calendar
 
 object DailyDisplayLogic {
-    private const val AUTO_ADVANCE_CUTOFF_HOUR = 15
     private const val AUTO_ADVANCE_EVENT_END_BUFFER_MILLIS = 1_000L
 
     fun getHeaderTextSize(colWidth: Float, isToday: Boolean): Float {
@@ -42,7 +41,8 @@ object DailyDisplayLogic {
      */
     fun shouldAutoAdvance(
         todayEvents: List<CalendarEvent>,
-        nowMillis: Long
+        nowMillis: Long,
+        cutoffMinuteOfDay: Int = PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
     ): Boolean {
         val validEvents = todayEvents.filter { !it.isDeclined }
 
@@ -53,14 +53,15 @@ object DailyDisplayLogic {
         val calendar = Calendar.getInstance().apply {
             timeInMillis = nowMillis
         }
-        return calendar.get(Calendar.HOUR_OF_DAY) >= AUTO_ADVANCE_CUTOFF_HOUR
+        return minuteOfDay(calendar) >= cutoffMinuteOfDay.coerceIn(0, (24 * 60) - 1)
     }
 
     fun getNextAutoAdvanceCheckTime(
         todayEvents: List<CalendarEvent>,
-        nowMillis: Long
+        nowMillis: Long,
+        cutoffMinuteOfDay: Int = PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
     ): Long? {
-        if (shouldAutoAdvance(todayEvents, nowMillis)) return null
+        if (shouldAutoAdvance(todayEvents, nowMillis, cutoffMinuteOfDay)) return null
 
         val validEvents = todayEvents.filter { !it.isDeclined }
         val nextEventEnd = validEvents
@@ -73,12 +74,17 @@ object DailyDisplayLogic {
 
         val cutoffTime = Calendar.getInstance().apply {
             timeInMillis = nowMillis
-            set(Calendar.HOUR_OF_DAY, AUTO_ADVANCE_CUTOFF_HOUR)
-            set(Calendar.MINUTE, 0)
+            val cutoff = cutoffMinuteOfDay.coerceIn(0, (24 * 60) - 1)
+            set(Calendar.HOUR_OF_DAY, cutoff / 60)
+            set(Calendar.MINUTE, cutoff % 60)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
 
         return if (nowMillis < cutoffTime) cutoffTime else null
+    }
+
+    private fun minuteOfDay(calendar: Calendar): Int {
+        return calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE)
     }
 }

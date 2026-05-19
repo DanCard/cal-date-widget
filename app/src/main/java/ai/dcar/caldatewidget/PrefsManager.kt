@@ -14,6 +14,7 @@ class PrefsManager(context: Context) {
         const val DEFAULT_TEXT_COLOR = Color.WHITE
         const val DEFAULT_SHADOW_COLOR = Color.BLACK
         const val DEFAULT_BG_COLOR = Color.TRANSPARENT
+        const val DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY = 15 * 60
     }
 
     data class WidgetSettings(
@@ -26,7 +27,8 @@ class PrefsManager(context: Context) {
         val startTimeShadowColor: Int = Color.BLACK,
         val showDeclinedEvents: Boolean = false,
         val showAmPm: Boolean = false,
-        val selectedCalendarIds: Set<Long> = emptySet()
+        val selectedCalendarIds: Set<Long> = emptySet(),
+        val dailyAutoAdvanceCutoffMinuteOfDay: Int = DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
     )
 
     fun saveSettings(widgetId: Int, settings: WidgetSettings) {
@@ -41,6 +43,7 @@ class PrefsManager(context: Context) {
             putBoolean("${KEY_PREFIX}${widgetId}_show_declined", settings.showDeclinedEvents)
             putBoolean("${KEY_PREFIX}${widgetId}_show_ampm", settings.showAmPm)
             putStringSet("${KEY_PREFIX}${widgetId}_calendars", settings.selectedCalendarIds.map { it.toString() }.toSet())
+            putInt("${KEY_PREFIX}${widgetId}_daily_auto_advance_cutoff", settings.dailyAutoAdvanceCutoffMinuteOfDay)
             apply()
         }
     }
@@ -57,8 +60,24 @@ class PrefsManager(context: Context) {
         val showAmPm = prefs.getBoolean("${KEY_PREFIX}${widgetId}_show_ampm", false)
         val selectedCalendarIds = prefs.getStringSet("${KEY_PREFIX}${widgetId}_calendars", emptySet())
             ?.mapNotNull { it.toLongOrNull() }?.toSet() ?: emptySet()
+        val dailyAutoAdvanceCutoff = prefs.getInt(
+            "${KEY_PREFIX}${widgetId}_daily_auto_advance_cutoff",
+            DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
+        ).coerceIn(0, (24 * 60) - 1)
 
-        return WidgetSettings(format, textColor, shadowColor, bgColor, weekStart, startTimeColor, startTimeShadowColor, showDeclined, showAmPm, selectedCalendarIds)
+        return WidgetSettings(
+            format,
+            textColor,
+            shadowColor,
+            bgColor,
+            weekStart,
+            startTimeColor,
+            startTimeShadowColor,
+            showDeclined,
+            showAmPm,
+            selectedCalendarIds,
+            dailyAutoAdvanceCutoff
+        )
     }
 
     fun deleteSettings(widgetId: Int) {
@@ -73,6 +92,7 @@ class PrefsManager(context: Context) {
             remove("${KEY_PREFIX}${widgetId}_show_declined")
             remove("${KEY_PREFIX}${widgetId}_show_ampm")
             remove("${KEY_PREFIX}${widgetId}_calendars")
+            remove("${KEY_PREFIX}${widgetId}_daily_auto_advance_cutoff")
             apply()
         }
     }

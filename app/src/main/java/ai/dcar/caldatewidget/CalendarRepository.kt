@@ -73,7 +73,7 @@ class CalendarRepository(private val context: Context) {
 
         Log.d(
             "CalendarRepository",
-            "getEvents displayRange=[$startMillis,$endMillis) queryRange=[$queryStartMillis,$queryEndMillis) numDays=$numDays calendars=${visibleCalendarIds.size}"
+            "getEvents displayRange=[$startMillis,$endMillis) queryRange=[$queryStartMillis,$queryEndMillis) numDays=$numDays calendarsCount=${visibleCalendarIds.size} ids=$visibleCalendarIds"
         )
 
         try {
@@ -84,6 +84,8 @@ class CalendarRepository(private val context: Context) {
                 selectionArgs,
                 "${CalendarContract.Instances.BEGIN} ASC"
             )
+
+            Log.d("CalendarRepository", "getEvents cursor count: ${cursor?.count ?: "null"}")
 
             cursor?.use {
                 val idIdx = it.getColumnIndex(CalendarContract.Instances.EVENT_ID)
