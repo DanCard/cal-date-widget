@@ -72,35 +72,52 @@ object CalendarImageGenerator {
             val todayMillis = startOfDayMillis()
             val startMillis = WeeklyDisplayLogic.getStartDate(Calendar.getInstance(), settings.weekStartDay)
 
-            val numDays = 7
-            val events = fetchAndFilterEvents(context, settings, todayMillis, numDays)
-            val todayIndex = daysBetween(startMillis, todayMillis).coerceIn(0, numDays - 1)
+            val dm = context.resources.displayMetrics
+            val heightDp = size.heightPx / dm.density
+            val weeks = WeeklyDisplayLogic.weeksToShow(settings.twoLineModeEnabled, heightDp)
 
-            val dayMillisList = (0 until numDays).map { i ->
-                WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndex)
-            }
+            val totalDays = 7 * weeks
+            val todayIndexInWeek = daysBetween(startMillis, todayMillis).coerceIn(0, 6)
 
-            val weights = computeAdjustedWeights(
-                events,
-                WeeklyDisplayLogic.getColumnWeights(todayIndex, numDays),
-                dayMillisList
-            )
+            // Build the global day list. Row 1 uses effective shifting; Row 2 starts 7 days after Row 1.
+            val globalDayMillisList = (0 until totalDays).map { globalIdx ->
+                val w = globalIdx / 7
+                val i = globalIdx % 7
+                val baseEffective = WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndexInWeek)
+                baseEffective + (w * 7 * DAY_MILLIS)
+                }
 
-            val config = ColumnRenderConfig(
-                pastEventScaleFactor = 0.7f,
-                useCompressDeclinedMaxLines = true,
-                useTimeScaleForPast = true,
-                widgetTag = "Weekly"
-            )
+                val allEvents = fetchAndFilterEvents(context, settings, startMillis, totalDays + 7)
 
-            val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
+                val bandHeight = size.heightPx / weeks
             val now = System.currentTimeMillis()
+            val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
 
-            renderDayColumns(
-                canvas, size.widthPx, size.heightPx, paints, settings, events,
-                weights, todayIndex, dayMillisList, config, timeFormat, now
-            ) { _, dayMillis, isToday, currentX, colWidth ->
-                drawWeeklyDayHeader(canvas, paints, dayMillis, isToday, currentX, colWidth)
+            for (w in 0 until weeks) {
+                val rowDayMillisList = globalDayMillisList.subList(w * 7, (w + 1) * 7)
+                
+                val rowTodayIndex = if (w == 0) todayIndexInWeek else -1
+                
+                // Base weighting for this row
+                val baseRowWeights = WeeklyDisplayLogic.getColumnWeights(rowTodayIndex, 7)
+                
+                // Adjust weights for empty columns
+                val rowWeights = computeAdjustedWeights(allEvents, baseRowWeights, rowDayMillisList)
+
+                val config = ColumnRenderConfig(
+                    pastEventScaleFactor = 0.7f,
+                    useCompressDeclinedMaxLines = true,
+                    useTimeScaleForPast = true,
+                    widgetTag = "Weekly"
+                )
+
+                renderDayColumns(
+                    canvas, size.widthPx, bandHeight, paints, settings, allEvents,
+                    rowWeights, rowTodayIndex, rowDayMillisList, config, timeFormat, now,
+                    topOffset = (w * bandHeight).toFloat()
+                ) { _, dayMillis, isToday, currentX, colWidth, top ->
+                    drawWeeklyDayHeader(canvas, paints, dayMillis, isToday, currentX, colWidth, top)
+                }
             }
 
             return bitmap
@@ -116,7 +133,8 @@ object CalendarImageGenerator {
         dayMillis: Long,
         isToday: Boolean,
         currentX: Float,
-        colWidth: Float
+        colWidth: Float,
+        topOffset: Float = 0f
     ) {
         if (isToday) {
             paints.dayHeaderPaint.color = Color.YELLOW
@@ -136,7 +154,7 @@ object CalendarImageGenerator {
         canvas.drawText(
             header.text,
             currentX + colWidth / 2,
-            verticallyCenterBaseline(paints.dayHeaderPaint, CONTENT_TOP / 2f),
+            verticallyCenterBaseline(paints.dayHeaderPaint, topOffset + CONTENT_TOP / 2f),
             paints.dayHeaderPaint
         )
     }
@@ -166,7 +184,7 @@ object CalendarImageGenerator {
             val paints = WidgetRenderingHelper.createPaints(settings)
 
             val todayMillis = startOfDayMillis()
-            var numDays = calculateNumberOfDays(context, size.widthPx, size.heightPx)
+            val cols = calculateNumberOfDays(context, size.widthPx, size.heightPx)
 
             val startCalendar = Calendar.getInstance()
             var didAutoAdvance = false
@@ -194,64 +212,23 @@ object CalendarImageGenerator {
                     startCalendar.add(Calendar.DAY_OF_YEAR, 1)
                     didAutoAdvance = true
                     Log.d("CalendarImageGenerator", "All events for today are in the past. Auto-advancing to tomorrow.")
-                } else {
-                    Log.d(
-                        "CalendarImageGenerator",
-                        "Daily widget stays on today. now=$now todayEvents=${todayEvents.size} titles=${todayEvents.joinToString { it.title }}"
-                    )
                 }
             }
 
             val startMillis = calculateStartDate(startCalendar)
+            val dm = context.resources.displayMetrics
+            val heightDp = size.heightPx / dm.density
+            val grid = DailyDisplayLogic.computeGridLayout(cols, heightDp, settings.twoLineModeEnabled)
 
-            // maxFetchDays must cover the post-expansion window. The dynamic-expansion block
-            // below grows numDays by at most +1 (to maxPossibleDays = baselineDays + 1), so
-            // fetching baselineDays + 1 here is sufficient.
-            val maxFetchDays = (numDays + 1).coerceAtMost(7)
             val events = if (hasPermission) {
-                fetchAndFilterEvents(context, settings, startMillis, maxFetchDays)
+                fetchAndFilterEvents(context, settings, startMillis, grid.days)
             } else {
                 emptyList()
             }
 
-            val dm = context.resources.displayMetrics
-            val heightDp = size.heightPx / dm.density
-            val baselineDays = numDays
+            val globalDayMillisList = (0 until grid.days).map { startMillis + it * DAY_MILLIS }
 
-            if (heightDp >= 100f) {
-                var emptyDays = 0
-                var maxEventsOnAnyDay = 0
-
-                for (i in 0 until baselineDays) {
-                    val dayMillis = startMillis + (i * DAY_MILLIS)
-                    val dayEnd = dayMillis + DAY_MILLIS
-                    val dayEventCount = events.count { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
-
-                    if (dayEventCount == 0) emptyDays++
-                    if (dayEventCount > maxEventsOnAnyDay) maxEventsOnAnyDay = dayEventCount
-                }
-
-                val maxPossibleDays = (baselineDays + 1).coerceAtMost(7)
-                if (emptyDays >= 1 && maxEventsOnAnyDay <= 1 && baselineDays < maxPossibleDays) {
-                    Log.d("WidgetSize", "Dynamic expansion: emptyDays=$emptyDays, maxEvents=$maxEventsOnAnyDay, heightDp=$heightDp. Expanding numDays from $baselineDays to $maxPossibleDays.")
-                    numDays = maxPossibleDays
-                }
-            }
-
-            // After auto-advance, startMillis > todayMillis; this clamps the "highlight" column to 0
-            // so the first visible (= tomorrow) column is treated as the primary/today column.
-            val todayIndex = daysBetween(startMillis, todayMillis).coerceIn(0, numDays - 1)
-
-            val dayMillisList = (0 until numDays).map { i ->
-                startMillis + (i * DAY_MILLIS)
-            }
-
-            val weights = computeAdjustedWeights(
-                events,
-                DailyDisplayLogic.getColumnWeights(todayIndex, numDays),
-                dayMillisList
-            )
-
+            val bandHeight = size.heightPx / grid.rows
             val config = ColumnRenderConfig(
                 pastEventScaleFactor = 0.8f,
                 useCompressDeclinedMaxLines = true,
@@ -264,19 +241,39 @@ object CalendarImageGenerator {
             val dayFormatEEE = SimpleDateFormat("EEE", Locale.getDefault())
             val dayFormatEEEd = SimpleDateFormat("EEE d", Locale.getDefault())
 
-            renderDayColumns(
-                canvas, size.widthPx, size.heightPx, paints, settings, events,
-                weights, todayIndex, dayMillisList, config, timeFormat, now
-            ) { colIndex, dayMillis, isToday, currentX, colWidth ->
-                val dayName = if (colIndex < todayIndex) {
-                    dayFormatEEE.format(dayMillis)
+            for (r in 0 until grid.rows) {
+                val rowStart = r * grid.cols
+                val rowEnd = minOf(rowStart + grid.cols, grid.days)
+                val rowDayMillisList = globalDayMillisList.subList(rowStart, rowEnd)
+                
+                val rowTodayIndex = if (r == 0) {
+                    daysBetween(startMillis, todayMillis).coerceIn(0, rowDayMillisList.size - 1)
                 } else {
-                    dayFormatEEEd.format(dayMillis)
+                    -1
                 }
-                drawDailyDayHeader(
-                    canvas, paints, appWidgetId, colIndex, isToday, currentX, colWidth,
-                    didAutoAdvance, dayName
+
+                val rowWeights = computeAdjustedWeights(
+                    events,
+                    DailyDisplayLogic.getColumnWeights(rowTodayIndex, rowDayMillisList.size),
+                    rowDayMillisList
                 )
+
+                renderDayColumns(
+                    canvas, size.widthPx, bandHeight, paints, settings, events,
+                    rowWeights, rowTodayIndex, rowDayMillisList, config, timeFormat, now,
+                    topOffset = (r * bandHeight).toFloat()
+                ) { colIndex, dayMillis, isToday, currentX, colWidth, top ->
+                    val globalIndex = rowStart + colIndex
+                    val dayName = if (globalIndex < daysBetween(startMillis, todayMillis)) {
+                        dayFormatEEE.format(dayMillis)
+                    } else {
+                        dayFormatEEEd.format(dayMillis)
+                    }
+                    drawDailyDayHeader(
+                        canvas, paints, appWidgetId, globalIndex, isToday, currentX, colWidth,
+                        didAutoAdvance, dayName, top
+                    )
+                }
             }
 
             return bitmap
@@ -299,10 +296,14 @@ object CalendarImageGenerator {
         config: ColumnRenderConfig,
         timeFormat: java.text.DateFormat,
         now: Long,
-        drawHeader: (colIndex: Int, dayMillis: Long, isToday: Boolean, currentX: Float, colWidth: Float) -> Unit
+        topOffset: Float = 0f,
+        drawHeader: (colIndex: Int, dayMillis: Long, isToday: Boolean, currentX: Float, colWidth: Float, top: Float) -> Unit
     ) {
         var totalWeight = 0f
         for (weight in weights) totalWeight += weight
+
+        Log.d("WeightDebug", "--- renderDayColumns (top=$topOffset, tag=${config.widgetTag}) ---")
+        Log.d("WeightDebug", "Total Row Weight: $totalWeight, Weights: ${weights.joinToString()}")
 
         val eventsByDay = dayMillisList.map { dayMillis ->
             val dayEnd = dayMillis + DAY_MILLIS
@@ -315,15 +316,15 @@ object CalendarImageGenerator {
 
         for (i in dayMillisList.indices) {
             val colWidth = (width * (weights[i] / totalWeight))
-
-            if (i > 0) {
-                canvas.drawLine(currentX, 0f, currentX, height.toFloat(), paints.linePaint)
-            }
-
             val dayMillis = dayMillisList[i]
             val isToday = (dayMillis == actualTodayMillis)
+            Log.d("WeightDebug", "Col $i: width=$colWidth weight=${weights[i]} isToday=$isToday day=${SimpleDateFormat("EEE d", Locale.getDefault()).format(dayMillis)}")
 
-            drawHeader(i, dayMillis, isToday, currentX, colWidth)
+            if (i > 0) {
+                canvas.drawLine(currentX, topOffset, currentX, topOffset + height.toFloat(), paints.linePaint)
+            }
+
+            drawHeader(i, dayMillis, isToday, currentX, colWidth, topOffset)
 
             val dayEvents = eventsByDay[i]
             val textWidth = (colWidth - COL_WIDTH_PADDING).toInt()
@@ -346,7 +347,7 @@ object CalendarImageGenerator {
                 renderColumnEvents(
                     canvas, dayEvents, optimalFontScale, compressDeclined,
                     paints, settings, timeFormat, currentX, colWidth, textWidth, height,
-                    todayIndex, i, now, config
+                    todayIndex, i, now, config, topOffset
                 )
             }
 
@@ -369,16 +370,17 @@ object CalendarImageGenerator {
         todayIndex: Int,
         dayIndex: Int,
         now: Long,
-        config: ColumnRenderConfig
+        config: ColumnRenderConfig,
+        topOffset: Float = 0f
     ) {
-        var yPos = CONTENT_TOP
+        var yPos = topOffset + CONTENT_TOP
         val isTodayColumn = dayIndex == todayIndex
         val hasFutureEvents = dayEvents.any { it.endTime >= now }
         val verboseDebug = Log.isLoggable(DEBUG_TAG, Log.VERBOSE)
 
         for (event in dayEvents) {
             canvas.save()
-            canvas.clipRect(currentX, CONTENT_TOP, currentX + colWidth, height.toFloat())
+            canvas.clipRect(currentX, topOffset + CONTENT_TOP, currentX + colWidth, topOffset + height.toFloat())
 
             paints.textPaint.color = settings.textColor
 
@@ -440,6 +442,8 @@ object CalendarImageGenerator {
             }
 
             canvas.restore()
+
+            if (yPos > topOffset + height) break
         }
     }
 
@@ -595,7 +599,8 @@ object CalendarImageGenerator {
         currentX: Float,
         colWidth: Float,
         didAutoAdvance: Boolean,
-        dayName: String
+        dayName: String,
+        topOffset: Float = 0f
     ) {
         paints.dayHeaderPaint.textSize = DailyDisplayLogic.getHeaderTextSize(colWidth, isToday)
         if (isToday) {
@@ -606,14 +611,14 @@ object CalendarImageGenerator {
             paints.dayHeaderPaint.isFakeBoldText = false
         }
 
-        val headerBaseline = verticallyCenterBaseline(paints.dayHeaderPaint, CONTENT_TOP / 2f)
+        val headerBaseline = verticallyCenterBaseline(paints.dayHeaderPaint, topOffset + CONTENT_TOP / 2f)
         val centerX = currentX + colWidth / 2f
         if (shouldDrawTomorrowIndicator(didAutoAdvance, colIndex)) {
             val indicatorDrawn = drawHeaderWithTomorrowIndicator(
                 canvas = canvas,
                 dayName = dayName,
                 centerX = centerX,
-                centerY = CONTENT_TOP / 2f,
+                centerY = topOffset + CONTENT_TOP / 2f,
                 colWidth = colWidth,
                 basePaint = paints.dayHeaderPaint
             )

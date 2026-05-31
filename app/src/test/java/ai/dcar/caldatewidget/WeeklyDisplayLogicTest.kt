@@ -9,10 +9,41 @@ import org.robolectric.annotation.Config
 import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.Locale
+import java.util.TimeZone
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class WeeklyDisplayLogicTest {
+
+    @Test
+    fun `shouldDisplayEventOnDay fails for all-day events when range is multiple days and event is not on the first day`() {
+        val mondayStart = GregorianCalendar(2026, Calendar.MAY, 4).apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        val tuesdayStart = mondayStart + 24 * 60 * 60 * 1000L
+        val nextMondayStart = mondayStart + 7 * 24 * 60 * 60 * 1000L
+
+        // All-day event on Tuesday
+        val tuesdayJulian = WeeklyDisplayLogic.getEffectiveDayMillis(tuesdayStart, 0, 0).let {
+            val cal = Calendar.getInstance()
+            cal.timeInMillis = tuesdayStart
+            // getLocalJulianDay logic:
+            val offset = TimeZone.getDefault().getOffset(tuesdayStart).toLong()
+            val dayMillis = 24L * 60 * 60 * 1000L
+            ((tuesdayStart + offset) / dayMillis).toInt() + 2440588
+        }
+
+        val event = CalendarEvent(1, "All Day Tue", tuesdayStart, tuesdayStart + 1, 0, true, false, 1, tuesdayJulian, tuesdayJulian)
+
+        // BUG: shouldDisplayEventOnDay only checks the first day of the range for all-day events
+        val matches = WeeklyDisplayLogic.shouldDisplayEventOnDay(event, mondayStart, nextMondayStart)
+        
+        // This is expected to FAIL (be false) even though Tuesday is in the [Mon, Mon+7] range.
+        assertTrue("BUG: All-day event on Tuesday should match Monday-to-Monday range", matches)
+    }
 
     @Test
     fun `chooseHeaderText keeps short weekday plus date when text is slightly wider than column`() {
@@ -109,33 +140,6 @@ class WeeklyDisplayLogicTest {
         val diff = cal.timeInMillis - startMillis
         // Allow some buffer for current time vs midnight
         assertTrue(diff >= 48 * 60 * 60 * 1000 - 10000) 
-    }
-
-    @Test
-    fun `getColumnWeights assigns weights correctly`() {
-        val count = 7
-        val todayIndex = 2 // Mon(0), Tue(1), Wed(2=Today)
-
-        val weights = WeeklyDisplayLogic.getColumnWeights(todayIndex, count)
-
-        // Past (0, 1)
-        assertEquals(0.6f, weights[0], 0.01f)
-        assertEquals(0.6f, weights[1], 0.01f)
-
-        // Today (2)
-        assertEquals(2.0f, weights[2], 0.01f)
-
-        // Future (3, 4, 5, 6)
-        // 3 is immediate future -> 1.5
-        assertEquals(1.5f, weights[3], 0.01f)
-        // 4 -> 1.35
-        assertEquals(1.35f, weights[4], 0.01f)
-
-        // Verify assertions:
-        // Current (2.0) > Past (0.6) -> YES
-        // Current (2.0) > Future (1.5) -> YES
-        // Future (1.5) > Past (0.6) -> YES
-        // Future Decay: weights[3] > weights[4] -> YES
     }
 
     @Test

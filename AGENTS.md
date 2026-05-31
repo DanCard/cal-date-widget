@@ -52,6 +52,7 @@ This project does not have configured linting or type checking commands. Do not 
 - **Before committing:** Run `git status` to review all changes, then use `git add -A` or explicitly list all relevant files
 - **If unsure:** Ask the user about including untracked files (e.g., `plans/`, temporary files) before adding them
 - **Test first:** Always run tests with `./gradlew testDebugUnitTest` before committing code changes
+- **Do not use "feat" in commit messages**
 
 ## Code Style Guidelines
 

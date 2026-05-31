@@ -5,6 +5,28 @@ import java.util.Calendar
 object DailyDisplayLogic {
     private const val AUTO_ADVANCE_EVENT_END_BUFFER_MILLIS = 1_000L
 
+    data class GridLayout(val cols: Int, val rows: Int, val days: Int)
+
+    /**
+     * Computes the grid for the multi-line flow mode.
+     * @param cols Number of columns (days per row)
+     * @param heightDp Current widget height in dp
+     * @param twoLineModeEnabled User's preference
+     * @param minRowHeightDp Minimum height for one legible row
+     * @return cols x rows grid
+     */
+    fun computeGridLayout(
+        cols: Int,
+        heightDp: Float,
+        twoLineModeEnabled: Boolean,
+        minRowHeightDp: Float = 110f
+    ): GridLayout {
+        val safeCols = cols.coerceAtLeast(1)
+        val rows = if (twoLineModeEnabled && heightDp >= minRowHeightDp * 2) 2 else 1
+        val days = safeCols * rows
+        return GridLayout(safeCols, rows, days)
+    }
+
     fun getHeaderTextSize(colWidth: Float, isToday: Boolean): Float {
         val ratio = if (isToday) 0.3f else 0.25f
         return (colWidth * ratio).coerceIn(30f, 70f)

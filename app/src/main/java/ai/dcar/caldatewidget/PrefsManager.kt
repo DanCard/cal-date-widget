@@ -28,7 +28,8 @@ class PrefsManager(context: Context) {
         val showDeclinedEvents: Boolean = false,
         val showAmPm: Boolean = false,
         val selectedCalendarIds: Set<Long> = emptySet(),
-        val dailyAutoAdvanceCutoffMinuteOfDay: Int = DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
+        val dailyAutoAdvanceCutoffMinuteOfDay: Int = DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY,
+        val twoLineModeEnabled: Boolean = false
     )
 
     fun saveSettings(widgetId: Int, settings: WidgetSettings) {
@@ -44,6 +45,7 @@ class PrefsManager(context: Context) {
             putBoolean("${KEY_PREFIX}${widgetId}_show_ampm", settings.showAmPm)
             putStringSet("${KEY_PREFIX}${widgetId}_calendars", settings.selectedCalendarIds.map { it.toString() }.toSet())
             putInt("${KEY_PREFIX}${widgetId}_daily_auto_advance_cutoff", settings.dailyAutoAdvanceCutoffMinuteOfDay)
+            putBoolean("${KEY_PREFIX}${widgetId}_two_line_mode", settings.twoLineModeEnabled)
             apply()
         }
     }
@@ -64,6 +66,7 @@ class PrefsManager(context: Context) {
             "${KEY_PREFIX}${widgetId}_daily_auto_advance_cutoff",
             DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
         ).coerceIn(0, (24 * 60) - 1)
+        val twoLineMode = prefs.getBoolean("${KEY_PREFIX}${widgetId}_two_line_mode", false)
 
         return WidgetSettings(
             format,
@@ -76,7 +79,8 @@ class PrefsManager(context: Context) {
             showDeclined,
             showAmPm,
             selectedCalendarIds,
-            dailyAutoAdvanceCutoff
+            dailyAutoAdvanceCutoff,
+            twoLineMode
         )
     }
 
@@ -93,6 +97,7 @@ class PrefsManager(context: Context) {
             remove("${KEY_PREFIX}${widgetId}_show_ampm")
             remove("${KEY_PREFIX}${widgetId}_calendars")
             remove("${KEY_PREFIX}${widgetId}_daily_auto_advance_cutoff")
+            remove("${KEY_PREFIX}${widgetId}_two_line_mode")
             apply()
         }
     }

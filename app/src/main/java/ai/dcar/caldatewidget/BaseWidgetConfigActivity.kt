@@ -80,6 +80,13 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
             saveSettings()
         }
 
+        val cbTwoLineMode = findViewById<CheckBox>(R.id.cb_two_line_mode)
+        cbTwoLineMode?.isChecked = currentSettings.twoLineModeEnabled
+        cbTwoLineMode?.setOnCheckedChangeListener { _, isChecked ->
+            currentSettings = currentSettings.copy(twoLineModeEnabled = isChecked)
+            saveSettings()
+        }
+
         populateCalendarCheckboxes()
 
         updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
@@ -186,8 +193,10 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
 
         val cbShowDeclined = findViewById<CheckBox>(R.id.cb_show_declined)
         val cbShowAmPm = findViewById<CheckBox>(R.id.cb_show_ampm)
+        val cbTwoLineMode = findViewById<CheckBox>(R.id.cb_two_line_mode)
         cbShowDeclined.isChecked = currentSettings.showDeclinedEvents
         cbShowAmPm.isChecked = currentSettings.showAmPm
+        cbTwoLineMode?.isChecked = currentSettings.twoLineModeEnabled
 
         undoSpecificSettings()
 

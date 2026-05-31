@@ -37,15 +37,9 @@ object WeeklyDisplayLogic {
         }
 
         if (event.startDay != null && event.endDay != null) {
-            val dayJulian = getLocalJulianDay(dayStart)
-            val matches = dayJulian >= event.startDay && dayJulian <= event.endDay
-            if (event.title == "Children with Dad") {
-                safeDebugLog(
-                    "EventDayFilter",
-                    "provider-day match title='${event.title}' dayJulian=$dayJulian startDay=${event.startDay} endDay=${event.endDay} matches=$matches"
-                )
-            }
-            return matches
+            val startJulian = getLocalJulianDay(dayStart)
+            val endJulian = getLocalJulianDay(dayEnd - 1)
+            return startJulian <= event.endDay && endJulian >= event.startDay
         }
 
         // For All-Day events, start/end are in UTC. We map them to Local dates.
@@ -84,6 +78,20 @@ object WeeklyDisplayLogic {
         val offsetMillis = TimeZone.getDefault().getOffset(timeMillis).toLong()
         return Math.floorDiv(timeMillis + offsetMillis, DAY_MILLIS).toInt() + JULIAN_DAY_OF_EPOCH
     }
+
+    /**
+     * Determines the number of weeks to render based on user preference and widget height.
+     * @param enabled User's "two-line mode" preference
+     * @param heightDp Current widget height in dp
+     * @param minTwoWeekHeightDp Minimum height for two bands (~2 single-week bands of ~110dp)
+     * @return 2 to render two stacked weeks, else 1
+     */
+    fun weeksToShow(
+        enabled: Boolean,
+        heightDp: Float,
+        minTwoWeekHeightDp: Float = 220f
+    ): Int =
+        if (enabled && heightDp >= minTwoWeekHeightDp) 2 else 1
 
     fun getEffectiveDayMillis(startMillis: Long, columnIndex: Int, todayIndex: Int): Long {
         val daysOffset = if (columnIndex < todayIndex) columnIndex + 7 else columnIndex
