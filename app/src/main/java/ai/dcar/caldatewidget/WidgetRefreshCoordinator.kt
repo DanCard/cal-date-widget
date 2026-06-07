@@ -13,6 +13,7 @@ object WidgetRefreshCoordinator {
         Intent.ACTION_DATE_CHANGED,
         Intent.ACTION_TIME_CHANGED,
         Intent.ACTION_TIMEZONE_CHANGED,
+        "android.intent.action.PROVIDER_CHANGED",
         ACTION_REFRESH
     )
 

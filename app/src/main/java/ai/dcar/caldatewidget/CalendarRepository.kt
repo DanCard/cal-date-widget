@@ -131,9 +131,11 @@ class CalendarRepository(private val context: Context) {
         }
         
         // Deduplicate events that have same title, start, end, and allDay status
-        return events.distinctBy { 
+        val result = events.distinctBy { 
             listOf(it.title, it.startTime, it.endTime, it.isAllDay, it.isDeclined, it.selfStatus)
         }
+        Log.d("CalendarRepository", "getEvents returning ${result.size} events: ${result.map { "'${it.title}' [start=${it.startTime}, id=${it.id}]" }}")
+        return result
     }
 
     private fun getVisibleCalendarIds(): List<Long> {

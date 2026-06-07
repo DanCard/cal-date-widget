@@ -23,6 +23,11 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="ai.dcar.caldatewidget.ACTION_REFRESH" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PROVIDER_CHANGED" />
+                <data android:scheme="content" />
+                <data android:host="com.android.calendar" />
+            </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/date_widget_info" />
@@ -39,6 +44,11 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="ai.dcar.caldatewidget.ACTION_REFRESH" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PROVIDER_CHANGED" />
+                <data android:scheme="content" />
+                <data android:host="com.android.calendar" />
+            </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/weekly_widget_info" />
@@ -54,6 +64,11 @@
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="ai.dcar.caldatewidget.ACTION_REFRESH" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PROVIDER_CHANGED" />
+                <data android:scheme="content" />
+                <data android:host="com.android.calendar" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
