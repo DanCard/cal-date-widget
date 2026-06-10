@@ -36,8 +36,20 @@ object CalendarImageGenerator {
     internal const val EMPTY_COLUMN_WEIGHT_FACTOR = 0.35f
     private const val DEFAULT_BG_COLOR = 0x4D000000.toInt()
     private const val DAY_MILLIS = 24L * 60 * 60 * 1000
-    private const val DEBUG_TAG = "WidgetDebug"
     private const val TAG = "CalendarImageGenerator"
+
+    private const val RAINBOW_INITIAL_SCALE = 0.62f
+    private const val RAINBOW_MIN_SCALE = 0.35f
+    private const val RAINBOW_SCALE_STEP = 0.05f
+    private const val RAINBOW_MIN_TEXT_SIZE = 18f
+    private const val RAINBOW_MAX_TEXT_SIZE = 44f
+    private const val RAINBOW_SPACING_FACTOR = 0.12f
+    private const val RAINBOW_MIN_SPACING = 2f
+    private const val RAINBOW_HORIZONTAL_PADDING = 10f
+    private const val HEADER_SCALE_DOWN_FACTOR = 0.9f
+    private const val HEADER_MIN_TEXT_SIZE = 10f
+    private const val HEADER_MAX_SCALE_ITERATIONS = 20
+    private const val DAILY_CELL_WIDTH_DP = 92f
 
     internal data class ColumnRenderConfig(
         val pastEventScaleFactor: Float,
@@ -49,7 +61,7 @@ object CalendarImageGenerator {
     fun drawWeeklyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
         val size = calculateWidgetSize(context, appWidgetManager, appWidgetId)
         try {
-            Log.d("CalendarImageGenerator", "Starting drawWeeklyCalendar for ID: $appWidgetId")
+            Log.d(TAG, "Starting drawWeeklyCalendar for ID: $appWidgetId")
             val prefsManager = PrefsManager(context)
             val settings = prefsManager.loadSettings(appWidgetId)
 
@@ -161,7 +173,7 @@ object CalendarImageGenerator {
     fun drawDailyCalendar(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
         val size = calculateWidgetSize(context, appWidgetManager, appWidgetId)
         try {
-            Log.d("CalendarImageGenerator", "Starting drawDailyCalendar for ID: $appWidgetId")
+            Log.d(TAG, "Starting drawDailyCalendar for ID: $appWidgetId")
             val prefsManager = PrefsManager(context)
             val settings = prefsManager.loadSettings(appWidgetId)
 
@@ -293,8 +305,8 @@ object CalendarImageGenerator {
         var totalWeight = 0f
         for (weight in weights) totalWeight += weight
 
-        Log.d("WeightDebug", "--- renderDayColumns (top=$topOffset, tag=${config.widgetTag}) ---")
-        Log.d("WeightDebug", "Total Row Weight: $totalWeight, Weights: ${weights.joinToString()}")
+        Log.d(TAG, "--- renderDayColumns (top=$topOffset, tag=${config.widgetTag}) ---")
+        Log.d(TAG, "Total Row Weight: $totalWeight, Weights: ${weights.joinToString()}")
 
         val eventsByDay = dayMillisList.map { dayMillis ->
             val dayEnd = dayMillis + DAY_MILLIS
@@ -309,7 +321,7 @@ object CalendarImageGenerator {
             val colWidth = (width * (weights[i] / totalWeight))
             val dayMillis = dayMillisList[i]
             val isToday = (dayMillis == actualTodayMillis)
-            Log.d("WeightDebug", "Col $i: width=$colWidth weight=${weights[i]} isToday=$isToday day=${SimpleDateFormat("EEE d", Locale.getDefault()).format(dayMillis)}")
+            Log.d(TAG, "Col $i: width=$colWidth weight=${weights[i]} isToday=$isToday day=${SimpleDateFormat("EEE d", Locale.getDefault()).format(dayMillis)}")
 
             if (i > 0) {
                 canvas.drawLine(currentX, topOffset, currentX, topOffset + height.toFloat(), paints.linePaint)
@@ -367,7 +379,7 @@ object CalendarImageGenerator {
         var yPos = topOffset + CONTENT_TOP
         val isTodayColumn = dayIndex == todayIndex
         val hasFutureEvents = dayEvents.any { it.endTime >= now }
-        val verboseDebug = Log.isLoggable(DEBUG_TAG, Log.VERBOSE)
+        val verboseDebug = Log.isLoggable(TAG, Log.VERBOSE)
 
         for (event in dayEvents) {
             canvas.save()
@@ -388,7 +400,7 @@ object CalendarImageGenerator {
 
             if (verboseDebug) {
                 Log.v(
-                    DEBUG_TAG,
+                    TAG,
                     "${config.widgetTag} Event: '${event.title}', status=${event.selfStatus}, declined=${event.isDeclined}, lessInteresting=${decision.isLessInteresting}"
                 )
             }
@@ -429,7 +441,7 @@ object CalendarImageGenerator {
                         WidgetRenderingHelper.eventSpacing(paints.textPaint.textSize, isTodayColumn)
                 yPos += consumedHeight
             } catch (e: Exception) {
-                Log.e("CalendarImageGenerator", "StaticLayout crash: title='${event.title}', width=$textWidth", e)
+                Log.e(TAG, "StaticLayout crash: title='${event.title}', width=$textWidth", e)
             }
 
             canvas.restore()
@@ -482,24 +494,24 @@ object CalendarImageGenerator {
             context,
             android.Manifest.permission.READ_CALENDAR
         ) == PackageManager.PERMISSION_GRANTED
-        Log.d("CalendarImageGenerator", "fetchAndFilterEvents permission: $hasPermission")
+        Log.d(TAG, "fetchAndFilterEvents permission: $hasPermission")
         if (!hasPermission) return emptyList()
 
         val repo = CalendarRepository(context)
         val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
-        Log.d("CalendarImageGenerator", "fetchAndFilterEvents selectedIds: $selectedIds")
+        Log.d(TAG, "fetchAndFilterEvents selectedIds: $selectedIds")
         
         var events = repo.getEvents(startMillis, days, selectedIds.ifEmpty { null })
-        Log.d("CalendarImageGenerator", "fetchAndFilterEvents rawCount: ${events.size}")
+        Log.d(TAG, "fetchAndFilterEvents rawCount: ${events.size}")
 
         if (!settings.showDeclinedEvents) {
             val countBefore = events.size
             events = events.filter { !it.isDeclined }
-            Log.d("CalendarImageGenerator", "fetchAndFilterEvents afterDeclinedFilter: ${events.size} (removed ${countBefore - events.size})")
+            Log.d(TAG, "fetchAndFilterEvents afterDeclinedFilter: ${events.size} (removed ${countBefore - events.size})")
         }
 
         val filtered = WeeklyDisplayLogic.filterNearDuplicates(events, System.currentTimeMillis())
-        Log.d("CalendarImageGenerator", "fetchAndFilterEvents finalCount: ${filtered.size}")
+        Log.d(TAG, "fetchAndFilterEvents finalCount: ${filtered.size}")
         return filtered
     }
 
@@ -512,6 +524,9 @@ object CalendarImageGenerator {
         val adjusted = weights.copyOf()
         for (i in dayMillisList.indices) {
             val dayMillis = dayMillisList[i]
+            // +DAY_MILLIS is safe here: this is event-membership filtering (does this day have
+            // any events?), not day-counting. Even across a DST transition the boundary is close
+            // enough for the "has events" check.
             val dayEnd = dayMillis + DAY_MILLIS
             val hasEvents = events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
             if (!hasEvents) {
@@ -541,7 +556,7 @@ object CalendarImageGenerator {
                 widthDp = portraitSize.width
                 heightDp = portraitSize.height
                 usedAppWidgetSizes = true
-                Log.d("WidgetSize", "Widget $appWidgetId: Using appWidgetSizes[0] = ${widthDp}x${heightDp}dp")
+                Log.d(TAG, "Widget $appWidgetId: Using appWidgetSizes[0] = ${widthDp}x${heightDp}dp")
             }
         }
 
@@ -551,7 +566,7 @@ object CalendarImageGenerator {
             val maxHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, minHeightDp)
             widthDp = minWidthDp.toFloat()
             heightDp = maxHeightDp.toFloat()
-            Log.d("WidgetSize", "Widget $appWidgetId: Fallback to min/max = ${widthDp}x${heightDp}dp")
+            Log.d(TAG, "Widget $appWidgetId: Fallback to min/max = ${widthDp}x${heightDp}dp")
         }
 
         val widthPx = TypedValue.applyDimension(
@@ -566,7 +581,7 @@ object CalendarImageGenerator {
             dm
         ).toInt().coerceAtLeast(1)
 
-        Log.d("WidgetSize", "Widget $appWidgetId: Final size = ${widthPx}x${heightPx}px")
+        Log.d(TAG, "Widget $appWidgetId: Final size = ${widthPx}x${heightPx}px")
 
         return WidgetSize(widthPx, heightPx)
     }
@@ -575,9 +590,9 @@ object CalendarImageGenerator {
         val dm = context.resources.displayMetrics
         val widthDp = widthPx / dm.density
 
-        val cellWidthDp = 92f
+        val cellWidthDp = DAILY_CELL_WIDTH_DP
         val numDays = ((widthDp / cellWidthDp) + 0.5f).toInt().coerceIn(1, 7)
-        Log.d("WidgetSize", "calculateNumberOfDays: px=$widthPx, density=${dm.density}, dp=$widthDp, cellWidth=$cellWidthDp -> numDays=$numDays")
+        Log.d(TAG, "calculateNumberOfDays: px=$widthPx, density=${dm.density}, dp=$widthDp, cellWidth=$cellWidthDp -> numDays=$numDays")
         return numDays
     }
 
@@ -614,10 +629,10 @@ object CalendarImageGenerator {
                 basePaint = paints.dayHeaderPaint
             )
             if (indicatorDrawn) {
-                Log.d("CalendarImageGenerator", "Drawing tomorrow indicator for daily widget $appWidgetId")
+                Log.d(TAG, "Drawing tomorrow indicator for daily widget $appWidgetId")
             } else {
                 canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
-                Log.d("CalendarImageGenerator", "Skipped tomorrow indicator due to narrow column for widget $appWidgetId")
+                Log.d(TAG, "Skipped tomorrow indicator due to narrow column for widget $appWidgetId")
             }
         } else {
             canvas.drawText(dayName, centerX, headerBaseline, paints.dayHeaderPaint)
@@ -642,7 +657,7 @@ object CalendarImageGenerator {
         basePaint: Paint
     ): Boolean {
         val paint = Paint(basePaint)
-        val horizontalPadding = 10f
+        val horizontalPadding = RAINBOW_HORIZONTAL_PADDING
         val availableWidth = (colWidth - horizontalPadding).coerceAtLeast(1f)
 
         var baseTextWidth = paint.measureText(dayName)
@@ -657,8 +672,8 @@ object CalendarImageGenerator {
         }
 
         var scaleDownCount = 0
-        while ((layout == null || baseTextWidth >= availableWidth) && paint.textSize > 10f && scaleDownCount < 20) {
-            paint.textSize *= 0.9f
+        while ((layout == null || baseTextWidth >= availableWidth) && paint.textSize > HEADER_MIN_TEXT_SIZE && scaleDownCount < HEADER_MAX_SCALE_ITERATIONS) {
+            paint.textSize *= HEADER_SCALE_DOWN_FACTOR
             baseTextWidth = paint.measureText(dayName)
             layout = buildTomorrowIndicatorHeaderLayout(
                 dayName = dayName,
@@ -697,17 +712,17 @@ object CalendarImageGenerator {
         availableWidth: Float,
         rainbowWidthAtTextSize: (Float) -> Float
     ): Float? {
-        val spacing = (baseTextSize * 0.12f).coerceAtLeast(2f)
-        var scale = 0.62f
+        val spacing = (baseTextSize * RAINBOW_SPACING_FACTOR).coerceAtLeast(RAINBOW_MIN_SPACING)
+        var scale = RAINBOW_INITIAL_SCALE
 
-        while (scale >= 0.35f) {
-            val candidateTextSize = (baseTextSize * scale).coerceIn(18f, 44f)
+        while (scale >= RAINBOW_MIN_SCALE) {
+            val candidateTextSize = (baseTextSize * scale).coerceIn(RAINBOW_MIN_TEXT_SIZE, RAINBOW_MAX_TEXT_SIZE)
             val rainbowWidth = rainbowWidthAtTextSize(candidateTextSize)
             val combinedWidth = dayNameWidth + spacing + rainbowWidth
             if (combinedWidth <= availableWidth) {
                 return candidateTextSize
             }
-            scale -= 0.05f
+            scale -= RAINBOW_SCALE_STEP
         }
 
         return null
@@ -721,7 +736,7 @@ object CalendarImageGenerator {
         availableWidth: Float,
         rainbowWidthAtTextSize: (Float) -> Float
     ): TomorrowIndicatorHeaderLayout? {
-        val spacing = (baseTextSize * 0.12f).coerceAtLeast(2f)
+        val spacing = (baseTextSize * RAINBOW_SPACING_FACTOR).coerceAtLeast(RAINBOW_MIN_SPACING)
         val rainbowTextSize = calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
