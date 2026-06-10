@@ -63,6 +63,6 @@ class CalendarImageGeneratorTomorrowIndicatorInstrumentedTest {
             basePaint = narrowPaint
         )
         assertTrue("Indicator should be drawn by scaling down text", narrowDrawn)
-        assertTrue("Text size should be scaled down", narrowPaint.textSize < 52f)
+        assertEquals("Original paint should not be mutated", 52f, narrowPaint.textSize, 0.001f)
     }
 }
