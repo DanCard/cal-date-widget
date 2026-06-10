@@ -14,7 +14,7 @@ class CalendarImageGeneratorTest {
         val availableWidth = 200f
 
         // When
-        val result = CalendarImageGenerator.calculateRainbowIndicatorTextSize(
+        val result = DailyWidgetRenderer.calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
             availableWidth = availableWidth
@@ -32,7 +32,7 @@ class CalendarImageGeneratorTest {
         val availableWidth = 110f
 
         // When
-        val result = CalendarImageGenerator.calculateRainbowIndicatorTextSize(
+        val result = DailyWidgetRenderer.calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
             availableWidth = availableWidth
@@ -50,7 +50,7 @@ class CalendarImageGeneratorTest {
         val availableWidth = 260f
 
         // When
-        val result = CalendarImageGenerator.calculateRainbowIndicatorTextSize(
+        val result = DailyWidgetRenderer.calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
             availableWidth = availableWidth
@@ -68,7 +68,7 @@ class CalendarImageGeneratorTest {
         val availableWidth = 110f
 
         // When
-        val result = CalendarImageGenerator.calculateRainbowIndicatorTextSize(
+        val result = DailyWidgetRenderer.calculateRainbowIndicatorTextSize(
             dayNameWidth = dayNameWidth,
             baseTextSize = baseTextSize,
             availableWidth = availableWidth

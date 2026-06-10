@@ -29,14 +29,14 @@ class CalendarImageGeneratorTomorrowIndicatorRobolectricTest {
 
     @Test
     fun `shouldDrawTomorrowIndicator returns true only for first column when auto advanced`() {
-        assertTrue(CalendarImageGenerator.shouldDrawTomorrowIndicator(true, 0))
-        assertFalse(CalendarImageGenerator.shouldDrawTomorrowIndicator(true, 1))
-        assertFalse(CalendarImageGenerator.shouldDrawTomorrowIndicator(false, 0))
+        assertTrue(DailyWidgetRenderer.shouldDrawTomorrowIndicator(true, 0))
+        assertFalse(DailyWidgetRenderer.shouldDrawTomorrowIndicator(true, 1))
+        assertFalse(DailyWidgetRenderer.shouldDrawTomorrowIndicator(false, 0))
     }
 
     @Test
     fun `buildTomorrowIndicatorHeaderLayout includes rainbow symbol when width allows`() {
-        val layout = CalendarImageGenerator.buildTomorrowIndicatorHeaderLayout(
+        val layout = DailyWidgetRenderer.buildTomorrowIndicatorHeaderLayout(
             dayName = "Thu 5",
             dayNameWidth = 120f,
             baseTextSize = 52f,
@@ -46,14 +46,14 @@ class CalendarImageGeneratorTomorrowIndicatorRobolectricTest {
         assertTrue(layout != null)
         assertEquals("Thu 5", layout!!.dayName)
         assertEquals("🌈", layout.indicator)
-        assertEquals(CalendarImageGenerator.TOMORROW_INDICATOR, layout.indicator)
+        assertEquals(DailyWidgetRenderer.TOMORROW_INDICATOR, layout.indicator)
         assertTrue(layout.rainbowTextSize > 0f)
         assertTrue(layout.spacing >= 2f)
     }
 
     @Test
     fun `buildTomorrowIndicatorHeaderLayout returns null when column is too narrow`() {
-        val layout = CalendarImageGenerator.buildTomorrowIndicatorHeaderLayout(
+        val layout = DailyWidgetRenderer.buildTomorrowIndicatorHeaderLayout(
             dayName = "Thu 5",
             dayNameWidth = 120f,
             baseTextSize = 52f,
@@ -69,7 +69,7 @@ class CalendarImageGeneratorTomorrowIndicatorRobolectricTest {
         val canvas = Canvas(bitmap)
         val paint = createHeaderPaint()
 
-        val drawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
+        val drawn = DailyWidgetRenderer.drawHeaderWithTomorrowIndicator(
             canvas = canvas,
             dayName = "Thu 5",
             centerX = 300f,
@@ -105,7 +105,7 @@ class CalendarImageGeneratorTomorrowIndicatorRobolectricTest {
         // Original text size = 52f. Width of "Thu 5" = 5 * 26 = 130f.
         // We set available width to 100f (colWidth = 110f). 
         // It must scale down to fit.
-        val drawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
+        val drawn = DailyWidgetRenderer.drawHeaderWithTomorrowIndicator(
             canvas = canvas,
             dayName = "Thu 5",
             centerX = 40f,

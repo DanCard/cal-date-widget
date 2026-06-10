@@ -36,7 +36,7 @@ class CalendarImageGeneratorHeaderTest {
         val colWidth = 100f
         
         // When
-        CalendarImageGenerator.drawWeeklyDayHeader(
+        WeeklyWidgetRenderer.drawDayHeader(
             canvas = canvas,
             paints = paints,
             dayMillis = dayMillis,
@@ -65,7 +65,7 @@ class CalendarImageGeneratorHeaderTest {
         val colWidth = 100f
         
         // When
-        CalendarImageGenerator.drawWeeklyDayHeader(
+        WeeklyWidgetRenderer.drawDayHeader(
             canvas = canvas,
             paints = paints,
             dayMillis = dayMillis,
@@ -93,7 +93,7 @@ class CalendarImageGeneratorHeaderTest {
         val dayName = "Mon 1"
         
         // When
-        CalendarImageGenerator.drawDailyDayHeader(
+        DailyWidgetRenderer.drawDayHeader(
             canvas = canvas,
             paints = paints,
             appWidgetId = 1,
@@ -126,7 +126,7 @@ class CalendarImageGeneratorHeaderTest {
         val dayName = "Tue 2"
         
         // When
-        CalendarImageGenerator.drawDailyDayHeader(
+        DailyWidgetRenderer.drawDayHeader(
             canvas = canvas,
             paints = paints,
             appWidgetId = 1,

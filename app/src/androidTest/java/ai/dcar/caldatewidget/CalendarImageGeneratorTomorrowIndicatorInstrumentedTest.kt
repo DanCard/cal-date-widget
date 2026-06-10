@@ -25,7 +25,7 @@ class CalendarImageGeneratorTomorrowIndicatorInstrumentedTest {
 
     @Test
     fun buildTomorrowIndicatorHeaderLayoutExposesRainbowSymbol() {
-        val layout = CalendarImageGenerator.buildTomorrowIndicatorHeaderLayout(
+        val layout = DailyWidgetRenderer.buildTomorrowIndicatorHeaderLayout(
             dayName = "Thu 5",
             dayNameWidth = 120f,
             baseTextSize = 52f,
@@ -34,14 +34,14 @@ class CalendarImageGeneratorTomorrowIndicatorInstrumentedTest {
 
         assertTrue(layout != null)
         assertEquals("🌈", layout!!.indicator)
-        assertEquals(CalendarImageGenerator.TOMORROW_INDICATOR, layout.indicator)
+        assertEquals(DailyWidgetRenderer.TOMORROW_INDICATOR, layout.indicator)
     }
 
     @Test
     fun drawHeaderWithTomorrowIndicatorScalesTextForNarrowColumn() {
         val wideBitmap = Bitmap.createBitmap(600, 180, Bitmap.Config.ARGB_8888)
         val widePaint = createHeaderPaint()
-        val wideDrawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
+        val wideDrawn = DailyWidgetRenderer.drawHeaderWithTomorrowIndicator(
             canvas = Canvas(wideBitmap),
             dayName = "Thu 5",
             centerX = 300f,
@@ -54,7 +54,7 @@ class CalendarImageGeneratorTomorrowIndicatorInstrumentedTest {
 
         val narrowBitmap = Bitmap.createBitmap(160, 180, Bitmap.Config.ARGB_8888)
         val narrowPaint = createHeaderPaint()
-        val narrowDrawn = CalendarImageGenerator.drawHeaderWithTomorrowIndicator(
+        val narrowDrawn = DailyWidgetRenderer.drawHeaderWithTomorrowIndicator(
             canvas = Canvas(narrowBitmap),
             dayName = "Thu 5",
             centerX = 80f,
