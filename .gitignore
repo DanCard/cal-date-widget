@@ -12,7 +12,8 @@ build
 *.m4a
 
 # AI assistant local settings
-.claude/settings.local.json
+.claude/
+.specstory/
 .gemini/settings.json
 
 # Local log files
