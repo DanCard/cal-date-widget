@@ -23,6 +23,9 @@
     <string name="instruction_text">1. Tap a button above to add a widget.\n2. Long-press the widget on your home screen to resize it.\n3. Tap the widget to customize colors and formats.</string>
     <string name="label_privacy_policy">Privacy Policy</string>
     <string name="url_privacy_policy">https://dcar.ai/cal-date-widget/privacy</string>
+    <string name="permission_required">Permission Required</string>
+    <string name="permission_tap_to_grant">Tap to grant</string>
+    <string name="error_prefix">Error: %s</string>
     
     <string-array name="date_formats">
         <item>EEE, MMM d</item>

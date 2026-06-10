@@ -64,7 +64,7 @@ object CalendarImageGenerator {
             ) == PackageManager.PERMISSION_GRANTED
 
             if (!hasPermission) {
-                drawPermissionRequired(canvas, size, settings)
+                drawPermissionRequired(canvas, size, settings, context)
                 return bitmap
             }
 
@@ -121,8 +121,8 @@ object CalendarImageGenerator {
 
             return bitmap
         } catch (e: Exception) {
-            Log.e("CalendarImageGenerator", "Error drawing weekly widget", e)
-            return createErrorBitmap(e, size.widthPx, size.heightPx)
+            Log.e(TAG, "Error drawing weekly widget", e)
+            return createErrorBitmap(e, size.widthPx, size.heightPx, context)
         }
     }
 
@@ -176,7 +176,7 @@ object CalendarImageGenerator {
             ) == PackageManager.PERMISSION_GRANTED
 
             if (!hasPermission) {
-                drawPermissionRequired(canvas, size, settings)
+                drawPermissionRequired(canvas, size, settings, context)
                 return bitmap
             }
 
@@ -269,8 +269,8 @@ object CalendarImageGenerator {
 
             return bitmap
         } catch (e: Exception) {
-            Log.e("CalendarImageGenerator", "Error drawing daily widget", e)
-            return createErrorBitmap(e, size.widthPx, size.heightPx)
+            Log.e(TAG, "Error drawing daily widget", e)
+            return createErrorBitmap(e, size.widthPx, size.heightPx, context)
         }
     }
 
@@ -747,14 +747,15 @@ object CalendarImageGenerator {
         return cal.timeInMillis
     }
 
-    private fun drawPermissionRequired(canvas: Canvas, size: WidgetSize, settings: PrefsManager.WidgetSettings) {
+    private fun drawPermissionRequired(canvas: Canvas, size: WidgetSize, settings: PrefsManager.WidgetSettings, context: Context) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = settings.textColor
             textAlign = Paint.Align.CENTER
             textSize = 14f * canvas.density
         }
-        val text = "Permission Required\nTap to grant"
-        val lines = text.split("\n")
+        val line1 = context.getString(R.string.permission_required)
+        val line2 = context.getString(R.string.permission_tap_to_grant)
+        val lines = listOf(line1, line2)
         val yStart = size.heightPx / 2f - (lines.size - 1) * paint.textSize / 2f
         lines.forEachIndexed { index, line ->
             canvas.drawText(
@@ -766,11 +767,18 @@ object CalendarImageGenerator {
         }
     }
 
-    private fun createErrorBitmap(e: Exception, width: Int, height: Int): Bitmap {
-        val errorBitmap = Bitmap.createBitmap(width.coerceAtLeast(1), height.coerceAtLeast(1), Bitmap.Config.ARGB_8888)
+    private fun createErrorBitmap(e: Exception, width: Int, height: Int, context: Context): Bitmap {
+        val w = width.coerceAtLeast(1)
+        val h = height.coerceAtLeast(1)
+        val errorBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val c = Canvas(errorBitmap)
-        val p = Paint().apply { color = Color.RED; textSize = 40f }
-        c.drawText("Error: ${e.localizedMessage}", 50f, 200f, p)
+        val p = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.RED
+            textSize = (minOf(w, h) / 8f).coerceIn(12f, 40f)
+            textAlign = Paint.Align.CENTER
+        }
+        val message = context.getString(R.string.error_prefix, e.localizedMessage ?: "Unknown")
+        c.drawText(message, w / 2f, h / 2f, p)
         return errorBitmap
     }
 }
