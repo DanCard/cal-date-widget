@@ -52,12 +52,12 @@ object DailyDisplayLogic {
     /**
      * Determines if the widget should auto-advance to the next day.
      *
-     * Two branches:
-     *  - If today had non-declined events and all of them have ended, advance immediately
-     *    (no time-of-day gate — once the day's last event is over, there is nothing left to wait for).
-     *  - If today had no non-declined events at all, only advance after the local cutoff hour.
-     *    This prevents jumping to "tomorrow" first thing in the morning on a calendar that
-     *    just hasn't had events added yet.
+     * Two conditions must BOTH hold to advance:
+     *  - The local time is at or past the cutoff hour (default 3 PM). This prevents jumping
+     *    to "tomorrow" earlier in the day — keeping today's view in place even when all of
+     *    today's events have already ended.
+     *  - Every remaining non-declined event has ended. (For an empty day this is vacuously
+     *    true, so an event-less day advances exactly at the cutoff.)
      *
      * Declined events are always ignored for this decision.
      */
@@ -66,16 +66,15 @@ object DailyDisplayLogic {
         nowMillis: Long,
         cutoffMinuteOfDay: Int = PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
     ): Boolean {
-        val validEvents = todayEvents.filter { !it.isDeclined }
-
-        if (validEvents.isNotEmpty()) {
-            return validEvents.all { it.endTime < nowMillis }
-        }
-
         val calendar = Calendar.getInstance().apply {
             timeInMillis = nowMillis
         }
-        return minuteOfDay(calendar) >= cutoffMinuteOfDay.coerceIn(0, (24 * 60) - 1)
+        if (minuteOfDay(calendar) < cutoffMinuteOfDay.coerceIn(0, (24 * 60) - 1)) {
+            return false
+        }
+
+        val validEvents = todayEvents.filter { !it.isDeclined }
+        return validEvents.all { it.endTime < nowMillis }
     }
 
     fun getNextAutoAdvanceCheckTime(
@@ -90,10 +89,6 @@ object DailyDisplayLogic {
             .filter { it.endTime >= nowMillis }
             .minOfOrNull { it.endTime + AUTO_ADVANCE_EVENT_END_BUFFER_MILLIS }
 
-        if (nextEventEnd != null) {
-            return nextEventEnd
-        }
-
         val cutoffTime = Calendar.getInstance().apply {
             timeInMillis = nowMillis
             val cutoff = cutoffMinuteOfDay.coerceIn(0, (24 * 60) - 1)
@@ -102,8 +97,12 @@ object DailyDisplayLogic {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
+        val cutoffCandidate = if (nowMillis < cutoffTime) cutoffTime else null
 
-        return if (nowMillis < cutoffTime) cutoffTime else null
+        // Wake at whichever milestone comes first. An intermediate event-end before the
+        // cutoff just re-renders (refreshing past-event dimming) and re-schedules toward
+        // the next milestone; the chain terminates once both advance conditions hold.
+        return listOfNotNull(nextEventEnd, cutoffCandidate).minOrNull()
     }
 
     private fun minuteOfDay(calendar: Calendar): Int {

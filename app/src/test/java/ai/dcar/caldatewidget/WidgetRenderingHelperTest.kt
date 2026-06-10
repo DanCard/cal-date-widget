@@ -200,4 +200,77 @@ class WidgetRenderingHelperTest {
         assertTrue(WidgetRenderingHelper.isLessInteresting(declinedEvent))
         assertFalse(WidgetRenderingHelper.isLessInteresting(acceptedEvent))
     }
+
+    @Test
+    fun `decideEventLayout caps past events at PAST_EVENT_MAX_SCALE even with plenty of room`() {
+        val event = createEvent("Ended meeting")
+
+        // A roomy column drives optimalScale high (1.5). A past event must NOT inflate with it.
+        val pastDecision = WidgetRenderingHelper.decideEventLayout(
+            event = event,
+            optimalScale = 1.5f,
+            isPastTodayEvent = true,
+            hasFutureEvents = true,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f
+        )
+        assertEquals(
+            WidgetRenderingHelper.PAST_EVENT_MAX_SCALE,
+            pastDecision.eventScale,
+            0.0001f
+        )
+
+        // Same roomy scale, but a non-past event should render at the full optimal scale.
+        val futureDecision = WidgetRenderingHelper.decideEventLayout(
+            event = event,
+            optimalScale = 1.5f,
+            isPastTodayEvent = false,
+            hasFutureEvents = true,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f
+        )
+        assertEquals(1.5f, futureDecision.eventScale, 0.0001f)
+    }
+
+    @Test
+    fun `decideEventLayout never shrinks past events below PAST_EVENT_MIN_SCALE`() {
+        // Drive optimalScale * factor below the floor (0.1 * 0.8 = 0.08).
+        val decision = WidgetRenderingHelper.decideEventLayout(
+            event = createEvent("Ended meeting"),
+            optimalScale = 0.1f,
+            isPastTodayEvent = true,
+            hasFutureEvents = false,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f
+        )
+        assertEquals(
+            WidgetRenderingHelper.PAST_EVENT_MIN_SCALE,
+            decision.eventScale,
+            0.0001f
+        )
+    }
+
+    @Test
+    fun `decideEventLayout leaves normal and declined event scaling unchanged`() {
+        val normal = WidgetRenderingHelper.decideEventLayout(
+            event = createEvent("Normal"),
+            optimalScale = 1.2f,
+            isPastTodayEvent = false,
+            hasFutureEvents = false,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f
+        )
+        assertEquals(1.2f, normal.eventScale, 0.0001f)
+
+        // Declined event keeps its 0.5 floor (not pulled to the past floor by the reordering).
+        val declined = WidgetRenderingHelper.decideEventLayout(
+            event = createEvent("Declined", isDeclined = true),
+            optimalScale = 0.7f,
+            isPastTodayEvent = false,
+            hasFutureEvents = false,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f
+        )
+        assertEquals(0.5f, declined.eventScale, 0.0001f)
+    }
 }

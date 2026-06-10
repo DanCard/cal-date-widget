@@ -76,22 +76,22 @@ class AutoAdvanceTest {
     }
 
     @Test
-    fun `shouldAutoAdvance returns true when all events are in the past even before cutoff`() {
+    fun `shouldAutoAdvance returns false when all events are in the past but before cutoff`() {
         val now = timeMillis(14, 59)
         val events = listOf(
             createEvent("Past Event 1", now - 1000),
             createEvent("Past Event 2", now - 500)
         )
         val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
-        assertTrue("Should advance once last event ends, regardless of time of day", result)
+        assertFalse("Should not advance before the cutoff even when all events have ended", result)
     }
 
     @Test
-    fun `shouldAutoAdvance returns true at 1pm when last event ended at noon`() {
+    fun `shouldAutoAdvance returns false at 1pm when last event ended at noon`() {
         val now = timeMillis(13, 0)
         val events = listOf(createEvent("Lunch", endMillis = timeMillis(12, 0)))
         val result = DailyDisplayLogic.shouldAutoAdvance(events, now, cutoffMinuteOfDay(18, 30))
-        assertTrue("Should advance once last event ends, even before 3 PM cutoff", result)
+        assertFalse("Should not advance before the cutoff even though the last event ended", result)
     }
 
     @Test
@@ -178,12 +178,32 @@ class AutoAdvanceTest {
     }
 
     @Test
-    fun `getNextAutoAdvanceCheckTime returns null after auto advance condition is met`() {
+    fun `getNextAutoAdvanceCheckTime returns cutoff when all events ended before cutoff`() {
         val now = timeMillis(13, 0)
         val events = listOf(createEvent("Lunch", endMillis = timeMillis(12, 0)))
 
         val result = DailyDisplayLogic.getNextAutoAdvanceCheckTime(events, now)
 
+        assertEquals(timeMillis(15, 0), result)
+    }
+
+    @Test
+    fun `getNextAutoAdvanceCheckTime returns null after cutoff once all events have ended`() {
+        val now = timeMillis(15, 0)
+        val events = listOf(createEvent("Lunch", endMillis = timeMillis(12, 0)))
+
+        val result = DailyDisplayLogic.getNextAutoAdvanceCheckTime(events, now)
+
         assertEquals(null, result)
+    }
+
+    @Test
+    fun `shouldAutoAdvance returns false at cutoff when an event has not yet ended`() {
+        val now = timeMillis(15, 0)
+        val events = listOf(createEvent("Afternoon Meeting", endMillis = timeMillis(15, 30)))
+
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
+
+        assertFalse("Should not advance at the cutoff while an event is still running", result)
     }
 }

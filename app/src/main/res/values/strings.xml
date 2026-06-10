@@ -13,6 +13,17 @@
     <string name="weekly_widget_desc">Weekly Calendar of Events</string>
     <string name="daily_widget_desc">Daily Calendar of Events</string>
     
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Minimalist widgets for your home screen.</string>
+    <string name="label_quick_add">Quick Add</string>
+    <string name="btn_add_date">Add Date Widget</string>
+    <string name="btn_add_weekly">Add Weekly Calendar</string>
+    <string name="btn_add_daily">Add Daily Calendar</string>
+    <string name="label_instructions">Instructions</string>
+    <string name="instruction_text">1. Tap a button above to add a widget.\n2. Long-press the widget on your home screen to resize it.\n3. Tap the widget to customize colors and formats.</string>
+    <string name="label_privacy_policy">Privacy Policy</string>
+    <string name="url_privacy_policy">https://dcar.ai/cal-date-widget/privacy</string>
+    
     <string-array name="date_formats">
         <item>EEE, MMM d</item>
         <item>EEEE, MMMM d</item>

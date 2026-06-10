@@ -37,6 +37,12 @@ object WidgetRenderingHelper {
 
     const val BASE_TEXT_SIZE = 48f
 
+    // Past events on today's column get a tiny, room-independent size. The cap keeps them
+    // small even when the column has plenty of room (high optimal scale); the low floor lets
+    // the cap take effect instead of being clamped back up by the normal 0.7 floor.
+    const val PAST_EVENT_MAX_SCALE = 0.75f
+    const val PAST_EVENT_MIN_SCALE = 0.55f
+
     data class EventLayoutDecision(
         val eventScale: Float,
         val forceOneLine: Boolean,
@@ -61,14 +67,18 @@ object WidgetRenderingHelper {
     ): EventLayoutDecision {
         val isLessInteresting = isLessInteresting(event)
         var scale = when {
-            isPastTodayEvent -> optimalScale * pastEventScaleFactor
+            isPastTodayEvent -> minOf(optimalScale * pastEventScaleFactor, PAST_EVENT_MAX_SCALE)
             isLessInteresting -> {
                 val invScale = (0.8f - 0.2f * optimalScale).coerceIn(0.5f, 0.7f)
                 optimalScale * invScale
             }
             else -> optimalScale
         }
-        val minScale = if (isLessInteresting) 0.5f else 0.7f
+        val minScale = when {
+            isPastTodayEvent -> PAST_EVENT_MIN_SCALE
+            isLessInteresting -> 0.5f
+            else -> 0.7f
+        }
         if (scale < minScale) scale = minScale
 
         val forceOneLine = (isPastTodayEvent && hasFutureEvents) ||

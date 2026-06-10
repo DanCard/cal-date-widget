@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.tvPrivacyPolicy.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://dcar.ai/cal-date-widget/privacy")) // Update this URL later
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_privacy_policy)))
             startActivity(intent)
         }
     }
