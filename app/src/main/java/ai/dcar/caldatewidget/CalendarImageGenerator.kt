@@ -107,7 +107,7 @@ object CalendarImageGenerator {
                 val config = ColumnRenderConfig(
                     pastEventScaleFactor = 0.7f,
                     useCompressDeclinedMaxLines = true,
-                    useTimeScaleForPast = true,
+                    useTimeScaleForPast = false,
                     widgetTag = "Weekly"
                 )
 
@@ -232,7 +232,7 @@ object CalendarImageGenerator {
             val config = ColumnRenderConfig(
                 pastEventScaleFactor = 0.8f,
                 useCompressDeclinedMaxLines = true,
-                useTimeScaleForPast = true,
+                useTimeScaleForPast = false,
                 widgetTag = "Daily"
             )
 

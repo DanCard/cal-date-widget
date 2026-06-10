@@ -251,6 +251,33 @@ class WidgetRenderingHelperTest {
     }
 
     @Test
+    fun `decideEventLayout keeps past event time prefix full size when useTimeScaleForPast is false`() {
+        val event = createEvent("Ended meeting")
+
+        val withShrink = WidgetRenderingHelper.decideEventLayout(
+            event = event,
+            optimalScale = 1.0f,
+            isPastTodayEvent = true,
+            hasFutureEvents = true,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f,
+            useTimeScaleForPast = true
+        )
+        assertEquals(0.5f, withShrink.timeScale, 0.0001f)
+
+        val noShrink = WidgetRenderingHelper.decideEventLayout(
+            event = event,
+            optimalScale = 1.0f,
+            isPastTodayEvent = true,
+            hasFutureEvents = true,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f,
+            useTimeScaleForPast = false
+        )
+        assertEquals(1f, noShrink.timeScale, 0.0001f)
+    }
+
+    @Test
     fun `decideEventLayout leaves normal and declined event scaling unchanged`() {
         val normal = WidgetRenderingHelper.decideEventLayout(
             event = createEvent("Normal"),
