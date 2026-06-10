@@ -115,6 +115,6 @@ class CalendarImageGeneratorTomorrowIndicatorRobolectricTest {
         )
 
         assertTrue("Should return true, indicating it fit after scaling", drawn)
-        assertTrue("Paint text size should be scaled down", paint.textSize < originalTextSize)
+        assertEquals("Original paint should not be mutated", originalTextSize, paint.textSize, 0.001f)
     }
 }

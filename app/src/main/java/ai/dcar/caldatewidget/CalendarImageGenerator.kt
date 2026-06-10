@@ -37,6 +37,7 @@ object CalendarImageGenerator {
     private const val DEFAULT_BG_COLOR = 0x4D000000.toInt()
     private const val DAY_MILLIS = 24L * 60 * 60 * 1000
     private const val DEBUG_TAG = "WidgetDebug"
+    private const val TAG = "CalendarImageGenerator"
 
     internal data class ColumnRenderConfig(
         val pastEventScaleFactor: Float,
@@ -79,17 +80,15 @@ object CalendarImageGenerator {
             val totalDays = 7 * weeks
             val todayIndexInWeek = daysBetween(startMillis, todayMillis).coerceIn(0, 6)
 
-            // Build the global day list. Row 1 uses effective shifting; Row 2 starts 7 days after Row 1.
             val globalDayMillisList = (0 until totalDays).map { globalIdx ->
                 val w = globalIdx / 7
                 val i = globalIdx % 7
                 val baseEffective = WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndexInWeek)
                 baseEffective + (w * 7 * DAY_MILLIS)
-                }
+            }
 
-                val allEvents = fetchAndFilterEvents(context, settings, startMillis, totalDays + 7)
-
-                val bandHeight = size.heightPx / weeks
+            val allEvents = fetchAndFilterEvents(context, settings, startMillis, totalDays + 7)
+            val bandHeight = size.heightPx / weeks
             val now = System.currentTimeMillis()
             val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
 
@@ -184,35 +183,31 @@ object CalendarImageGenerator {
             val paints = WidgetRenderingHelper.createPaints(settings)
 
             val todayMillis = startOfDayMillis()
-            val cols = calculateNumberOfDays(context, size.widthPx, size.heightPx)
+            val cols = calculateNumberOfDays(context, size.widthPx)
 
             val startCalendar = Calendar.getInstance()
             var didAutoAdvance = false
 
-            Log.d("CalendarImageGenerator", "Permission Check (Daily): $hasPermission")
+            val repo = CalendarRepository(context)
+            val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
+            val selection = selectedIds.ifEmpty { null }
 
-            if (hasPermission) {
-                val repo = CalendarRepository(context)
-                val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
-                val selection = selectedIds.ifEmpty { null }
+            val checkStart = calculateStartDate(startCalendar)
+            val todayEnd = checkStart + DAY_MILLIS
+            val todayEvents = repo.getEvents(checkStart, 1, selection).filter {
+                WeeklyDisplayLogic.shouldDisplayEventOnDay(it, checkStart, todayEnd)
+            }
+            val autoAdvanceNow = System.currentTimeMillis()
 
-                val checkStart = calculateStartDate(startCalendar)
-                val todayEnd = checkStart + DAY_MILLIS
-                val todayEvents = repo.getEvents(checkStart, 1, selection).filter {
-                    WeeklyDisplayLogic.shouldDisplayEventOnDay(it, checkStart, todayEnd)
-                }
-                val now = System.currentTimeMillis()
-
-                if (DailyDisplayLogic.shouldAutoAdvance(
-                        todayEvents,
-                        now,
-                        settings.dailyAutoAdvanceCutoffMinuteOfDay
-                    )
-                ) {
-                    startCalendar.add(Calendar.DAY_OF_YEAR, 1)
-                    didAutoAdvance = true
-                    Log.d("CalendarImageGenerator", "All events for today are in the past. Auto-advancing to tomorrow.")
-                }
+            if (DailyDisplayLogic.shouldAutoAdvance(
+                    todayEvents,
+                    autoAdvanceNow,
+                    settings.dailyAutoAdvanceCutoffMinuteOfDay
+                )
+            ) {
+                startCalendar.add(Calendar.DAY_OF_YEAR, 1)
+                didAutoAdvance = true
+                Log.d(TAG, "All events for today are in the past. Auto-advancing to tomorrow.")
             }
 
             val startMillis = calculateStartDate(startCalendar)
@@ -220,11 +215,7 @@ object CalendarImageGenerator {
             val heightDp = size.heightPx / dm.density
             val grid = DailyDisplayLogic.computeGridLayout(cols, heightDp, settings.twoLineModeEnabled)
 
-            val events = if (hasPermission) {
-                fetchAndFilterEvents(context, settings, startMillis, grid.days)
-            } else {
-                emptyList()
-            }
+            val events = fetchAndFilterEvents(context, settings, startMillis, grid.days)
 
             val globalDayMillisList = (0 until grid.days).map { startMillis + it * DAY_MILLIS }
 
@@ -580,7 +571,7 @@ object CalendarImageGenerator {
         return WidgetSize(widthPx, heightPx)
     }
 
-    private fun calculateNumberOfDays(context: Context, widthPx: Int, @Suppress("UNUSED_PARAMETER") heightPx: Int): Int {
+    private fun calculateNumberOfDays(context: Context, widthPx: Int): Int {
         val dm = context.resources.displayMetrics
         val widthDp = widthPx / dm.density
 
@@ -650,31 +641,32 @@ object CalendarImageGenerator {
         colWidth: Float,
         basePaint: Paint
     ): Boolean {
+        val paint = Paint(basePaint)
         val horizontalPadding = 10f
         val availableWidth = (colWidth - horizontalPadding).coerceAtLeast(1f)
-        
-        var baseTextWidth = basePaint.measureText(dayName)
+
+        var baseTextWidth = paint.measureText(dayName)
         var layout = buildTomorrowIndicatorHeaderLayout(
             dayName = dayName,
             dayNameWidth = baseTextWidth,
-            baseTextSize = basePaint.textSize,
+            baseTextSize = paint.textSize,
             availableWidth = availableWidth
         ) { candidateTextSize ->
-            val rainbowPaint = Paint(basePaint).apply { textSize = candidateTextSize }
+            val rainbowPaint = Paint(paint).apply { textSize = candidateTextSize }
             rainbowPaint.measureText(TOMORROW_INDICATOR)
         }
 
         var scaleDownCount = 0
-        while ((layout == null || baseTextWidth >= availableWidth) && basePaint.textSize > 10f && scaleDownCount < 20) {
-            basePaint.textSize *= 0.9f
-            baseTextWidth = basePaint.measureText(dayName)
+        while ((layout == null || baseTextWidth >= availableWidth) && paint.textSize > 10f && scaleDownCount < 20) {
+            paint.textSize *= 0.9f
+            baseTextWidth = paint.measureText(dayName)
             layout = buildTomorrowIndicatorHeaderLayout(
                 dayName = dayName,
                 dayNameWidth = baseTextWidth,
-                baseTextSize = basePaint.textSize,
+                baseTextSize = paint.textSize,
                 availableWidth = availableWidth
             ) { candidateTextSize ->
-                val rainbowPaint = Paint(basePaint).apply { textSize = candidateTextSize }
+                val rainbowPaint = Paint(paint).apply { textSize = candidateTextSize }
                 rainbowPaint.measureText(TOMORROW_INDICATOR)
             }
             scaleDownCount++
@@ -684,17 +676,17 @@ object CalendarImageGenerator {
             return false
         }
 
-        val rainbowPaint = Paint(basePaint).apply { textSize = layout.rainbowTextSize }
+        val rainbowPaint = Paint(paint).apply { textSize = layout.rainbowTextSize }
         val rainbowWidth = rainbowPaint.measureText(layout.indicator)
         val combinedWidth = baseTextWidth + layout.spacing + rainbowWidth
         val leftX = centerX - (combinedWidth / 2f)
         val baseCenterX = leftX + (baseTextWidth / 2f)
         val rainbowCenterX = leftX + baseTextWidth + layout.spacing + (rainbowWidth / 2f)
 
-        val baseBaseline = verticallyCenterBaseline(basePaint, centerY)
+        val baseBaseline = verticallyCenterBaseline(paint, centerY)
         val rainbowBaseline = verticallyCenterBaseline(rainbowPaint, centerY)
 
-        canvas.drawText(dayName, baseCenterX, baseBaseline, basePaint)
+        canvas.drawText(dayName, baseCenterX, baseBaseline, paint)
         canvas.drawText(layout.indicator, rainbowCenterX, rainbowBaseline, rainbowPaint)
         return true
     }
