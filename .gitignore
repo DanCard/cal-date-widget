@@ -23,3 +23,10 @@ crap/
 
 # Emulator configuration
 emulator_*.txt
+
+# Release signing keys & properties
+keystore.properties
+*.jks
+*.keystore
+*.pepk
+

@@ -1,1 +1,1 @@
-A simple, customizable calendar date widget.
+Beautiful, minimal home screen widgets for your date and calendar events.

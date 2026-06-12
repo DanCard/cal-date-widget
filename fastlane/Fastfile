@@ -1,0 +1,43 @@
+default_platform(:android)
+
+platform :android do
+  desc "Run unit tests and lint-vital check"
+  lane :test do
+    gradle(task: "testDebugUnitTest")
+  end
+
+  desc "Build the Release Android App Bundle (AAB)"
+  lane :build do
+    gradle(
+      task: "bundle",
+      build_type: "Release"
+    )
+  end
+
+  desc "Upload only metadata and screenshots to Google Play"
+  lane :upload_metadata do
+    upload_to_play_store(
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_changelogs: false,
+      metadata_path: "./fastlane/metadata"
+    )
+  end
+
+  desc "Build and upload to Google Play Internal Testing Track"
+  lane :internal do
+    # Ensure tests pass first
+    test
+    
+    # Build release AAB
+    build
+
+    # Upload to Play Console
+    upload_to_play_store(
+      track: "internal",
+      skip_upload_metadata: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false
+    )
+  end
+end

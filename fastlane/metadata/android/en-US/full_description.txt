@@ -1,7 +1,28 @@
-Cal Date Widget is a minimal and customizable home screen widget that displays the current date.
+Cal Date Widget brings sleek, premium, and fully customizable calendar widgets directly to your Android home screen. Stay organized at a glance with a minimalist design that fits beautifully with any wallpaper or theme.
 
-Features:
-- Customizable text color, shadow color, and background color.
-- Adjustable date format.
-- Resizable widget (1x1 and larger).
-- Open source and privacy-friendly.
+The app includes three distinct, powerful widgets:
+
+1. DATE WIDGET (1x1 & larger)
+• A clean, minimal widget displaying the current date.
+• Choose from multiple pre-set formats or define your own custom pattern (e.g., EEEE, d MMM).
+
+2. DAILY CALENDAR WIDGET
+• A dynamic daily planner widget that adjusts the number of columns (1 to 7 days) automatically based on the widget’s width on your screen.
+• Smart Start Day: Automatically shifts to show the next day's schedule once all of today's events have elapsed, keeping you focused on what's next.
+
+3. WEEKLY CALENDAR WIDGET
+• A comprehensive 7-day view of your calendar events.
+• Today Highlight: Today’s column is weighted larger, making it easy to focus on today's agenda.
+• Dynamic Font Scaling: Uses an advanced per-column sizing algorithm to automatically scale text to perfectly fit the widget space.
+• Near-Duplicate Filtering & Rotation: Intelligently groups matching events (such as multiple shifts or duplicates) and rotates through them minute-by-minute so your screen stays clean without missing details.
+• Past Event Dimming: Events that have already passed are displayed in a smaller, subtler font to keep your layout organized.
+
+PREMIUM CUSTOMIZATION
+• Complete control over text color, shadow color, and background transparency (70% dark mode transparency included by default for optimal contrast).
+• Increased text shadow radius and offset for maximum readability over any background.
+• Tap widgets to open settings or launch your calendar app instantly.
+
+100% PRIVACY FIRST
+• Works entirely offline.
+• No internet permission requested – your calendar data never leaves your device.
+• Open-source and free of trackers, ads, or third-party analytics.
