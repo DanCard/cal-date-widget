@@ -25,9 +25,9 @@ Since we do not collect any personal data, we do not have any "data" to secure o
 
 The Service does not use third-party analytics, advertising, or tracking services.
 
-## 5. Open Source & Transparency
+## 5. Source-Available & Transparency
 
-The Service is open-source, and its complete source code is publicly accessible for review and auditing. You can find the repository on GitHub at: [https://github.com/DanCard/cal-date-widget](https://github.com/DanCard/cal-date-widget).
+The Service is source-available, and its complete source code is publicly accessible for review and auditing. You can find the repository on GitHub at: [https://github.com/DanCard/cal-date-widget](https://github.com/DanCard/cal-date-widget).
 
 ## 6. Children's Privacy
 

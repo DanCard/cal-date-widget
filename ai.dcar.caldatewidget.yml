@@ -1,7 +1,7 @@
 Categories:
   - System
   - Time
-License: MIT
+License: Proprietary
 SourceCode: https://github.com/dancard/cal-date-widget
 IssueTracker: https://github.com/dancard/cal-date-widget/issues
 
@@ -14,7 +14,7 @@ Description: |
   - Customizable text color, shadow color, and background color.
   - Adjustable date format.
   - Resizable widget (1x1 and larger).
-  - Open source and privacy-friendly.
+  - Source-available and privacy-friendly.
 
 RepoType: git
 Repo: https://github.com/dancard/cal-date-widget

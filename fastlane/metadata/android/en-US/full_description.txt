@@ -25,4 +25,4 @@ PREMIUM CUSTOMIZATION
 100% PRIVACY FIRST
 • Works entirely offline.
 • No internet permission requested – your calendar data never leaves your device.
-• Open-source and free of trackers, ads, or third-party analytics.
+• Source-available and free of trackers, ads, or third-party analytics.
