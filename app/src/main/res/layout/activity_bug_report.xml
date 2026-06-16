@@ -87,7 +87,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Includes device manufacturer/model, Android OS version, number of active widgets, and widget display settings (no personal identifiers)."
+                    android:text="Includes device manufacturer/model, Android OS version, number of active widgets, widget display settings, and list of calendar accounts."
                     android:textColor="#B0B0B0"
                     android:textSize="12sp"
                     android:layout_marginBottom="16dp"
@@ -112,7 +112,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Includes the last ~200 lines of console logs printed by the widget provider. Critical for fixing layout, crash, or refresh problems."
+                    android:text="Includes the last ~200 lines of console logs printed by the widget. Note: These logs may contain titles of calendar events currently shown on your widgets."
                     android:textColor="#B0B0B0"
                     android:textSize="12sp"
                     android:layout_marginStart="4dp"/>
