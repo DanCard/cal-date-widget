@@ -15,4 +15,5 @@
     <color name="btn_undo">#FFB300</color> <!-- Amber 600 -->
     <color name="btn_back">#43A047</color> <!-- Green 600 -->
     <color name="btn_refresh">#1E88E5</color> <!-- Blue 600 -->
+    <color name="btn_bug_report">#D81B60</color> <!-- Pink 600 -->
 </resources>

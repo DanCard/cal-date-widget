@@ -262,13 +262,15 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_report_bug"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
             android:text="Report a Bug / Send Feedback"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/btn_bug_report"
+            app:cornerRadius="24dp"
             android:textAllCaps="false"/>
 
         </LinearLayout>

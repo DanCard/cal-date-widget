@@ -74,14 +74,14 @@
             android:text="@string/instruction_text"
             android:layout_marginBottom="32dp"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_report_bug"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Report a Bug / Send Feedback"
-            android:textColor="?attr/colorPrimary"
-            app:strokeColor="?attr/colorPrimary"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/btn_bug_report"
             android:layout_marginBottom="16dp"
             android:textAllCaps="false"/>
 
