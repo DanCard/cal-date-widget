@@ -1,0 +1,7 @@
+Initial release of Cal Date Widget.
+
+• Date widget — the current date with custom formats, colors & shadows
+• Daily widget — today's events with adaptive multi-day columns
+• Weekly widget — a full 7-day grid with today highlighted
+
+100% private: works offline, no ads, no trackers, no internet permission.

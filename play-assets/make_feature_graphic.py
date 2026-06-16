@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+"""Build the 1024x500 Play Store feature graphic."""
+import os
+from PIL import Image, ImageDraw, ImageFont
+
+W, H = 1024, 500
+OUT = "fastlane/metadata/android/en-US/images/featureGraphic/1.png"
+
+# --- Brand gradient background (#6200EE -> #3700B3, vertical) ---
+top = (0x62, 0x00, 0xEE)
+bot = (0x37, 0x00, 0xB3)
+bg = Image.new("RGB", (W, H))
+px = bg.load()
+for y in range(H):
+    t = y / (H - 1)
+    px[0, y] = tuple(int(top[i] + (bot[i] - top[i]) * t) for i in range(3))
+for x in range(1, W):  # copy first column across (gradient is vertical only)
+    for y in range(H):
+        px[x, y] = px[0, y]
+
+# --- Icon rendered as a rounded app tile with a soft shadow ---
+TILE = 300
+RADIUS = 66
+icon = Image.open("fastlane/metadata/android/en-US/images/icon/1.png").convert("RGBA").resize((TILE, TILE))
+mask = Image.new("L", (TILE, TILE), 0)
+ImageDraw.Draw(mask).rounded_rectangle([0, 0, TILE, TILE], radius=RADIUS, fill=255)
+icon.putalpha(mask)
+
+icon_x, icon_y = 80, (H - TILE) // 2
+# soft drop shadow
+shadow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+sdraw = ImageDraw.Draw(shadow)
+sdraw.rounded_rectangle([icon_x + 6, icon_y + 10, icon_x + TILE + 6, icon_y + TILE + 10],
+                        radius=RADIUS, fill=(0, 0, 0, 90))
+try:
+    from PIL import ImageFilter
+    shadow = shadow.filter(ImageFilter.GaussianBlur(12))
+except Exception:
+    pass
+base = bg.convert("RGBA")
+base.alpha_composite(shadow)
+base.alpha_composite(icon, (icon_x, icon_y))
+
+# --- Text ---
+def font(size, bold=True):
+    for p in (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold
+        else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ):
+        if os.path.exists(p):
+            return ImageFont.truetype(p, size)
+    return ImageFont.load_default()
+
+draw = ImageDraw.Draw(base)
+tx = icon_x + TILE + 60
+avail = W - tx - 48  # right margin
+
+# Largest title size that fits the available width
+title = "Cal Date Widget"
+tsize = 72
+while tsize > 30:
+    f = font(tsize, True)
+    if draw.textlength(title, font=f) <= avail:
+        break
+    tsize -= 2
+title_font = font(tsize, True)
+sub_font = font(30, False)
+
+# Vertically center the title + 2 tagline lines as a block
+draw.text((tx, 188), title, font=title_font, fill=(255, 255, 255, 255))
+draw.text((tx, 188 + tsize + 18), "Minimal date & calendar widgets", font=sub_font, fill=(224, 215, 255, 255))
+draw.text((tx, 188 + tsize + 18 + 40), "for your home screen", font=sub_font, fill=(224, 215, 255, 255))
+
+base.convert("RGB").save(OUT, "PNG")
+print("feature graphic written:", Image.open(OUT).size, Image.open(OUT).mode)
