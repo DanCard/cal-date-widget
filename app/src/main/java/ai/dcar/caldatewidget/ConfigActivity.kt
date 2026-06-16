@@ -168,6 +168,11 @@ class ConfigActivity : AppCompatActivity() {
                 updateUndoButton()
             }
         })
+
+        binding.btnReportBug.setOnClickListener {
+            val intent = Intent(this, BugReportActivity::class.java)
+            startActivity(intent)
+        }
     }
     
     private fun updateSettings(newSettings: PrefsManager.WidgetSettings, pushUndo: Boolean = true) {

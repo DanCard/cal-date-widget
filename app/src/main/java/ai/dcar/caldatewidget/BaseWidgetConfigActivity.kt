@@ -155,6 +155,11 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
             onRefreshClicked()
         }
 
+        findViewById<Button>(R.id.btn_report_bug)?.setOnClickListener {
+            val intent = Intent(this, BugReportActivity::class.java)
+            startActivity(intent)
+        }
+
         saveSettings()
     }
 
