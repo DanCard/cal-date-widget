@@ -74,6 +74,17 @@
             android:text="@string/instruction_text"
             android:layout_marginBottom="32dp"/>
 
+        <Button
+            android:id="@+id/btn_report_bug"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Report a Bug / Send Feedback"
+            android:textColor="?attr/colorPrimary"
+            app:strokeColor="?attr/colorPrimary"
+            android:layout_marginBottom="16dp"
+            android:textAllCaps="false"/>
+
         <TextView
             android:id="@+id/tv_privacy_policy"
             android:layout_width="wrap_content"

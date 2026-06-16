@@ -34,6 +34,11 @@ class MainActivity : AppCompatActivity() {
             pinWidget(DailyWidgetProvider::class.java)
         }
 
+        binding.btnReportBug.setOnClickListener {
+            val intent = Intent(this, BugReportActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.tvPrivacyPolicy.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_privacy_policy)))
             startActivity(intent)

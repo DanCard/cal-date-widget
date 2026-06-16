@@ -3,6 +3,16 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
+def releaseStorePassword = project.findProperty("RELEASE_STORE_PASSWORD") ?: localProperties.getProperty("RELEASE_STORE_PASSWORD") ?: System.getenv("RELEASE_STORE_PASSWORD") ?: ""
+def releaseKeyPassword = project.findProperty("RELEASE_KEY_PASSWORD") ?: localProperties.getProperty("RELEASE_KEY_PASSWORD") ?: System.getenv("RELEASE_KEY_PASSWORD") ?: ""
+def releaseKeyAlias = project.findProperty("RELEASE_KEY_ALIAS") ?: localProperties.getProperty("RELEASE_KEY_ALIAS") ?: System.getenv("RELEASE_KEY_ALIAS") ?: "caldatewidget"
+
 android {
     namespace = 'ai.dcar.caldatewidget'
     compileSdk 35
@@ -25,15 +35,11 @@ android {
 
     signingConfigs {
         release {
-            def keystorePropsFile = rootProject.file("keystore.properties")
-            if (keystorePropsFile.exists()) {
-                def keystoreProps = new Properties()
-                keystoreProps.load(new FileInputStream(keystorePropsFile))
-                storeFile = file(keystoreProps['storeFile'])
-                storePassword = keystoreProps['storePassword']
-                keyAlias = keystoreProps['keyAlias']
-                keyPassword = keystoreProps['keyPassword']
-            }
+            def storeFilePath = project.findProperty("RELEASE_STORE_FILE") ?: localProperties.getProperty("RELEASE_STORE_FILE") ?: System.getenv("RELEASE_STORE_FILE")
+            storeFile = storeFilePath ? file(storeFilePath) : rootProject.file("release.keystore")
+            storePassword = releaseStorePassword
+            keyAlias = releaseKeyAlias
+            keyPassword = releaseKeyPassword
         }
     }
 
@@ -42,9 +48,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            if (rootProject.file("keystore.properties").exists()) {
-                signingConfig signingConfigs.release
-            }
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {

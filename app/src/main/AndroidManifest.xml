@@ -93,6 +93,11 @@
         </activity>
 
         <activity
+            android:name=".BugReportActivity"
+            android:exported="false"
+            android:label="Bug Report &amp; Feedback" />
+
+        <activity
             android:name=".ConfigActivity"
             android:exported="true">
             <intent-filter>
