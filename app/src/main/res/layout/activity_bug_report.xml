@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Help us make Cal Date Widget better by reporting bugs or sharing suggestions. Including logs and settings makes debugging much faster!"
+            android:text="Help us make Cal Date Widget better by reporting bugs or sharing suggestions. Please describe the issue below. If this is a visual/layout bug, please attach a screenshot in your email client!"
             android:textColor="#B0B0B0"
             android:textSize="14sp"
             android:layout_marginBottom="24dp" />

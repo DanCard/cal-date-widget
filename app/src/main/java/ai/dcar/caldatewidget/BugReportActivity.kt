@@ -213,6 +213,7 @@ class BugReportActivity : AppCompatActivity() {
         val userDescription = binding.etDescription.text.toString().trim()
         val builder = StringBuilder()
 
+        builder.append("[Tip: If you're experiencing a visual/layout bug, please attach a screenshot to this email!]\n\n")
         builder.append("=== USER DESCRIPTION ===\n")
         if (userDescription.isEmpty()) {
             builder.append("(No description provided)\n")
