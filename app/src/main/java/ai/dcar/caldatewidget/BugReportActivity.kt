@@ -238,9 +238,10 @@ class BugReportActivity : AppCompatActivity() {
 
     private fun sendEmailReport() {
         val reportBody = generateReportBody()
+        val recipientEmail = getString(R.string.bug_report_email)
         val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("support@dcar.ai"))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(recipientEmail))
             putExtra(Intent.EXTRA_SUBJECT, "[Cal Date Widget] Bug Report & Feedback")
             putExtra(Intent.EXTRA_TEXT, reportBody)
         }

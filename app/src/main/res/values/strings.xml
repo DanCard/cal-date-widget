@@ -26,6 +26,7 @@
     <string name="permission_required">Permission Required</string>
     <string name="permission_tap_to_grant">Tap to grant</string>
     <string name="error_prefix">Error: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
     
     <string-array name="date_formats">
         <item>EEE, MMM d</item>
