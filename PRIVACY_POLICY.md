@@ -25,15 +25,19 @@ Since we do not collect any personal data, we do not have any "data" to secure o
 
 The Service does not use third-party analytics, advertising, or tracking services.
 
-## 5. Children's Privacy
+## 5. Open Source & Transparency
+
+The Service is open-source, and its complete source code is publicly accessible for review and auditing. You can find the repository on GitHub at: [https://github.com/DanCard/cal-date-widget](https://github.com/DanCard/cal-date-widget).
+
+## 6. Children's Privacy
 
 Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from children under 13.
 
-## 6. Changes to This Privacy Policy
+## 7. Changes to This Privacy Policy
 
 We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.
 
-## 7. Contact Us
+## 8. Contact Us
 
 If you have any questions about this Privacy Policy, please contact us:
 *   By email: daniecarde55@gmail.com
