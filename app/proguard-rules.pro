@@ -1,5 +1,15 @@
 # ProGuard rules for Cal Date Widget
 
+# Keep code shrinking + optimization (minifyEnabled true) but skip obfuscation.
+# The source is public on GitHub, so name-mangling buys no IP protection while it
+# makes on-device bug-report stack traces unreadable. Disabling it keeps traces
+# legible in both Play Android vitals and BugReportActivity.
+-dontobfuscate
+
+# Preserve file names + line numbers so traces read as File.kt:NN even though R8
+# can strip these attributes independently of obfuscation.
+-keepattributes SourceFile,LineNumberTable
+
 # Keep the widget providers
 -keep class ai.dcar.caldatewidget.*Provider { *; }
 

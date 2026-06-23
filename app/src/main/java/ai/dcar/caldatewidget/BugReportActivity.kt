@@ -21,6 +21,7 @@ class BugReportActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBugReportBinding
     private var diagnosticData: String = ""
     private var logsData: String = ""
+    private var lastCrashData: String = ""
     private var isLoadingData = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,9 +75,13 @@ class BugReportActivity : AppCompatActivity() {
             // 2. Gather logs (logcat)
             val logs = gatherAppLogs()
 
+            // 3. Gather the last persisted crash (survives process restart)
+            val crash = gatherLastCrash()
+
             runOnUiThread {
                 diagnosticData = sysInfo
                 logsData = logs
+                lastCrashData = crash
                 isLoadingData = false
                 binding.progressPreview.visibility = View.GONE
                 updatePreviewText()
@@ -96,6 +101,9 @@ class BugReportActivity : AppCompatActivity() {
             builder.append("\n\n")
         }
         if (binding.switchAppLogs.isChecked) {
+            builder.append("=== LAST RECORDED CRASH ===\n")
+            builder.append(lastCrashData)
+            builder.append("\n\n")
             builder.append("=== RECENT APP LOGS ===\n")
             builder.append(logsData)
         }
@@ -209,6 +217,8 @@ class BugReportActivity : AppCompatActivity() {
         }
     }
 
+    private fun gatherLastCrash(): String = CrashStore.read(filesDir)
+
     private fun generateReportBody(): String {
         val userDescription = binding.etDescription.text.toString().trim()
         val builder = StringBuilder()
@@ -229,6 +239,9 @@ class BugReportActivity : AppCompatActivity() {
         }
 
         if (binding.switchAppLogs.isChecked) {
+            builder.append("=== LAST RECORDED CRASH ===\n")
+            builder.append(lastCrashData)
+            builder.append("\n\n")
             builder.append("=== RECENT APP LOGS ===\n")
             builder.append(logsData)
             builder.append("\n")

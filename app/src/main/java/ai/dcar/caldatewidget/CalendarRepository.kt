@@ -127,9 +127,10 @@ class CalendarRepository(private val context: Context) {
                 }
             }
         } catch (e: SecurityException) {
-            // Permission not granted
+            // READ_CALENDAR missing/revoked — surface it so empty widgets are diagnosable
+            Log.w("CalendarRepository", "getEvents: calendar permission denied, returning no events", e)
         }
-        
+
         // Deduplicate events that have same title, start, end, and allDay status
         val result = events.distinctBy { 
             listOf(it.title, it.startTime, it.endTime, it.isAllDay, it.isDeclined, it.selfStatus)
@@ -153,7 +154,8 @@ class CalendarRepository(private val context: Context) {
                 }
             }
         } catch (e: SecurityException) {
-            // Ignore
+            // READ_CALENDAR missing/revoked — surface it so empty widgets are diagnosable
+            Log.w("CalendarRepository", "getVisibleCalendarIds: calendar permission denied", e)
         }
         return ids
     }
@@ -188,7 +190,8 @@ class CalendarRepository(private val context: Context) {
                 }
             }
         } catch (e: SecurityException) {
-            // Permission not granted
+            // READ_CALENDAR missing/revoked — surface it so empty widgets are diagnosable
+            Log.w("CalendarRepository", "getAvailableCalendars: calendar permission denied", e)
         }
         return calendars
     }
