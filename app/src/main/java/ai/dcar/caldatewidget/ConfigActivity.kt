@@ -14,7 +14,6 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import ai.dcar.caldatewidget.databinding.ActivityConfigBinding
 import ai.dcar.caldatewidget.databinding.WidgetDateBinding
-import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
@@ -117,6 +116,11 @@ class ConfigActivity : AppCompatActivity() {
             }
         })
 
+        // Back Button
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+
         // Undo Button
         binding.btnUndo.setOnClickListener {
             if (stateManager.undo()) {
@@ -144,6 +148,11 @@ class ConfigActivity : AppCompatActivity() {
 
         binding.btnPickShadowColor.setOnClickListener { ColorPickerDialog.show(this, "Shadow Color", stateManager.currentSettings.shadowColor) { color ->
             val newSettings = stateManager.currentSettings.copy(shadowColor = color)
+            updateSettings(newSettings)
+        }}
+
+        binding.btnPickDayNumberColor.setOnClickListener { ColorPickerDialog.show(this, "Day Number Color", stateManager.currentSettings.dayNumberColor) { color ->
+            val newSettings = stateManager.currentSettings.copy(dayNumberColor = color)
             updateSettings(newSettings)
         }}
 
@@ -214,6 +223,7 @@ class ConfigActivity : AppCompatActivity() {
         binding.previewTextColor.setBackgroundColor(settings.textColor)
         binding.previewBgColor.setBackgroundColor(settings.bgColor)
         binding.previewShadowColor.setBackgroundColor(settings.shadowColor)
+        binding.previewDayNumberColor.setBackgroundColor(settings.dayNumberColor)
 
         // Opacity
         binding.seekbarBgOpacity.progress = Color.alpha(settings.bgColor)
@@ -223,15 +233,12 @@ class ConfigActivity : AppCompatActivity() {
         // Apply settings to previewBinding
         val settings = stateManager.currentSettings
         
-        // Date Text
-        val dateText = try {
-            val sdf = SimpleDateFormat(settings.dateFormat, Locale.getDefault())
-            sdf.format(Date())
-        } catch (e: Exception) {
-            "Invalid Format"
-        }
-        previewBinding.widgetDateText.text = dateText
-        
+        // Date Text (with the day-of-month styled bigger + accent color, matching the widget)
+        val formatted = DateWidgetText.format(settings.dateFormat, Date(), Locale.getDefault())
+        previewBinding.widgetDateText.text = DateWidgetText.applyDayStyle(
+            formatted.text, formatted.dayRange, settings.dayNumberColor, DateWidgetText.DEFAULT_DAY_SIZE_FACTOR
+        )
+
         // Colors
         previewBinding.widgetDateText.setTextColor(settings.textColor)
         previewBinding.widgetRoot.setBackgroundColor(settings.bgColor)
@@ -243,5 +250,6 @@ class ConfigActivity : AppCompatActivity() {
         binding.previewTextColor.setBackgroundColor(settings.textColor)
         binding.previewBgColor.setBackgroundColor(settings.bgColor)
         binding.previewShadowColor.setBackgroundColor(settings.shadowColor)
+        binding.previewDayNumberColor.setBackgroundColor(settings.dayNumberColor)
     }
 }

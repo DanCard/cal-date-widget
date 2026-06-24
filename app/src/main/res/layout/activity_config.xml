@@ -25,14 +25,43 @@
                 android:layout_height="match_parent" />
         </FrameLayout>
 
-        <Button
-            android:id="@+id/btn_undo"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
             android:layout_marginTop="8dp"
-            android:layout_gravity="end"
-            android:text="@string/btn_undo"
-            android:enabled="false"/>
+            android:layout_marginBottom="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_undo"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="@string/btn_undo"
+                android:enabled="false"
+                android:layout_marginEnd="4dp"
+                android:textColor="@color/selector_btn_text"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="40dp"
+                app:backgroundTint="@color/selector_btn_undo_bg"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_back"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Back"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginStart="4dp"
+                app:cornerRadius="40dp"
+                app:backgroundTint="@color/btn_back"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+        </LinearLayout>
 
         <!-- Settings -->
         <TextView
@@ -80,6 +109,34 @@
             
             <Button
                 android:id="@+id/btn_pick_text_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pick" />
+        </LinearLayout>
+
+        <!-- Day Number Color -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_day_number_color"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+             <View
+                android:id="@+id/preview_day_number_color"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="#FFEB3B"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btn_pick_day_number_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pick" />

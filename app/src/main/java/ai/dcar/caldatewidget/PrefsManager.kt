@@ -15,6 +15,7 @@ class PrefsManager(context: Context) {
         const val DEFAULT_SHADOW_COLOR = Color.BLACK
         const val DEFAULT_BG_COLOR = Color.TRANSPARENT
         const val DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY = 15 * 60
+        val DEFAULT_DAY_NUMBER_COLOR = Color.parseColor("#FFEB3B") // yellow, matches widget icon
     }
 
     data class WidgetSettings(
@@ -29,7 +30,8 @@ class PrefsManager(context: Context) {
         val showAmPm: Boolean = false,
         val selectedCalendarIds: Set<Long> = emptySet(),
         val dailyAutoAdvanceCutoffMinuteOfDay: Int = DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY,
-        val twoLineModeEnabled: Boolean = false
+        val twoLineModeEnabled: Boolean = false,
+        val dayNumberColor: Int = DEFAULT_DAY_NUMBER_COLOR
     )
 
     fun saveSettings(widgetId: Int, settings: WidgetSettings) {
@@ -46,6 +48,7 @@ class PrefsManager(context: Context) {
             putStringSet("${KEY_PREFIX}${widgetId}_calendars", settings.selectedCalendarIds.map { it.toString() }.toSet())
             putInt("${KEY_PREFIX}${widgetId}_daily_auto_advance_cutoff", settings.dailyAutoAdvanceCutoffMinuteOfDay)
             putBoolean("${KEY_PREFIX}${widgetId}_two_line_mode", settings.twoLineModeEnabled)
+            putInt("${KEY_PREFIX}${widgetId}_day_number_color", settings.dayNumberColor)
             apply()
         }
     }
@@ -67,6 +70,7 @@ class PrefsManager(context: Context) {
             DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
         ).coerceIn(0, (24 * 60) - 1)
         val twoLineMode = prefs.getBoolean("${KEY_PREFIX}${widgetId}_two_line_mode", false)
+        val dayNumberColor = prefs.getInt("${KEY_PREFIX}${widgetId}_day_number_color", DEFAULT_DAY_NUMBER_COLOR)
 
         return WidgetSettings(
             format,
@@ -80,7 +84,8 @@ class PrefsManager(context: Context) {
             showAmPm,
             selectedCalendarIds,
             dailyAutoAdvanceCutoff,
-            twoLineMode
+            twoLineMode,
+            dayNumberColor
         )
     }
 
@@ -98,6 +103,7 @@ class PrefsManager(context: Context) {
             remove("${KEY_PREFIX}${widgetId}_calendars")
             remove("${KEY_PREFIX}${widgetId}_daily_auto_advance_cutoff")
             remove("${KEY_PREFIX}${widgetId}_two_line_mode")
+            remove("${KEY_PREFIX}${widgetId}_day_number_color")
             apply()
         }
     }

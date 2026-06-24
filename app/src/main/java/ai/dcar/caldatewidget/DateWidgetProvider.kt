@@ -11,7 +11,6 @@ import android.provider.CalendarContract
 import android.util.Log
 import android.util.TypedValue
 import android.widget.RemoteViews
-import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
@@ -55,14 +54,9 @@ class DateWidgetProvider : AppWidgetProvider() {
             val prefsManager = PrefsManager(context)
             val settings = prefsManager.loadSettings(appWidgetId)
 
-            // 1. Format Date
-            var dateText = try {
-                val sdf = SimpleDateFormat(settings.dateFormat, Locale.getDefault())
-                sdf.format(Date())
-            } catch (e: Exception) {
-                Log.e("DateWidget", "Error formatting date with pattern '${settings.dateFormat}'", e)
-                "Invalid Format"
-            }
+            // 1. Format Date (and locate the day-of-month field for styling)
+            val formatted = DateWidgetText.format(settings.dateFormat, Date(), Locale.getDefault())
+            var dateText = formatted.text
 
             // Check widget size options to potentially force single-line
             val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
@@ -103,9 +97,14 @@ class DateWidgetProvider : AppWidgetProvider() {
             
             val views = RemoteViews(context.packageName, layoutId)
 
-            views.setTextViewText(R.id.widget_date_text, dateText)
+            // Style the day-of-month: bigger + accent color. Transforms above are 1:1 char
+            // replacements so the day range computed on the formatted text is still valid here.
+            val styledText = DateWidgetText.applyDayStyle(
+                dateText, formatted.dayRange, settings.dayNumberColor, DateWidgetText.DEFAULT_DAY_SIZE_FACTOR
+            )
+            views.setTextViewText(R.id.widget_date_text, styledText)
 
-            // 2. Apply Colors
+            // 2. Apply Colors (base color for the weekday/remainder; day number overrides via span)
             views.setTextColor(R.id.widget_date_text, settings.textColor)
             views.setInt(R.id.widget_root, "setBackgroundColor", settings.bgColor)
 
