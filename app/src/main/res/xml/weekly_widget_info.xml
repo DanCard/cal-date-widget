@@ -10,7 +10,6 @@
     android:minResizeHeight="40dp"
     android:resizeMode="horizontal|vertical"
     android:previewImage="@drawable/preview_weekly_widget"
-    android:previewLayout="@layout/widget_weekly"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"
     android:configure="ai.dcar.caldatewidget.WeeklyConfigActivity">

@@ -1,20 +1,60 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="200dp"
     android:height="100dp"
-    android:viewportWidth="48"
-    android:viewportHeight="24">
-    
-    <!-- Background -->
-    <path
-        android:fillColor="#FF4CAF50"
-        android:pathData="M2,2h44v20H2z"
-        android:fillAlpha="0.5"/>
-        
-    <!-- List items -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M4,5 h40 v2 h-40 z
-                          M4,9 h40 v2 h-40 z
-                          M4,13 h40 v2 h-40 z
-                          M4,17 h40 v2 h-40 z" />
+    android:viewportWidth="240"
+    android:viewportHeight="120">
+    <path android:fillColor="#99000000"
+        android:pathData="M10.00,0.00 h220.00 a10.00,10.00 0 0 1 10.00,10.00 v100.00 a10.00,10.00 0 0 1 -10.00,10.00 h-220.00 a10.00,10.00 0 0 1 -10.00,-10.00 v-100.00 a10.00,10.00 0 0 1 10.00,-10.00 z" />
+    <path android:fillColor="#FFC8C8C8"
+        android:pathData="M14.12,7.00 h4.25 a2.00,2.00 0 0 1 2.00,2.00 v1.00 a2.00,2.00 0 0 1 -2.00,2.00 h-4.25 a2.00,2.00 0 0 1 -2.00,-2.00 v-1.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF4CAF50"
+        android:pathData="M12.00,24.00 h8.49 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-8.49 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#24FFFFFF"
+        android:pathData="M24.19,18.00 h0.60 v94.00 h-0.60 z" />
+    <path android:fillColor="#FFC8C8C8"
+        android:pathData="M30.61,7.00 h4.25 a2.00,2.00 0 0 1 2.00,2.00 v1.00 a2.00,2.00 0 0 1 -2.00,2.00 h-4.25 a2.00,2.00 0 0 1 -2.00,-2.00 v-1.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF2196F3"
+        android:pathData="M28.49,24.00 h8.49 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-8.49 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#1FFFFFFF"
+        android:pathData="M45.98,14.00 h44.97 a4.00,4.00 0 0 1 4.00,4.00 v90.00 a4.00,4.00 0 0 1 -4.00,4.00 h-44.97 a4.00,4.00 0 0 1 -4.00,-4.00 v-90.00 a4.00,4.00 0 0 1 4.00,-4.00 z" />
+    <path android:fillColor="#24FFFFFF"
+        android:pathData="M40.68,18.00 h0.60 v94.00 h-0.60 z" />
+    <path android:fillColor="#FFFFEB3B"
+        android:pathData="M63.47,7.00 h10.00 a2.00,2.00 0 0 1 2.00,2.00 v1.00 a2.00,2.00 0 0 1 -2.00,2.00 h-10.00 a2.00,2.00 0 0 1 -2.00,-2.00 v-1.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF9575CD"
+        android:pathData="M44.98,24.00 h46.97 a2.00,2.00 0 0 1 2.00,2.00 v5.00 a2.00,2.00 0 0 1 -2.00,2.00 h-46.97 a2.00,2.00 0 0 1 -2.00,-2.00 v-5.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FFFF8A65"
+        android:pathData="M44.98,36.00 h46.97 a2.00,2.00 0 0 1 2.00,2.00 v5.00 a2.00,2.00 0 0 1 -2.00,2.00 h-46.97 a2.00,2.00 0 0 1 -2.00,-2.00 v-5.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF4CAF50"
+        android:pathData="M44.98,48.00 h46.97 a2.00,2.00 0 0 1 2.00,2.00 v5.00 a2.00,2.00 0 0 1 -2.00,2.00 h-46.97 a2.00,2.00 0 0 1 -2.00,-2.00 v-5.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#24FFFFFF"
+        android:pathData="M95.65,18.00 h0.60 v94.00 h-0.60 z" />
+    <path android:fillColor="#FFC8C8C8"
+        android:pathData="M111.56,7.00 h10.00 a2.00,2.00 0 0 1 2.00,2.00 v1.00 a2.00,2.00 0 0 1 -2.00,2.00 h-10.00 a2.00,2.00 0 0 1 -2.00,-2.00 v-1.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FFFF8A65"
+        android:pathData="M99.95,24.00 h33.23 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-33.23 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF4CAF50"
+        android:pathData="M99.95,33.00 h33.23 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-33.23 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#24FFFFFF"
+        android:pathData="M136.88,18.00 h0.60 v94.00 h-0.60 z" />
+    <path android:fillColor="#FFC8C8C8"
+        android:pathData="M150.73,7.00 h10.00 a2.00,2.00 0 0 1 2.00,2.00 v1.00 a2.00,2.00 0 0 1 -2.00,2.00 h-10.00 a2.00,2.00 0 0 1 -2.00,-2.00 v-1.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF4CAF50"
+        android:pathData="M141.18,24.00 h29.10 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-29.10 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF2196F3"
+        android:pathData="M141.18,33.00 h29.10 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-29.10 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#24FFFFFF"
+        android:pathData="M173.98,18.00 h0.60 v94.00 h-0.60 z" />
+    <path android:fillColor="#FFC8C8C8"
+        android:pathData="M185.77,7.00 h10.00 a2.00,2.00 0 0 1 2.00,2.00 v1.00 a2.00,2.00 0 0 1 -2.00,2.00 h-10.00 a2.00,2.00 0 0 1 -2.00,-2.00 v-1.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF2196F3"
+        android:pathData="M178.28,24.00 h24.98 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-24.98 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF9575CD"
+        android:pathData="M178.28,33.00 h24.98 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-24.98 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#24FFFFFF"
+        android:pathData="M206.96,18.00 h0.60 v94.00 h-0.60 z" />
+    <path android:fillColor="#FFC8C8C8"
+        android:pathData="M215.45,7.00 h8.37 a2.00,2.00 0 0 1 2.00,2.00 v1.00 a2.00,2.00 0 0 1 -2.00,2.00 h-8.37 a2.00,2.00 0 0 1 -2.00,-2.00 v-1.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
+    <path android:fillColor="#FF9575CD"
+        android:pathData="M211.26,24.00 h16.74 a2.00,2.00 0 0 1 2.00,2.00 v2.00 a2.00,2.00 0 0 1 -2.00,2.00 h-16.74 a2.00,2.00 0 0 1 -2.00,-2.00 v-2.00 a2.00,2.00 0 0 1 2.00,-2.00 z" />
 </vector>
