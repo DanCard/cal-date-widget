@@ -54,13 +54,22 @@ object WeeklyWidgetRenderer {
             val now = System.currentTimeMillis()
             val timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT)
 
+            // Shared lensing profile: every band uses the same column widths (with the 2.0x
+            // spike at today's weekday) so the vertical separators of the stacked weeks line up.
+            // The empty-column shrink is decided across ALL weeks so a weekday is only narrowed
+            // when it is empty in every week — keeping the grid aligned. For weeks == 1 this is
+            // identical to the previous per-band computeAdjustedWeights call.
+            val sharedBaseWeights = WeeklyDisplayLogic.getColumnWeights(todayIndexInWeek, 7)
+            val sharedWeights = WidgetColumnRenderer.computeAlignedAdjustedWeights(
+                allEvents, sharedBaseWeights, globalDayMillisList, weeks
+            )
+
             for (w in 0 until weeks) {
                 val rowDayMillisList = globalDayMillisList.subList(w * 7, (w + 1) * 7)
 
+                // Only band 0 has the real "today" for highlighting / past-event scaling; band 1
+                // shows next week, so it gets -1. (Width is driven by sharedWeights, not this.)
                 val rowTodayIndex = if (w == 0) todayIndexInWeek else -1
-
-                val baseRowWeights = WeeklyDisplayLogic.getColumnWeights(rowTodayIndex, 7)
-                val rowWeights = WidgetColumnRenderer.computeAdjustedWeights(allEvents, baseRowWeights, rowDayMillisList)
 
                 val config = WidgetColumnRenderer.ColumnRenderConfig(
                     pastEventScaleFactor = 0.7f,
@@ -71,7 +80,7 @@ object WeeklyWidgetRenderer {
 
                 WidgetColumnRenderer.renderDayColumns(
                     canvas, size.widthPx, bandHeight, paints, settings, allEvents,
-                    rowWeights, rowTodayIndex, rowDayMillisList, config, timeFormat, now,
+                    sharedWeights, rowTodayIndex, rowDayMillisList, config, timeFormat, now,
                     topOffset = (w * bandHeight).toFloat()
                 ) { _, dayMillis, isToday, currentX, colWidth, top ->
                     drawDayHeader(canvas, paints, dayMillis, isToday, currentX, colWidth, top)

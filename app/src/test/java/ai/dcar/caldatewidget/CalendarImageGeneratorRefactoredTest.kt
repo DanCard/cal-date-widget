@@ -103,6 +103,60 @@ class CalendarImageGeneratorRefactoredTest {
         }
     }
 
+    // A second stacked week, immediately following dayMillisList (days 7..13).
+    private val twoWeekDayMillisList = (0L until 14).map { day0 + it * (24L * 60 * 60 * 1000) }
+
+    @Test
+    fun `computeAlignedAdjustedWeights with one week matches computeAdjustedWeights`() {
+        // Regression guard: the single-week path must be byte-for-byte identical.
+        val events = listOf(
+            makeEvent("Event", dayMillisList[0] + 3600000, dayMillisList[0] + 7200000),
+            makeEvent("Event", dayMillisList[3] + 3600000, dayMillisList[3] + 7200000)
+        )
+        val weights = WeeklyDisplayLogic.getColumnWeights(2, 7)
+
+        val aligned = WidgetColumnRenderer.computeAlignedAdjustedWeights(events, weights, dayMillisList, weeks = 1)
+        val perBand = WidgetColumnRenderer.computeAdjustedWeights(events, weights, dayMillisList)
+
+        assertEquals(perBand.toList(), aligned.toList())
+    }
+
+    @Test
+    fun `computeAlignedAdjustedWeights keeps a weekday full width when only one week has events`() {
+        // Day index 3: events in week 1 only. Day index 5: events in week 2 only.
+        // Both must stay full width so the stacked columns line up vertically.
+        val events = listOf(
+            makeEvent("Wk1", twoWeekDayMillisList[3] + 3600000, twoWeekDayMillisList[3] + 7200000),
+            makeEvent("Wk2", twoWeekDayMillisList[12] + 3600000, twoWeekDayMillisList[12] + 7200000)
+        )
+        val base = floatArrayOf(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f)
+
+        val result = WidgetColumnRenderer.computeAlignedAdjustedWeights(events, base, twoWeekDayMillisList, weeks = 2)
+
+        val f = WidgetColumnRenderer.EMPTY_COLUMN_WEIGHT_FACTOR
+        // Index 3 busy in week 1, index 5 busy in week 2 -> both full width.
+        assertEquals(1.0f, result[3], 0.001f)
+        assertEquals(1.0f, result[5], 0.001f)
+        // Indices empty in BOTH weeks are shrunk.
+        assertEquals(1.0f * f, result[0], 0.001f)
+        assertEquals(1.0f * f, result[1], 0.001f)
+    }
+
+    @Test
+    fun `computeAlignedAdjustedWeights shrinks a weekday empty in every week`() {
+        // No events anywhere -> every column shrunk by the empty factor.
+        val base = WeeklyDisplayLogic.getColumnWeights(2, 7)
+        val f = WidgetColumnRenderer.EMPTY_COLUMN_WEIGHT_FACTOR
+
+        val result = WidgetColumnRenderer.computeAlignedAdjustedWeights(
+            emptyList(), base, twoWeekDayMillisList, weeks = 2
+        )
+
+        for (i in result.indices) {
+            assertEquals(base[i] * f, result[i], 0.001f)
+        }
+    }
+
     @Test
     fun `ColumnRenderConfig weekly has correct pastEventScaleFactor`() {
         val config = WidgetColumnRenderer.ColumnRenderConfig(

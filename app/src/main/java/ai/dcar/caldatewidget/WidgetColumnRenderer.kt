@@ -222,6 +222,39 @@ object WidgetColumnRenderer {
         return adjusted
     }
 
+    /**
+     * Like [computeAdjustedWeights], but decides the empty-column shrink across ALL stacked
+     * weeks so both bands share one width profile and their vertical separators line up.
+     *
+     * A weekday column is only narrowed (×[EMPTY_COLUMN_WEIGHT_FACTOR]) when it is event-empty
+     * in *every* week — that keeps the space-saving compaction for genuinely empty weekdays
+     * while never producing a per-row width that breaks alignment.
+     *
+     * @param baseWeights the shared 7-column profile (e.g. from [WeeklyDisplayLogic.getColumnWeights])
+     * @param allDayMillis week-major list of size 7 * [weeks]
+     * For [weeks] == 1 this is identical to [computeAdjustedWeights].
+     */
+    @VisibleForTesting
+    internal fun computeAlignedAdjustedWeights(
+        events: List<CalendarEvent>,
+        baseWeights: FloatArray,
+        allDayMillis: List<Long>,
+        weeks: Int
+    ): FloatArray {
+        val adjusted = baseWeights.copyOf()
+        for (i in 0 until 7) {
+            val anyWeekHasEvents = (0 until weeks).any { w ->
+                val dayMillis = allDayMillis[w * 7 + i]
+                val dayEnd = dayMillis + DAY_MILLIS
+                events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
+            }
+            if (!anyWeekHasEvents) {
+                adjusted[i] *= EMPTY_COLUMN_WEIGHT_FACTOR
+            }
+        }
+        return adjusted
+    }
+
     internal fun verticallyCenterBaseline(paint: Paint, centerY: Float): Float {
         val fm = paint.fontMetrics
         return centerY - (fm.ascent + fm.descent) / 2f
