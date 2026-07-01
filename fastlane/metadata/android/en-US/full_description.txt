@@ -1,28 +1,25 @@
-Cal Date Widget brings sleek, premium, and fully customizable calendar widgets directly to your Android home screen. Stay organized at a glance with a minimalist design that fits beautifully with any wallpaper or theme.
+Cal Date Widget is a small, early-release app that adds simple date and calendar widgets to your home screen. It works, but it is still young — expect some rough edges, and please report anything that looks off.
 
-The app includes three distinct, powerful widgets:
+THE THREE WIDGETS
 
-1. DATE WIDGET (1x1 & larger)
-• A clean, minimal widget displaying the current date.
-• Choose from multiple pre-set formats or define your own custom pattern (e.g., EEEE, d MMM).
+1. Date widget
+Shows the current date. Pick a preset format or type your own pattern (e.g. EEEE, d MMM).
 
-2. DAILY CALENDAR WIDGET
-• A dynamic daily planner widget that adjusts the number of columns (1 to 7 days) automatically based on the widget’s width on your screen.
-• Smart Start Day: Automatically shifts to show the next day's schedule once all of today's events have elapsed, keeping you focused on what's next.
+2. Daily calendar widget
+Shows today's events from your device calendars, and adds more day columns automatically if you make the widget wider. Once today's events are over, it moves on to tomorrow.
 
-3. WEEKLY CALENDAR WIDGET
-• A comprehensive 7-day view of your calendar events.
-• Today Highlight: Today’s column is weighted larger, making it easy to focus on today's agenda.
-• Dynamic Font Scaling: Uses an advanced per-column sizing algorithm to automatically scale text to perfectly fit the widget space.
-• Near-Duplicate Filtering & Rotation: Intelligently groups matching events (such as multiple shifts or duplicates) and rotates through them minute-by-minute so your screen stays clean without missing details.
-• Past Event Dimming: Events that have already passed are displayed in a smaller, subtler font to keep your layout organized.
+3. Weekly calendar widget
+A 7-day view of upcoming events. Today's column is wider than the others, and text size adjusts to fit the available space.
 
-PREMIUM CUSTOMIZATION
-• Complete control over text color, shadow color, and background transparency (70% dark mode transparency included by default for optimal contrast).
-• Increased text shadow radius and offset for maximum readability over any background.
-• Tap widgets to open settings or launch your calendar app instantly.
+CUSTOMIZATION
+Text color, shadows, and background transparency are adjustable per widget. Tap a widget to open your calendar app or its settings.
 
-100% PRIVACY FIRST
-• Works entirely offline.
-• No internet permission requested – your calendar data never leaves your device.
-• Source-available and free of trackers, ads, or third-party analytics.
+PRIVACY
+The app has no internet permission, so your calendar data cannot leave your device. No ads, no trackers, no analytics. The source code is publicly viewable on GitHub.
+
+KNOWN LIMITATIONS
+• Developed and tested mainly on one device (a Samsung Galaxy Z Fold4). Other devices and launchers may show layout quirks.
+• Widgets refresh periodically and when tapped, not instantly after every calendar change.
+• The interface is English-only for now.
+
+If something breaks or looks wrong, use the in-app bug report — it prepares a diagnostic email you can review before sending. Every report is read.
