@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         if (appWidgetManager.isRequestPinAppWidgetSupported) {
             appWidgetManager.requestPinAppWidget(myProvider, null, null)
         } else {
-            Toast.makeText(this, "Pinned widgets are not supported on this launcher.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_pin_unsupported), Toast.LENGTH_LONG).show()
         }
     }
 }

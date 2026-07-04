@@ -13,6 +13,16 @@
     <string name="desc_settings">Settings</string>
     <string name="weekly_widget_desc">Weekly Calendar of Events</string>
     <string name="daily_widget_desc">Daily Calendar of Events</string>
+    <string name="date_widget_desc">Current Date Display</string>
+    <string name="label_start_time_color">Start Time Color</string>
+    <string name="label_start_time_shadow">Start Time Shadow</string>
+    <string name="toast_widget_refreshing">Widget refreshing...</string>
+    <string name="toast_pin_unsupported">Pinned widgets are not supported on this launcher.</string>
+    <string name="bug_report_loading">Loading diagnostics...</string>
+    <string name="bug_report_send_via">Send Report via...</string>
+    <string name="toast_no_email_app">Could not open email app. Diagnostic data copied to clipboard.</string>
+    <string name="toast_diagnostics_copied">Diagnostics copied to clipboard!</string>
+    <string name="calendar_shared_suffix">" [shared]"</string>
     
     <string name="welcome_title">Cal Date Widget</string>
     <string name="welcome_subtitle">Minimalist widgets for your home screen.</string>

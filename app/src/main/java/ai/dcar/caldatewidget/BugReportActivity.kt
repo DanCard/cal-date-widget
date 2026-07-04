@@ -66,7 +66,7 @@ class BugReportActivity : AppCompatActivity() {
     private fun loadDiagnosticsAsync() {
         isLoadingData = true
         binding.progressPreview.visibility = View.VISIBLE
-        binding.tvPreview.text = "Loading diagnostics..."
+        binding.tvPreview.text = getString(R.string.bug_report_loading)
 
         thread {
             // 1. Gather System & Widget settings info
@@ -261,9 +261,9 @@ class BugReportActivity : AppCompatActivity() {
         }
 
         try {
-            startActivity(Intent.createChooser(emailIntent, "Send Report via..."))
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.bug_report_send_via)))
         } catch (e: Exception) {
-            Toast.makeText(this, "Could not open email app. Diagnostic data copied to clipboard.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_no_email_app), Toast.LENGTH_LONG).show()
             copyToClipboard(silent = true)
         }
     }
@@ -275,7 +275,7 @@ class BugReportActivity : AppCompatActivity() {
         clipboard.setPrimaryClip(clip)
 
         if (!silent) {
-            Toast.makeText(this, "Diagnostics copied to clipboard!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_diagnostics_copied), Toast.LENGTH_SHORT).show()
         }
     }
 }

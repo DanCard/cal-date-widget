@@ -247,15 +247,21 @@ object WeeklyDisplayLogic {
      * @param currentTimeMillis Current time in milliseconds, used for rotation seed
      * @return Filtered list with one event per duplicate group
      */
+    // Event titles are user data: title-bearing logs are verbose-gated so they never
+    // reach logcat in normal use. Enable with: adb shell setprop log.tag.NearDuplicate VERBOSE
+    private val logTitles: Boolean
+        get() = android.util.Log.isLoggable("NearDuplicate", android.util.Log.VERBOSE)
+
     fun filterNearDuplicates(events: List<CalendarEvent>, currentTimeMillis: Long): List<CalendarEvent> {
         if (events.size <= 1) return events
 
-        // Log all events being processed
         android.util.Log.d("NearDuplicate", "=== Processing ${events.size} events ===")
-        val dateFormat = java.text.SimpleDateFormat("EEE HH:mm", java.util.Locale.getDefault())
-        events.forEachIndexed { index, event ->
-            val timeStr = dateFormat.format(java.util.Date(event.startTime))
-            android.util.Log.d("NearDuplicate", "Event $index: '${event.title}' at $timeStr (id=${event.id}, allDay=${event.isAllDay})")
+        if (logTitles) {
+            val dateFormat = java.text.SimpleDateFormat("EEE HH:mm", java.util.Locale.getDefault())
+            events.forEachIndexed { index, event ->
+                val timeStr = dateFormat.format(java.util.Date(event.startTime))
+                android.util.Log.v("NearDuplicate", "Event $index: '${event.title}' at $timeStr (id=${event.id}, allDay=${event.isAllDay})")
+            }
         }
 
         // Track by list index, not event.id: recurring-series instances share an
@@ -277,14 +283,14 @@ object WeeklyDisplayLogic {
                 if (j in processedIndices) continue
                 val other = events[j]
                 if (areNearDuplicates(event, other)) {
-                    android.util.Log.d("NearDuplicate", "Found duplicate: '${event.title}' matches '${other.title}'")
+                    if (logTitles) android.util.Log.v("NearDuplicate", "Found duplicate: '${event.title}' matches '${other.title}'")
                     cluster.add(other)
                     processedIndices.add(j)
                 }
             }
 
             if (cluster.size > 1) {
-                android.util.Log.d("NearDuplicate", "Cluster of ${cluster.size} events: ${cluster.map { it.title }}")
+                android.util.Log.d("NearDuplicate", "Cluster of ${cluster.size} events: ${cluster.map { it.id }}")
             }
             clusters.add(cluster)
         }
@@ -305,7 +311,7 @@ object WeeklyDisplayLogic {
                 // Time-based rotation: changes roughly every minute
                 val seed = (currentTimeMillis / 60000 + pool.sumOf { it.id }) % pool.size
                 val selected = pool[seed.toInt()]
-                android.util.Log.d("NearDuplicate", "Selected '${selected.title}' from pool of ${pool.size} (cluster of ${cluster.size})")
+                android.util.Log.d("NearDuplicate", "Selected id=${selected.id} from pool of ${pool.size} (cluster of ${cluster.size})")
                 selected
             }
         }
@@ -323,14 +329,14 @@ object WeeklyDisplayLogic {
     private fun areNearDuplicates(a: CalendarEvent, b: CalendarEvent): Boolean {
         // Same type check
         if (a.isAllDay != b.isAllDay) {
-            android.util.Log.d("NearDuplicate", "Different types: '${a.title}' (allDay=${a.isAllDay}) vs '${b.title}' (allDay=${b.isAllDay})")
+            if (logTitles) android.util.Log.v("NearDuplicate", "Different types: '${a.title}' (allDay=${a.isAllDay}) vs '${b.title}' (allDay=${b.isAllDay})")
             return false
         }
 
         // Time proximity (15 minutes = 900,000 ms)
         val timeDiff = kotlin.math.abs(a.startTime - b.startTime)
         if (timeDiff > 900_000) {
-            android.util.Log.d("NearDuplicate", "Too far apart: '${a.title}' vs '${b.title}' (${timeDiff / 60000} minutes)")
+            if (logTitles) android.util.Log.v("NearDuplicate", "Too far apart: '${a.title}' vs '${b.title}' (${timeDiff / 60000} minutes)")
             return false
         }
 
@@ -342,10 +348,12 @@ object WeeklyDisplayLogic {
         val maxWords = kotlin.math.max(wordsA.size, wordsB.size)
         val similarity = if (maxWords > 0) commonWords.toDouble() / maxWords else 0.0
 
-        android.util.Log.d("NearDuplicate", "Comparing '${a.title}' vs '${b.title}': ${commonWords} common words (need 5), similarity=${String.format("%.2f", similarity)} (need > 0.60)")
-        android.util.Log.d("NearDuplicate", "  Words A: $wordsA")
-        android.util.Log.d("NearDuplicate", "  Words B: $wordsB")
-        android.util.Log.d("NearDuplicate", "  Common: ${wordsA.intersect(wordsB)}")
+        if (logTitles) {
+            android.util.Log.v("NearDuplicate", "Comparing '${a.title}' vs '${b.title}': ${commonWords} common words (need 5), similarity=${String.format("%.2f", similarity)} (need > 0.60)")
+            android.util.Log.v("NearDuplicate", "  Words A: $wordsA")
+            android.util.Log.v("NearDuplicate", "  Words B: $wordsB")
+            android.util.Log.v("NearDuplicate", "  Common: ${wordsA.intersect(wordsB)}")
+        }
 
         return commonWords >= 5 || (commonWords >= 1 && similarity > 0.60)
     }

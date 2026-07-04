@@ -134,24 +134,24 @@ class ConfigActivity : AppCompatActivity() {
         }
 
         // Color Pickers
-        binding.btnPickTextColor.setOnClickListener { ColorPickerDialog.show(this, "Text Color", stateManager.currentSettings.textColor) { color ->
+        binding.btnPickTextColor.setOnClickListener { ColorPickerDialog.show(this, getString(R.string.label_text_color), stateManager.currentSettings.textColor) { color ->
             val newSettings = stateManager.currentSettings.copy(textColor = color)
             updateSettings(newSettings)
         }}
 
-        binding.btnPickBgColor.setOnClickListener { ColorPickerDialog.show(this, "Background Color", stateManager.currentSettings.bgColor) { color ->
+        binding.btnPickBgColor.setOnClickListener { ColorPickerDialog.show(this, getString(R.string.label_bg_color), stateManager.currentSettings.bgColor) { color ->
             val alpha = Color.alpha(stateManager.currentSettings.bgColor)
             val newColorWithOldAlpha = (color and 0x00FFFFFF) or (alpha shl 24)
             val newSettings = stateManager.currentSettings.copy(bgColor = newColorWithOldAlpha)
             updateSettings(newSettings)
         }}
 
-        binding.btnPickShadowColor.setOnClickListener { ColorPickerDialog.show(this, "Shadow Color", stateManager.currentSettings.shadowColor) { color ->
+        binding.btnPickShadowColor.setOnClickListener { ColorPickerDialog.show(this, getString(R.string.label_shadow_color), stateManager.currentSettings.shadowColor) { color ->
             val newSettings = stateManager.currentSettings.copy(shadowColor = color)
             updateSettings(newSettings)
         }}
 
-        binding.btnPickDayNumberColor.setOnClickListener { ColorPickerDialog.show(this, "Day Number Color", stateManager.currentSettings.dayNumberColor) { color ->
+        binding.btnPickDayNumberColor.setOnClickListener { ColorPickerDialog.show(this, getString(R.string.label_day_number_color), stateManager.currentSettings.dayNumberColor) { color ->
             val newSettings = stateManager.currentSettings.copy(dayNumberColor = color)
             updateSettings(newSettings)
         }}

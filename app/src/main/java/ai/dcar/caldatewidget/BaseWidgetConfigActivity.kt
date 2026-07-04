@@ -109,7 +109,7 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
         }
 
         btnPickText.setOnClickListener {
-            ColorPickerDialog.show(this, "Text Color", currentSettings.textColor) { color ->
+            ColorPickerDialog.show(this, getString(R.string.label_text_color), currentSettings.textColor) { color ->
                 currentSettings = currentSettings.copy(textColor = color)
                 updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
                 saveSettings()
@@ -117,7 +117,7 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
         }
 
         btnPickShadow.setOnClickListener {
-            ColorPickerDialog.show(this, "Shadow Color", currentSettings.shadowColor) { color ->
+            ColorPickerDialog.show(this, getString(R.string.label_shadow_color), currentSettings.shadowColor) { color ->
                 currentSettings = currentSettings.copy(shadowColor = color)
                 updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
                 saveSettings()
@@ -125,7 +125,7 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
         }
 
         btnPickStartColor.setOnClickListener {
-            ColorPickerDialog.show(this, "Start Time Color", currentSettings.startTimeColor) { color ->
+            ColorPickerDialog.show(this, getString(R.string.label_start_time_color), currentSettings.startTimeColor) { color ->
                 currentSettings = currentSettings.copy(startTimeColor = color)
                 updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
                 saveSettings()
@@ -133,7 +133,7 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
         }
 
         btnPickStartShadow.setOnClickListener {
-            ColorPickerDialog.show(this, "Start Time Shadow", currentSettings.startTimeShadowColor) { color ->
+            ColorPickerDialog.show(this, getString(R.string.label_start_time_shadow), currentSettings.startTimeShadowColor) { color ->
                 currentSettings = currentSettings.copy(startTimeShadowColor = color)
                 updateColorPreviews(previewText, previewShadow, previewStartColor, previewStartShadow)
                 saveSettings()
@@ -246,7 +246,7 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
 
         for (cal in availableCalendars) {
             val checkBox = CheckBox(this).apply {
-                val suffix = if (cal.isPersonalCalendar()) "" else " [shared]"
+                val suffix = if (cal.isPersonalCalendar()) "" else getString(R.string.calendar_shared_suffix)
                 text = "${cal.displayName}$suffix"
                 setTextColor(Color.WHITE)
 

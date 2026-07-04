@@ -119,9 +119,10 @@ class CalendarRepository(private val context: Context) {
                     )
 
                     if (allDay) {
+                        // Titles are user data — log ids/timestamps only
                         Log.d(
                             "CalendarRepository",
-                            "allDay row title='${it.getString(titleIdx) ?: "No Title"}' begin=${it.getLong(beginIdx)} end=${it.getLong(endIdx)} startDay=${if (startDayIdx >= 0) it.getInt(startDayIdx) else null} endDay=${if (endDayIdx >= 0) it.getInt(endDayIdx) else null} eventId=${it.getLong(idIdx)}"
+                            "allDay row begin=${it.getLong(beginIdx)} end=${it.getLong(endIdx)} startDay=${if (startDayIdx >= 0) it.getInt(startDayIdx) else null} endDay=${if (endDayIdx >= 0) it.getInt(endDayIdx) else null} eventId=${it.getLong(idIdx)}"
                         )
                     }
                 }
@@ -135,7 +136,7 @@ class CalendarRepository(private val context: Context) {
         val result = events.distinctBy { 
             listOf(it.title, it.startTime, it.endTime, it.isAllDay, it.isDeclined, it.selfStatus)
         }
-        Log.d("CalendarRepository", "getEvents returning ${result.size} events: ${result.map { "'${it.title}' [start=${it.startTime}, id=${it.id}]" }}")
+        Log.d("CalendarRepository", "getEvents returning ${result.size} events: ${result.map { "[start=${it.startTime}, id=${it.id}]" }}")
         return result
     }
 
