@@ -46,26 +46,32 @@ File: `app/src/main/res/xml/date_widget_info.xml`
 `strings.xml:30` = `daniecarde55@gmail.com` for bug reports — differs from the
 Play account email. Verify intentional (typo-adjacent). Needs user yes/no.
 
-## Fine to defer to v1.1
+## Fine to defer to v1.1 (status: mostly done, 2026-07-04)
 
-- **Hardcoded user-facing strings** not in `strings.xml` (all English-only,
-  disclosed in listing — hygiene, not breakage):
-  - `WeeklyConfigActivity.kt:64` "Widget refreshing..."
-  - `MainActivity.kt:55` "Pinned widgets are not supported on this launcher."
-  - `BugReportActivity.kt:69,266,278` toasts/labels
-  - ColorPickerDialog titles in `ConfigActivity.kt:137-154` and
-    `BaseWidgetConfigActivity.kt:112-136` — these *duplicate existing*
-    `strings.xml` resources (`label_text_color` etc.)
-  - `BaseWidgetConfigActivity.kt:250` "$displayName [shared]" suffix
-- **`allowBackup="true"`** (Manifest line 9): widget prefs keyed by
-  `appWidgetId` can restore onto a device where those IDs mean nothing.
-  Harmless (stale prefs sit unused) — low priority.
-- **`previewLayout`** in all three widget info XMLs for a live Android 12+
-  picker preview (currently `previewImage` only).
-- **README refresh** — still leads with the date widget; doesn't reflect the
-  3-widget reality.
-- Optional `goAsync` timeout guard (work is bounded: one content query + one
-  bitmap draw — low risk).
+- ✅ **Hardcoded user-facing strings** moved into `strings.xml` — toasts in
+  `WeeklyConfigActivity`, `MainActivity`, `BugReportActivity`; ColorPickerDialog
+  titles now reuse existing `label_*` resources; `[shared]` suffix externalized.
+  (Done in the same pass as the pre-upload fixes, commit `71dd2c4`.)
+- ✅ **`allowBackup`** flipped to `false` (Manifest line 9). No user data worth
+  restoring cross-device — widget prefs are keyed by `appWidgetId`, which gets
+  reassigned on every fresh widget placement, so restored prefs would never
+  match up to a real widget anyway.
+- ✅ **README refresh** — now covers all three widgets (date/daily/weekly),
+  updated project structure section, points to `CLAUDE.md` for deeper
+  architecture detail.
+- ⏭️ **`previewLayout`** — skipped, not attempted. Investigated and it's not a
+  quick add: `initialLayout` for daily/weekly is just an `ImageView` target for
+  the canvas bitmap (`R.id.daily_canvas` / `R.id.weekly_canvas`), empty until
+  `updateAppWidget` runs. A real `previewLayout` needs a *separate* layout with
+  baked-in sample text mimicking the rendered grid — nontrivial design work,
+  and a rushed version (reusing `initialLayout` as-is) would show a blank
+  widget in the Android 12+ picker, which is worse than the current
+  `previewImage` static screenshots. Left for a real follow-up, not attempted
+  as "quick polish."
+- ⏭️ **`goAsync` timeout guard** — skipped. Audit's own note called this
+  optional/low-risk (bounded work: one content query + one bitmap draw); no
+  concrete failure mode identified that a timeout would fix, so added
+  complexity without a clear benefit.
 
 ## Suggested execution order
 
