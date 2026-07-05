@@ -76,6 +76,18 @@ Check the "Set up your app" dashboard checklist; complete whichever remain:
 - Play Console → Quality → **Android vitals** daily; crashes arrive deobfuscated
   (`-dontobfuscate`). Fix → bump `versionCode` to 3 → re-upload.
 
+## Status (2026-07-04)
+Submitted for production review — Publishing overview shows "In review".
+First-time app review for a personal/individual account; expect anywhere from
+a few hours to ~7 days. Nothing actionable until it clears or a rejection
+reason appears. While waiting: do the alternate-launcher pass from
+`plans/260701-close-single-device-testing-gap.md` (#2) on the debug build,
+and bookmark Play Console → Quality → Android vitals for post-launch.
+Also since this session: feature graphic was regenerated (stale icon +
+purple background swapped for current icon + dark background matching it,
+commit `d05eea5`) — no action needed, just noting the asset changed after
+step 3's original guidance was written.
+
 ## Verification
 - Step 2: fresh `.aab` mtime > commit 39db8c9; `./gradlew testDebugUnitTest` green.
 - Step 5: app installs from the internal-testing link on the Fold4; widgets render;
