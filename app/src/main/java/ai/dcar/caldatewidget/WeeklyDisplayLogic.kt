@@ -149,15 +149,23 @@ object WeeklyDisplayLogic {
         return candidates.last()
     }
 
-    fun getColumnWeights(todayIndex: Int, daysCount: Int): FloatArray {
+    /**
+     * @param todayHasEvents When today's column is empty, the 2.0x emphasis spike is dropped
+     *   (today becomes a neutral 1.0 column). The spike exists to give today's *events* room;
+     *   with nothing to show it just wastes width, and — because the empty-column shrink
+     *   multiplies from the base weight — an un-dropped spike leaves an empty today wider than
+     *   its empty neighbors (2.0*0.35=0.70 vs ~0.21). Passing false lets the standard
+     *   empty-column shrink narrow today like any other empty day.
+     */
+    fun getColumnWeights(todayIndex: Int, daysCount: Int, todayHasEvents: Boolean = true): FloatArray {
         val weights = FloatArray(daysCount)
         for (i in 0 until daysCount) {
             if (i < todayIndex) {
                 // Past
                 weights[i] = 0.6f
             } else if (i == todayIndex) {
-                // Today
-                weights[i] = 2.0f
+                // Today: emphasis spike only when there are events to emphasize.
+                weights[i] = if (todayHasEvents) 2.0f else 1.0f
             } else {
                 // Future
                 // "Make future columns bigger than past columns" -> > 0.6

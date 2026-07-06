@@ -853,6 +853,34 @@ class WeeklyDisplayLogicTest {
     // ===== getHeaderTextSize =====
 
     @Test
+    fun `getColumnWeights gives today the 2x spike when today has events`() {
+        val weights = WeeklyDisplayLogic.getColumnWeights(todayIndex = 2, daysCount = 7, todayHasEvents = true)
+        assertEquals(2.0f, weights[2], 0.001f)
+    }
+
+    @Test
+    fun `getColumnWeights drops today spike to neutral when today is empty`() {
+        val weights = WeeklyDisplayLogic.getColumnWeights(todayIndex = 2, daysCount = 7, todayHasEvents = false)
+        // No emphasis for an empty today: neutral 1.0 base, so the empty-column shrink narrows it
+        // like any other empty day instead of leaving it the widest column on screen.
+        assertEquals(1.0f, weights[2], 0.001f)
+    }
+
+    @Test
+    fun `getColumnWeights empty today is narrower than immediate future`() {
+        val weights = WeeklyDisplayLogic.getColumnWeights(todayIndex = 0, daysCount = 7, todayHasEvents = false)
+        // Regression guard for the "empty Monday is wide" report: an empty today must not be
+        // wider than tomorrow (the 1.5x immediate-future column).
+        assertTrue(weights[0] < weights[1])
+    }
+
+    @Test
+    fun `getColumnWeights defaults todayHasEvents to true`() {
+        val weights = WeeklyDisplayLogic.getColumnWeights(todayIndex = 2, daysCount = 7)
+        assertEquals(2.0f, weights[2], 0.001f)
+    }
+
+    @Test
     fun `getHeaderTextSize today clamps to 80 max on very wide columns`() {
         assertEquals(80f, WeeklyDisplayLogic.getHeaderTextSize(500f, isToday = true), 0.01f)
     }

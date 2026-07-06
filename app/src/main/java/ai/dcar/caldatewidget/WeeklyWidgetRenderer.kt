@@ -59,9 +59,23 @@ object WeeklyWidgetRenderer {
             // The empty-column shrink is decided across ALL weeks so a weekday is only narrowed
             // when it is empty in every week — keeping the grid aligned. For weeks == 1 this is
             // identical to the previous per-band computeAdjustedWeights call.
-            val sharedBaseWeights = WeeklyDisplayLogic.getColumnWeights(todayIndexInWeek, 7)
+            // Drop today's 2.0x emphasis spike when today itself is empty — otherwise the
+            // empty-column shrink (x0.35) leaves an empty today (2.0*0.35=0.70) wider than its
+            // empty neighbors (~0.21), so "no events" paradoxically reads as the widest column.
+            val todayHasEvents = allEvents.any {
+                WeeklyDisplayLogic.shouldDisplayEventOnDay(
+                    it, todayMillis, todayMillis + WidgetColumnRenderer.DAY_MILLIS
+                )
+            }
+            val sharedBaseWeights = WeeklyDisplayLogic.getColumnWeights(todayIndexInWeek, 7, todayHasEvents)
             val sharedWeights = WidgetColumnRenderer.computeAlignedAdjustedWeights(
                 allEvents, sharedBaseWeights, globalDayMillisList, weeks
+            )
+            Log.d(
+                TAG,
+                "weekly weights: todayIndex=$todayIndexInWeek todayHasEvents=$todayHasEvents " +
+                    "weeks=$weeks base=${sharedBaseWeights.joinToString { "%.2f".format(it) }} " +
+                    "final=${sharedWeights.joinToString { "%.2f".format(it) }}"
             )
 
             for (w in 0 until weeks) {
