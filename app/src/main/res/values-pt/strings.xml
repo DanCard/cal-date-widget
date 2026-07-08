@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Widget de Data</string>
+    <string name="config_title">Configurações do Widget</string>
+    
+    <string name="label_date_format">Formato da Data</string>
+    <string name="hint_custom_format">Padrão personalizado (ex: EEEE, d MMM)</string>
+    <string name="label_text_color">Cor do Texto</string>
+    <string name="label_bg_color">Cor do Fundo</string>
+    <string name="label_shadow_color">Cor da Sombra</string>
+    <string name="label_day_number_color">Cor do Número do Dia</string>
+    <string name="btn_undo">Desfazer</string>
+    <string name="desc_settings">Configurações</string>
+    <string name="weekly_widget_desc">Calendário Semanal de Eventos</string>
+    <string name="daily_widget_desc">Calendário Diário de Eventos</string>
+    <string name="date_widget_desc">Exibição da Data Atual</string>
+    <string name="label_start_time_color">Cor da Hora de Início</string>
+    <string name="label_start_time_shadow">Sombra da Hora de Início</string>
+    <string name="toast_widget_refreshing">Atualizando widget...</string>
+    <string name="toast_pin_unsupported">Widgets fixados não são suportados neste lançador.</string>
+    <string name="bug_report_loading">Carregando diagnósticos...</string>
+    <string name="bug_report_send_via">Enviar relatório via...</string>
+    <string name="toast_no_email_app">Não foi possível abrir o app de e-mail. Dados de diagnóstico copiados para a área de transferência.</string>
+    <string name="toast_diagnostics_copied">Diagnósticos copiados para a área de transferência!</string>
+    <string name="calendar_shared_suffix"> [compartilhado]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Widgets minimalistas para sua tela inicial.</string>
+    <string name="label_quick_add">Adicionar Rápido</string>
+    <string name="btn_add_date">Adicionar Widget de Data</string>
+    <string name="btn_add_weekly">Adicionar Calendário Semanal</string>
+    <string name="btn_add_daily">Adicionar Calendário Diário</string>
+    <string name="label_instructions">Instruções</string>
+    <string name="instruction_text">1. Toque em um botão acima para adicionar um widget.\n2. Pressione e segure o widget na tela inicial para redimensioná-lo.\n3. Toque no widget para personalizar cores e formatos.</string>
+    <string name="label_privacy_policy">Política de Privacidade</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">Permissão Necessária</string>
+    <string name="permission_tap_to_grant">Toque para conceder</string>
+    <string name="error_prefix">Erro: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Personalizado</item>
+    </string-array>
+</resources>

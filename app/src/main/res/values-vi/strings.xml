@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Widget Ngày</string>
+    <string name="config_title">Cài đặt Widget</string>
+    
+    <string name="label_date_format">Định dạng ngày</string>
+    <string name="hint_custom_format">Mẫu tùy chỉnh (VD: EEEE, d MMM)</string>
+    <string name="label_text_color">Màu chữ</string>
+    <string name="label_bg_color">Màu nền</string>
+    <string name="label_shadow_color">Màu bóng</string>
+    <string name="label_day_number_color">Màu số ngày</string>
+    <string name="btn_undo">Hoàn tác</string>
+    <string name="desc_settings">Cài đặt</string>
+    <string name="weekly_widget_desc">Lịch sự kiện hàng tuần</string>
+    <string name="daily_widget_desc">Lịch sự kiện hàng ngày</string>
+    <string name="date_widget_desc">Hiển thị ngày hiện tại</string>
+    <string name="label_start_time_color">Màu thời gian bắt đầu</string>
+    <string name="label_start_time_shadow">Bóng thời gian bắt đầu</string>
+    <string name="toast_widget_refreshing">Đang làm mới widget...</string>
+    <string name="toast_pin_unsupported">Widget được ghim không được hỗ trợ trên trình khởi chạy này.</string>
+    <string name="bug_report_loading">Đang tải chẩn đoán...</string>
+    <string name="bug_report_send_via">Gửi báo cáo qua...</string>
+    <string name="toast_no_email_app">Không thể mở ứng dụng email. Dữ liệu chẩn đoán đã được sao chép vào khay nhớ tạm.</string>
+    <string name="toast_diagnostics_copied">Đã sao chép chẩn đoán vào khay nhớ tạm!</string>
+    <string name="calendar_shared_suffix"> [được chia sẻ]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Các widget tối giản cho màn hình chính của bạn.</string>
+    <string name="label_quick_add">Thêm nhanh</string>
+    <string name="btn_add_date">Thêm Widget Ngày</string>
+    <string name="btn_add_weekly">Thêm Lịch hàng tuần</string>
+    <string name="btn_add_daily">Thêm Lịch hàng ngày</string>
+    <string name="label_instructions">Hướng dẫn</string>
+    <string name="instruction_text">1. Chạm vào nút ở trên để thêm widget.\n2. Nhấn và giữ widget trên màn hình chính của bạn để thay đổi kích thước.\n3. Chạm vào widget để tùy chỉnh màu sắc và định dạng.</string>
+    <string name="label_privacy_policy">Chính sách bảo mật</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">Yêu cầu quyền truy cập</string>
+    <string name="permission_tap_to_grant">Chạm để cấp quyền</string>
+    <string name="error_prefix">Lỗi: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Tùy chỉnh</item>
+    </string-array>
+</resources>

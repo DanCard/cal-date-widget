@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Datumwidget</string>
+    <string name="config_title">Widget-instellingen</string>
+    
+    <string name="label_date_format">Datumnotatie</string>
+    <string name="hint_custom_format">Aangepast patroon (bijv. EEEE, d MMM)</string>
+    <string name="label_text_color">Tekstkleur</string>
+    <string name="label_bg_color">Achtergrondkleur</string>
+    <string name="label_shadow_color">Schaduwkleur</string>
+    <string name="label_day_number_color">Kleur dagnummer</string>
+    <string name="btn_undo">Ongedaan maken</string>
+    <string name="desc_settings">Instellingen</string>
+    <string name="weekly_widget_desc">Wekelijkse evenementenkalender</string>
+    <string name="daily_widget_desc">Dagelijkse evenementenkalender</string>
+    <string name="date_widget_desc">Weergave huidige datum</string>
+    <string name="label_start_time_color">Kleur starttijd</string>
+    <string name="label_start_time_shadow">Schaduw starttijd</string>
+    <string name="toast_widget_refreshing">Widget vernieuwen...</string>
+    <string name="toast_pin_unsupported">Vastgezette widgets worden niet ondersteund op deze launcher.</string>
+    <string name="bug_report_loading">Diagnostische gegevens laden...</string>
+    <string name="bug_report_send_via">Rapport verzenden via...</string>
+    <string name="toast_no_email_app">Kan e-mailapp niet openen. Diagnostische gegevens gekopieerd naar klembord.</string>
+    <string name="toast_diagnostics_copied">Diagnostische gegevens gekopieerd naar klembord!</string>
+    <string name="calendar_shared_suffix"> [gedeeld]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Minimalistische widgets voor je startscherm.</string>
+    <string name="label_quick_add">Snel toevoegen</string>
+    <string name="btn_add_date">Datumwidget toevoegen</string>
+    <string name="btn_add_weekly">Wekelijkse kalender toevoegen</string>
+    <string name="btn_add_daily">Dagelijkse kalender toevoegen</string>
+    <string name="label_instructions">Instructies</string>
+    <string name="instruction_text">1. Tik op een knop hierboven om een widget toe te voegen.\n2. Houd de widget op je startscherm lang ingedrukt om de grootte aan te passen.\n3. Tik op de widget om kleuren en notaties aan te passen.</string>
+    <string name="label_privacy_policy">Privacybeleid</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">Toegang Vereist</string>
+    <string name="permission_tap_to_grant">Tik om toegang te verlenen</string>
+    <string name="error_prefix">Fout: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Aangepast</item>
+    </string-array>
+</resources>

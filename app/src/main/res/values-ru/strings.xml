@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Виджет даты</string>
+    <string name="config_title">Настройки виджета</string>
+    
+    <string name="label_date_format">Формат даты</string>
+    <string name="hint_custom_format">Свой шаблон (например, EEEE, d MMM)</string>
+    <string name="label_text_color">Цвет текста</string>
+    <string name="label_bg_color">Цвет фона</string>
+    <string name="label_shadow_color">Цвет тени</string>
+    <string name="label_day_number_color">Цвет номера дня</string>
+    <string name="btn_undo">Отменить</string>
+    <string name="desc_settings">Настройки</string>
+    <string name="weekly_widget_desc">Еженедельный календарь событий</string>
+    <string name="daily_widget_desc">Ежедневный календарь событий</string>
+    <string name="date_widget_desc">Отображение текущей даты</string>
+    <string name="label_start_time_color">Цвет времени начала</string>
+    <string name="label_start_time_shadow">Тень времени начала</string>
+    <string name="toast_widget_refreshing">Обновление виджета...</string>
+    <string name="toast_pin_unsupported">Закрепленные виджеты не поддерживаются на этом лаунчере.</string>
+    <string name="bug_report_loading">Загрузка диагностики...</string>
+    <string name="bug_report_send_via">Отправить отчет через...</string>
+    <string name="toast_no_email_app">Не удалось открыть почтовое приложение. Диагностические данные скопированы в буфер обмена.</string>
+    <string name="toast_diagnostics_copied">Диагностика скопирована в буфер обмена!</string>
+    <string name="calendar_shared_suffix"> [общий]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Минималистичные виджеты для вашего главного экрана.</string>
+    <string name="label_quick_add">Быстрое добавление</string>
+    <string name="btn_add_date">Добавить виджет даты</string>
+    <string name="btn_add_weekly">Добавить еженедельный календарь</string>
+    <string name="btn_add_daily">Добавить ежедневный календарь</string>
+    <string name="label_instructions">Инструкции</string>
+    <string name="instruction_text">1. Нажмите кнопку выше, чтобы добавить виджет.\n2. Удерживайте виджет на главном экране, чтобы изменить его размер.\n3. Нажмите на виджет, чтобы настроить цвета и форматы.</string>
+    <string name="label_privacy_policy">Политика конфиденциальности</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">Требуется разрешение</string>
+    <string name="permission_tap_to_grant">Нажмите для предоставления</string>
+    <string name="error_prefix">Ошибка: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Свой</item>
+    </string-array>
+</resources>

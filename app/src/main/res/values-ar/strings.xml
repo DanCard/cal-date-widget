@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">أداة التاريخ</string>
+    <string name="config_title">إعدادات الأداة</string>
+    
+    <string name="label_date_format">تنسيق التاريخ</string>
+    <string name="hint_custom_format">نمط مخصص (مثال: EEEE, d MMM)</string>
+    <string name="label_text_color">لون النص</string>
+    <string name="label_bg_color">لون الخلفية</string>
+    <string name="label_shadow_color">لون الظل</string>
+    <string name="label_day_number_color">لون رقم اليوم</string>
+    <string name="btn_undo">تراجع</string>
+    <string name="desc_settings">الإعدادات</string>
+    <string name="weekly_widget_desc">تقويم الأحداث الأسبوعي</string>
+    <string name="daily_widget_desc">تقويم الأحداث اليومي</string>
+    <string name="date_widget_desc">عرض التاريخ الحالي</string>
+    <string name="label_start_time_color">لون وقت البدء</string>
+    <string name="label_start_time_shadow">ظل وقت البدء</string>
+    <string name="toast_widget_refreshing">جاري تحديث الأداة...</string>
+    <string name="toast_pin_unsupported">الأدوات المثبتة غير مدعومة في مشغل التطبيقات هذا.</string>
+    <string name="bug_report_loading">جاري تحميل البيانات التشخيصية...</string>
+    <string name="bug_report_send_via">إرسال التقرير عبر...</string>
+    <string name="toast_no_email_app">تعذر فتح تطبيق البريد الإلكتروني. تم نسخ البيانات التشخيصية إلى الحافظة.</string>
+    <string name="toast_diagnostics_copied">تم نسخ البيانات التشخيصية إلى الحافظة!</string>
+    <string name="calendar_shared_suffix"> [مشترك]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">أدوات بسيطة لشاشتك الرئيسية.</string>
+    <string name="label_quick_add">إضافة سريعة</string>
+    <string name="btn_add_date">إضافة أداة التاريخ</string>
+    <string name="btn_add_weekly">إضافة التقويم الأسبوعي</string>
+    <string name="btn_add_daily">إضافة التقويم اليومي</string>
+    <string name="label_instructions">التعليمات</string>
+    <string name="instruction_text">1. اضغط على الزر أعلاه لإضافة أداة.\n2. اضغط مع الاستمرار على الأداة في شاشتك الرئيسية لتغيير حجمها.\n3. اضغط على الأداة لتخصيص الألوان والتنسيقات.</string>
+    <string name="label_privacy_policy">سياسة الخصوصية</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">الإذن مطلوب</string>
+    <string name="permission_tap_to_grant">اضغط لمنح الإذن</string>
+    <string name="error_prefix">خطأ: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>مخصص</item>
+    </string-array>
+</resources>

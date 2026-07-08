@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Widżet daty</string>
+    <string name="config_title">Ustawienia widżetu</string>
+    
+    <string name="label_date_format">Format daty</string>
+    <string name="hint_custom_format">Własny wzór (np. EEEE, d MMM)</string>
+    <string name="label_text_color">Kolor tekstu</string>
+    <string name="label_bg_color">Kolor tła</string>
+    <string name="label_shadow_color">Kolor cienia</string>
+    <string name="label_day_number_color">Kolor numeru dnia</string>
+    <string name="btn_undo">Cofnij</string>
+    <string name="desc_settings">Ustawienia</string>
+    <string name="weekly_widget_desc">Tygodniowy kalendarz wydarzeń</string>
+    <string name="daily_widget_desc">Dzienny kalendarz wydarzeń</string>
+    <string name="date_widget_desc">Wyświetlanie aktualnej daty</string>
+    <string name="label_start_time_color">Kolor czasu rozpoczęcia</string>
+    <string name="label_start_time_shadow">Cień czasu rozpoczęcia</string>
+    <string name="toast_widget_refreshing">Odświeżanie widżetu...</string>
+    <string name="toast_pin_unsupported">Przypięte widżety nie są obsługiwane przez ten launcher.</string>
+    <string name="bug_report_loading">Ładowanie diagnostyki...</string>
+    <string name="bug_report_send_via">Wyślij raport przez...</string>
+    <string name="toast_no_email_app">Nie można otworzyć aplikacji e-mail. Dane diagnostyczne skopiowano do schowka.</string>
+    <string name="toast_diagnostics_copied">Diagnostyka skopiowana do schowka!</string>
+    <string name="calendar_shared_suffix"> [udostępniony]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Minimalistyczne widżety na ekran główny.</string>
+    <string name="label_quick_add">Szybkie dodawanie</string>
+    <string name="btn_add_date">Dodaj widżet daty</string>
+    <string name="btn_add_weekly">Dodaj kalendarz tygodniowy</string>
+    <string name="btn_add_daily">Dodaj kalendarz dzienny</string>
+    <string name="label_instructions">Instrukcja</string>
+    <string name="instruction_text">1. Dotknij przycisku powyżej, aby dodać widżet.\n2. Przytrzymaj widżet na ekranie głównym, aby zmienić jego rozmiar.\n3. Dotknij widżetu, aby dostosować kolory i formaty.</string>
+    <string name="label_privacy_policy">Polityka Prywatności</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">Wymagane uprawnienie</string>
+    <string name="permission_tap_to_grant">Dotknij, aby zezwolić</string>
+    <string name="error_prefix">Błąd: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Własny</item>
+    </string-array>
+</resources>

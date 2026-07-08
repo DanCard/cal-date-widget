@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">तारीख विजेट</string>
+    <string name="config_title">विजेट सेटिंग्स</string>
+    
+    <string name="label_date_format">तारीख का प्रारूप</string>
+    <string name="hint_custom_format">कस्टम पैटर्न (जैसे EEEE, d MMM)</string>
+    <string name="label_text_color">टेक्स्ट का रंग</string>
+    <string name="label_bg_color">पृष्ठभूमि का रंग</string>
+    <string name="label_shadow_color">छाया का रंग</string>
+    <string name="label_day_number_color">दिन की संख्या का रंग</string>
+    <string name="btn_undo">पूर्ववत करें</string>
+    <string name="desc_settings">सेटिंग्स</string>
+    <string name="weekly_widget_desc">साप्ताहिक कार्यक्रम कैलेंडर</string>
+    <string name="daily_widget_desc">दैनिक कार्यक्रम कैलेंडर</string>
+    <string name="date_widget_desc">वर्तमान तारीख का प्रदर्शन</string>
+    <string name="label_start_time_color">प्रारंभ समय का रंग</string>
+    <string name="label_start_time_shadow">प्रारंभ समय की छाया</string>
+    <string name="toast_widget_refreshing">विजेट रीफ़्रेश हो रहा है...</string>
+    <string name="toast_pin_unsupported">यह लॉन्चर पिन किए गए विजेट का समर्थन नहीं करता है।</string>
+    <string name="bug_report_loading">डायग्नोस्टिक्स लोड हो रहा है...</string>
+    <string name="bug_report_send_via">रिपोर्ट इसके माध्यम से भेजें...</string>
+    <string name="toast_no_email_app">ईमेल ऐप नहीं खोला जा सका। डायग्नोस्टिक डेटा क्लिपबोर्ड पर कॉपी किया गया।</string>
+    <string name="toast_diagnostics_copied">डायग्नोस्टिक्स क्लिपबोर्ड पर कॉपी किया गया!</string>
+    <string name="calendar_shared_suffix"> [साझा]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">आपकी होम स्क्रीन के लिए न्यूनतम विजेट।</string>
+    <string name="label_quick_add">त्वरित जोड़ें</string>
+    <string name="btn_add_date">तारीख विजेट जोड़ें</string>
+    <string name="btn_add_weekly">साप्ताहिक कैलेंडर जोड़ें</string>
+    <string name="btn_add_daily">दैनिक कैलेंडर जोड़ें</string>
+    <string name="label_instructions">निर्देश</string>
+    <string name="instruction_text">1. विजेट जोड़ने के लिए ऊपर दिए गए बटन पर टैप करें।\n2. आकार बदलने के लिए होम स्क्रीन पर विजेट को देर तक दबाएं।\n3. रंग और प्रारूप को अनुकूलित करने के लिए विजेट पर टैप करें।</string>
+    <string name="label_privacy_policy">गोपनीयता नीति</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">अनुमति आवश्यक है</string>
+    <string name="permission_tap_to_grant">अनुमति देने के लिए टैप करें</string>
+    <string name="error_prefix">त्रुटि: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>कस्टम</item>
+    </string-array>
+</resources>

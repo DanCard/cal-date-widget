@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">日付ウィジェット</string>
+    <string name="config_title">ウィジェット設定</string>
+    
+    <string name="label_date_format">日付形式</string>
+    <string name="hint_custom_format">カスタムパターン（例：EEEE, d MMM）</string>
+    <string name="label_text_color">文字色</string>
+    <string name="label_bg_color">背景色</string>
+    <string name="label_shadow_color">影の色</string>
+    <string name="label_day_number_color">日付の数字の色</string>
+    <string name="btn_undo">元に戻す</string>
+    <string name="desc_settings">設定</string>
+    <string name="weekly_widget_desc">週刊イベントカレンダー</string>
+    <string name="daily_widget_desc">日刊イベントカレンダー</string>
+    <string name="date_widget_desc">現在の日付表示</string>
+    <string name="label_start_time_color">開始時間の文字色</string>
+    <string name="label_start_time_shadow">開始時間の影</string>
+    <string name="toast_widget_refreshing">ウィジェットを更新中...</string>
+    <string name="toast_pin_unsupported">このランチャーでは固定ウィジェットはサポートされていません。</string>
+    <string name="bug_report_loading">診断データを読み込み中...</string>
+    <string name="bug_report_send_via">レポートの送信方法...</string>
+    <string name="toast_no_email_app">メールアプリを開けませんでした。診断データをクリップボードにコピーしました。</string>
+    <string name="toast_diagnostics_copied">診断データをクリップボードにコピーしました！</string>
+    <string name="calendar_shared_suffix"> [共有]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">ホーム画面用のミニマリストウィジェット。</string>
+    <string name="label_quick_add">クイック追加</string>
+    <string name="btn_add_date">日付ウィジェットを追加</string>
+    <string name="btn_add_weekly">週刊カレンダーを追加</string>
+    <string name="btn_add_daily">日刊カレンダーを追加</string>
+    <string name="label_instructions">使い方</string>
+    <string name="instruction_text">1. 上記のボタンをタップしてウィジェットを追加します。\n2. ホーム画面上のウィジェットを長押ししてサイズを変更します。\n3. ウィジェットをタップして色や形式をカスタマイズします。</string>
+    <string name="label_privacy_policy">プライバシーポリシー</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">権限が必要です</string>
+    <string name="permission_tap_to_grant">タップして許可する</string>
+    <string name="error_prefix">エラー: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>カスタム</item>
+    </string-array>
+</resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Widget Tanggal</string>
+    <string name="config_title">Pengaturan Widget</string>
+    
+    <string name="label_date_format">Format Tanggal</string>
+    <string name="hint_custom_format">Pola khusus (misal: EEEE, d MMM)</string>
+    <string name="label_text_color">Warna Teks</string>
+    <string name="label_bg_color">Warna Latar Belakang</string>
+    <string name="label_shadow_color">Warna Bayangan</string>
+    <string name="label_day_number_color">Warna Angka Hari</string>
+    <string name="btn_undo">Urungkan</string>
+    <string name="desc_settings">Pengaturan</string>
+    <string name="weekly_widget_desc">Kalender Acara Mingguan</string>
+    <string name="daily_widget_desc">Kalender Acara Harian</string>
+    <string name="date_widget_desc">Tampilan Tanggal Saat Ini</string>
+    <string name="label_start_time_color">Warna Waktu Mulai</string>
+    <string name="label_start_time_shadow">Bayangan Waktu Mulai</string>
+    <string name="toast_widget_refreshing">Menyegarkan widget...</string>
+    <string name="toast_pin_unsupported">Widget tersemat tidak didukung pada peluncur ini.</string>
+    <string name="bug_report_loading">Memuat diagnostik...</string>
+    <string name="bug_report_send_via">Kirim Laporan melalui...</string>
+    <string name="toast_no_email_app">Tidak dapat membuka aplikasi email. Data diagnostik disalin ke papan klip.</string>
+    <string name="toast_diagnostics_copied">Diagnostik disalin ke papan klip!</string>
+    <string name="calendar_shared_suffix"> [dibagikan]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Widget minimalis untuk layar utama Anda.</string>
+    <string name="label_quick_add">Tambah Cepat</string>
+    <string name="btn_add_date">Tambah Widget Tanggal</string>
+    <string name="btn_add_weekly">Tambah Kalender Mingguan</string>
+    <string name="btn_add_daily">Tambah Kalender Harian</string>
+    <string name="label_instructions">Petunjuk</string>
+    <string name="instruction_text">1. Ketuk tombol di atas untuk menambahkan widget.\n2. Tekan lama widget di layar utama Anda untuk mengubah ukurannya.\n3. Ketuk widget untuk menyesuaikan warna dan format.</string>
+    <string name="label_privacy_policy">Kebijakan Privasi</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">Izin Diperlukan</string>
+    <string name="permission_tap_to_grant">Ketuk untuk memberikan izin</string>
+    <string name="error_prefix">Kesalahan: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Kustom</item>
+    </string-array>
+</resources>

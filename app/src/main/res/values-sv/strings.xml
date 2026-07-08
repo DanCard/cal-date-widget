@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Datumwidget</string>
+    <string name="config_title">Widgetinställningar</string>
+    
+    <string name="label_date_format">Datumformat</string>
+    <string name="hint_custom_format">Anpassat mönster (t.ex. EEEE, d MMM)</string>
+    <string name="label_text_color">Textfärg</string>
+    <string name="label_bg_color">Bakgrundsfärg</string>
+    <string name="label_shadow_color">Skuggfärg</string>
+    <string name="label_day_number_color">Färg på dagsnummer</string>
+    <string name="btn_undo">Ångra</string>
+    <string name="desc_settings">Inställningar</string>
+    <string name="weekly_widget_desc">Veckokalender för händelser</string>
+    <string name="daily_widget_desc">Dagskalender för händelser</string>
+    <string name="date_widget_desc">Visa aktuellt datum</string>
+    <string name="label_start_time_color">Färg på starttid</string>
+    <string name="label_start_time_shadow">Skugga på starttid</string>
+    <string name="toast_widget_refreshing">Uppdaterar widget...</string>
+    <string name="toast_pin_unsupported">Fästa widgetar stöds inte på den här startskärmen.</string>
+    <string name="bug_report_loading">Laddar diagnostik...</string>
+    <string name="bug_report_send_via">Skicka rapport via...</string>
+    <string name="toast_no_email_app">Kunde inte öppna e-postappen. Diagnostisk data kopierad till urklipp.</string>
+    <string name="toast_diagnostics_copied">Diagnostik kopierad till urklipp!</string>
+    <string name="calendar_shared_suffix"> [delad]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Minimalistiska widgetar för din startskärm.</string>
+    <string name="label_quick_add">Snabbval</string>
+    <string name="btn_add_date">Lägg till datumwidget</string>
+    <string name="btn_add_weekly">Lägg till veckokalender</string>
+    <string name="btn_add_daily">Lägg till dagskalender</string>
+    <string name="label_instructions">Instruktioner</string>
+    <string name="instruction_text">1. Tryck på en knapp ovan för att lägga till en widget.\n2. Håll fingret på widgeten på din startskärm för att ändra storlek.\n3. Tryck på widgeten för att anpassa färger och format.</string>
+    <string name="label_privacy_policy">Integritetspolicy</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">Behörighet krävs</string>
+    <string name="permission_tap_to_grant">Tryck för att tillåta</string>
+    <string name="error_prefix">Fel: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Anpassad</item>
+    </string-array>
+</resources>

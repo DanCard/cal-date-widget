@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Tarih Widget\'ı</string>
+    <string name="config_title">Widget Ayarları</string>
+    
+    <string name="label_date_format">Tarih Biçimi</string>
+    <string name="hint_custom_format">Özel desen (örn: EEEE, d MMM)</string>
+    <string name="label_text_color">Yazı Rengi</string>
+    <string name="label_bg_color">Arka Plan Rengi</string>
+    <string name="label_shadow_color">Gölge Rengi</string>
+    <string name="label_day_number_color">Gün Numarası Rengi</string>
+    <string name="btn_undo">Geri Al</string>
+    <string name="desc_settings">Ayarlar</string>
+    <string name="weekly_widget_desc">Haftalık Etkinlik Takvimi</string>
+    <string name="daily_widget_desc">Günlük Etkinlik Takvimi</string>
+    <string name="date_widget_desc">Mevcut Tarih Gösterimi</string>
+    <string name="label_start_time_color">Başlangıç Saati Rengi</string>
+    <string name="label_start_time_shadow">Başlangıç Saati Gölgesi</string>
+    <string name="toast_widget_refreshing">Widget güncelleniyor...</string>
+    <string name="toast_pin_unsupported">Sabitlenmiş widget\'lar bu başlatıcıda desteklenmiyor.</string>
+    <string name="bug_report_loading">Teşhis yükleniyor...</string>
+    <string name="bug_report_send_via">Raporu şununla gönder...</string>
+    <string name="toast_no_email_app">E-posta uygulaması açılamadı. Teşhis verileri panoya kopyalandı.</string>
+    <string name="toast_diagnostics_copied">Teşhis verileri panoya kopyalandı!</string>
+    <string name="calendar_shared_suffix"> [paylaşılan]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Ana ekranınız için minimalist widget\'lar.</string>
+    <string name="label_quick_add">Hızlı Ekle</string>
+    <string name="btn_add_date">Tarih Widget\'ı Ekle</string>
+    <string name="btn_add_weekly">Haftalık Takvim Ekle</string>
+    <string name="btn_add_daily">Günlük Takvim Ekle</string>
+    <string name="label_instructions">Talimatlar</string>
+    <string name="instruction_text">1. Widget eklemek için yukarıdaki bir düğmeye dokunun.\n2. Yeniden boyutlandırmak için ana ekranınızdaki widget\'a uzun basın.\n3. Renkleri ve biçimleri özelleştirmek için widget\'a dokunun.</string>
+    <string name="label_privacy_policy">Gizlilik Politikası</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">İzin Gerekli</string>
+    <string name="permission_tap_to_grant">İzin vermek için dokunun</string>
+    <string name="error_prefix">Hata: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Özel</item>
+    </string-array>
+</resources>

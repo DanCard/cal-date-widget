@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">日期小工具</string>
+    <string name="config_title">小工具設定</string>
+    
+    <string name="label_date_format">日期格式</string>
+    <string name="hint_custom_format">自訂格式 (如 EEEE, d MMM)</string>
+    <string name="label_text_color">文字顏色</string>
+    <string name="label_bg_color">背景顏色</string>
+    <string name="label_shadow_color">阴影顏色</string>
+    <string name="label_day_number_color">日期數字顏色</string>
+    <string name="btn_undo">復原</string>
+    <string name="desc_settings">設定</string>
+    <string name="weekly_widget_desc">每周活動日曆</string>
+    <string name="daily_widget_desc">每日活動日曆</string>
+    <string name="date_widget_desc">目前日期顯示</string>
+    <string name="label_start_time_color">開始時間顏色</string>
+    <string name="label_start_time_shadow">開始時間陰影</string>
+    <string name="toast_widget_refreshing">正在重新整理小工具...</string>
+    <string name="toast_pin_unsupported">此啟動器不支援固定小工具。</string>
+    <string name="bug_report_loading">正在載入診斷資訊...</string>
+    <string name="bug_report_send_via">發送報告至...</string>
+    <string name="toast_no_email_app">無法打開電子郵件應用。診斷數據已複製到剪貼簿。</string>
+    <string name="toast_diagnostics_copied">診斷數據已複製到剪貼簿！</string>
+    <string name="calendar_shared_suffix"> [共享]</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">主畫面極簡小工具。</string>
+    <string name="label_quick_add">快速新增</string>
+    <string name="btn_add_date">新增日期小工具</string>
+    <string name="btn_add_weekly">新增每周日曆</string>
+    <string name="btn_add_daily">新增每日日曆</string>
+    <string name="label_instructions">使用說明</string>
+    <string name="instruction_text">1. 點擊上方按鈕新增小工具。\n2. 在主畫面上長按小工具以調整其大小。\n3. 點擊小工具以自訂顏色和格式。</string>
+    <string name="label_privacy_policy">隱私權政策</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">需要權限</string>
+    <string name="permission_tap_to_grant">點擊授予權限</string>
+    <string name="error_prefix">錯誤: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, MMM d</item>
+        <item>EEEE, MMMM d</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>自訂</item>
+    </string-array>
+</resources>
