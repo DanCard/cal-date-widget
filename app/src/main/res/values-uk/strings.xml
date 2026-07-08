@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cal Date Widget</string>
+    <string name="widget_label">Віджет дати</string>
+    <string name="config_title">Налаштування віджета</string>
+    
+    <string name="label_date_format">Формат дати</string>
+    <string name="hint_custom_format">Власний шаблон (напр., EEEE, d MMM)</string>
+    <string name="label_text_color">Колір тексту</string>
+    <string name="label_bg_color">Колір фону</string>
+    <string name="label_shadow_color">Колір тіні</string>
+    <string name="label_day_number_color">Колір номера дня</string>
+    <string name="btn_undo">Скасувати</string>
+    <string name="desc_settings">Налаштування</string>
+    <string name="weekly_widget_desc">Тижневий календар подій</string>
+    <string name="daily_widget_desc">Щоденний календар подій</string>
+    <string name="date_widget_desc">Відображення поточної дати</string>
+    <string name="label_start_time_color">Колір часу початку</string>
+    <string name="label_start_time_shadow">Тінь часу початку</string>
+    <string name="toast_widget_refreshing">Оновлення віджета...</string>
+    <string name="toast_pin_unsupported">Закріплені віджети не підтримуються на цьому лаунчері.</string>
+    <string name="bug_report_loading">Завантаження діагностики...</string>
+    <string name="bug_report_send_via">Надіслати звіт через...</string>
+    <string name="toast_no_email_app">Не вдалося відкрити поштовий додаток. Діагностичні дані скопійовано.</string>
+    <string name="toast_diagnostics_copied">Діагностику скопійовано в буфер обміну!</string>
+    <string name="calendar_shared_suffix">" [спільний]"</string>
+    
+    <string name="welcome_title">Cal Date Widget</string>
+    <string name="welcome_subtitle">Мінімалістичні віджети для вашого головного екрана.</string>
+    <string name="label_quick_add">Швидке додавання</string>
+    <string name="btn_add_date">Додати віджет дати</string>
+    <string name="btn_add_weekly">Додати тижневий календар</string>
+    <string name="btn_add_daily">Додати щоденний календар</string>
+    <string name="label_instructions">Інструкції</string>
+    <string name="instruction_text">1. Натисніть кнопку вище, щоб додати віджет.\n2. Утримуйте віджет на головному екрані, щоб змінити його розмір.\n3. Натисніть на віджет, щоб налаштувати кольори та формати.</string>
+    <string name="label_privacy_policy">Політика конфіденційності</string>
+    <string name="url_privacy_policy">https://github.com/DanCard/cal-date-widget/blob/main/PRIVACY_POLICY.md</string>
+    <string name="permission_required">Необхідний дозвіл</string>
+    <string name="permission_tap_to_grant">Натисніть, щоб надати</string>
+    <string name="error_prefix">Помилка: %s</string>
+    <string name="bug_report_email">daniecarde55@gmail.com</string>
+    
+    <string-array name="date_formats">
+        <item>EEE, d MMM</item>
+        <item>EEEE, d MMMM</item>
+        <item>EEE\nd</item>
+        <item>MMM\nd</item>
+        <item>dd.MM.yyyy</item>
+        <item>dd/MM/yyyy</item>
+        <item>yyyy-MM-dd</item>
+        <item>d MMM</item>
+        <item>Власний</item>
+    </string-array>
+</resources>
