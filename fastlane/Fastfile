@@ -40,4 +40,21 @@ platform :android do
       skip_upload_screenshots: false
     )
   end
+
+  desc "Build and upload to Google Play Open Testing Track (Beta)"
+  lane :beta do
+    # Ensure tests pass first
+    test
+    
+    # Build release AAB
+    build
+
+    # Upload to Play Console
+    upload_to_play_store(
+      track: "beta",
+      skip_upload_metadata: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false
+    )
+  end
 end
