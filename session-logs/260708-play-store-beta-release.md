@@ -34,13 +34,13 @@
 - **[`app/build.gradle`](file:///home/dcar/projects/cal-date-widget/app/build.gradle)**
   - Updated `versionCode` to `26070801`.
 - **[`fastlane/Fastfile`](file:///home/dcar/projects/cal-date-widget/fastlane/Fastfile)**
-  - Added `beta` lane with `skip_upload_apk: true`.
+  - Added `beta` lane and updated `internal` lane to include `skip_upload_apk: true`.
 - **[`fastlane/metadata/android/en-US/changelogs/26070801.txt`](file:///home/dcar/projects/cal-date-widget/fastlane/metadata/android/en-US/changelogs/26070801.txt)**
   - Renamed from `3.txt` to match the version code.
 - **[`.gitignore`](file:///home/dcar/projects/cal-date-widget/.gitignore)**
   - Added rules to ignore Fastlane report and README outputs.
 
 ## Next Steps
-1. **Monitor Quick Checks:** Let the Google Play Console finish the automated quick checks (up to 12 minutes).
-2. **Review & Approval:** Wait for Google Play to review the updated build (`1.0.1`) and country settings. This usually takes a few hours to 1–2 days.
-3. **Test Link Verification:** Once the review is approved, access the opt-in link using your tester account to join the beta and install the app!
+1. **App Verification:** Test the currently installed app version from the Play Store on your device.
+2. **Review & Update Rollout:** Google Play is currently reviewing the new update (`1.0.1` / `26070801`). Once approved (typically a few hours to 1–2 days), it will automatically roll out to your device as a Play Store app update.
+
