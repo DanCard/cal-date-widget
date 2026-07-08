@@ -1,0 +1,5 @@
+Polish for the weekly widget.
+
+• An empty "today" column no longer takes extra width, so days with events get the space instead.
+
+100% private: works offline, no ads, no trackers, no internet permission.
