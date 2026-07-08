@@ -33,3 +33,12 @@ keystore.properties
 # Play Store service-account key (fastlane upload credential — never commit)
 fastlane/play-store-api-key.json
 
+# Fastlane outputs
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+fastlane/README.md
+fastlane/readme.md
+
+
