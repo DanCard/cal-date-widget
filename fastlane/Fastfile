@@ -90,5 +90,62 @@ platform :android do
       skip_upload_changelogs: true
     )
   end
+
+  desc "Download and summarize monthly install stats from the Play reports bucket"
+  desc "Usage: fastlane stats [month:YYYYMM]  (requires PLAY_STATS_BUCKET env var)"
+  lane :stats do |options|
+    bucket = ENV["PLAY_STATS_BUCKET"]&.chomp("/")
+    UI.user_error!(<<~MSG) if bucket.nil? || bucket.empty?
+      PLAY_STATS_BUCKET is not set.
+
+      Find your reports bucket in Play Console:
+        Download reports -> Statistics -> "Copy Cloud Storage URI"
+      then:  export PLAY_STATS_BUCKET=gs://pubsite_prod_rev_XXXXXXXXXXXXXXXXXXXX
+
+      Also grant the fastlane service account (client_email in play-store-api-key.json)
+      "View app information and download bulk reports" under Users and permissions.
+    MSG
+
+    package = CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
+    month = options[:month] || Time.now.strftime("%Y%m")
+    csv_name = "installs_#{package}_#{month}_overview.csv"
+    remote = "#{bucket}/stats/installs/#{csv_name}"
+
+    stats_dir = File.expand_path("stats", __dir__)
+    FileUtils.mkdir_p(stats_dir)
+    local_csv = File.join(stats_dir, csv_name)
+
+    key_file = File.expand_path("play-store-api-key.json", __dir__)
+    copy_cmd =
+      if system("command -v gcloud > /dev/null")
+        "CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE=#{key_file.shellescape} " \
+          "gcloud storage cp #{remote.shellescape} #{local_csv.shellescape}"
+      elsif system("command -v gsutil > /dev/null")
+        "BOTO_CONFIG=/dev/null GOOGLE_APPLICATION_CREDENTIALS=#{key_file.shellescape} " \
+          "gsutil cp #{remote.shellescape} #{local_csv.shellescape}"
+      else
+        UI.user_error!("Neither gcloud nor gsutil found. Install the Google Cloud CLI: https://cloud.google.com/sdk/docs/install")
+      end
+    sh(copy_cmd)
+
+    # Play Console exports these CSVs as UTF-16LE with a BOM
+    require "csv"
+    content = File.read(local_csv, encoding: "bom|utf-16le").encode("utf-8")
+    rows = CSV.parse(content, headers: true)
+    UI.user_error!("No data rows in #{csv_name} yet (reports lag ~24-48h)") if rows.empty?
+
+    daily_col = rows.headers.find { |h| h =~ /daily user installs/i } ||
+                rows.headers.find { |h| h =~ /daily device installs/i }
+    total_col = rows.headers.find { |h| h =~ /total user installs/i } ||
+                rows.headers.find { |h| h =~ /active device installs/i }
+
+    UI.message("Installs for #{package}, #{month}:")
+    rows.each do |row|
+      UI.message("  #{row['Date']}: #{row[daily_col]} installs" + (total_col ? " (#{total_col.downcase}: #{row[total_col]})" : ""))
+    end
+    month_total = rows.sum { |row| row[daily_col].to_i }
+    UI.success("Month-to-date installs: #{month_total}" + (total_col ? ", latest #{total_col.downcase}: #{rows.to_a.last[total_col]}" : ""))
+    UI.message("Full CSV: #{local_csv}")
+  end
 end
 
