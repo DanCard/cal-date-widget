@@ -1,1 +1,1 @@
-Cal Date Widget
+Custom Calendar & Date Widget

@@ -1,25 +1,23 @@
-Cal Date Widget is a small, early-release app that adds simple date and calendar widgets to your home screen. It works, but it is still young — expect some rough edges, and please report anything that looks off.
+Transform your home screen with a set of sleek, custom widgets designed to keep you organized and respect your privacy. Cal Date Widget offers three highly-customizable widgets to fit your unique style.
 
 THE THREE WIDGETS
 
-1. Date widget
-Shows the current date. Pick a preset format or type your own pattern (e.g. EEEE, d MMM).
+1. Date Widget: A self-resizing date display. Text auto-scales perfectly to fit any size, down to 1x1. Choose from beautiful preset formats or define your own SimpleDateFormat pattern.
 
-2. Daily calendar widget
-Shows today's events from your device calendars, and adds more day columns automatically if you make the widget wider. Once today's events are over, it moves on to tomorrow.
+2. Daily Calendar Widget: Shows today's upcoming events. It automatically advances to show tomorrow's agenda once the current day's events are done.
 
-3. Weekly calendar widget
-A 7-day view of upcoming events. Today's column is wider than the others, and text size adjusts to fit the available space.
+3. Weekly Calendar Widget: A smart 7-day overview. Today's column is wider to emphasize what's next. Past days automatically shift forward to show next week's corresponding days so you never see blank, stale columns.
 
-CUSTOMIZATION
-Text color, shadows, and background transparency are adjustable per widget. Tap a widget to open your calendar app or its settings.
+PREMIUM CUSTOMIZATION
+• Beautiful Color Palettes: Customize text, backgrounds, and shadows with a precision RGB color picker.
+• Dynamic Font Scaling: Per-column binary search text scaling ensures your event titles auto-fit perfectly without clipping.
+• Opacity Control: Adjust background transparency to blend seamlessly with any wallpaper.
+• Quick Navigation: Tap any widget to instantly open your default system calendar or configuration settings.
+• Multi-Level Undo: Experiment with designs risk-free with unlimited undo/redo on configuration screens.
 
-PRIVACY
-The app has no internet permission, so your calendar data cannot leave your device. No ads, no trackers, no analytics. The source code is publicly viewable on GitHub.
+100% PRIVACY-FIRST
+• No Internet Permission: The app is completely offline. Your calendar data never leaves your device.
+• Open Source: Auditable source code available on GitHub.
+• No Ads, No Trackers, No Analytics: We do not collect, share, or monetize any of your data.
 
-KNOWN LIMITATIONS
-• Developed and tested mainly on one device (a Samsung Galaxy Z Fold4). Other devices and launchers may show layout quirks.
-• Widgets refresh periodically and when tapped, not instantly after every calendar change.
-• The interface is English-only for now.
-
-If something breaks or looks wrong, use the in-app bug report — it prepares a diagnostic email you can review before sending. Every report is read.
+Clean, lightweight, and battery-friendly. Download today to clean up your Android home screen!
