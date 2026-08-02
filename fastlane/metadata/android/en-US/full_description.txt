@@ -17,7 +17,7 @@ PREMIUM CUSTOMIZATION
 
 100% PRIVACY-FIRST
 • No Internet Permission: The app is completely offline. Your calendar data never leaves your device.
-• Open Source: Auditable source code available on GitHub.
+• Open Source: Auditable source code available on GitHub: https://github.com/dancard/cal-date-widget
 • No Ads, No Trackers, No Analytics: We do not collect, share, or monetize any of your data.
 
 Clean, lightweight, and battery-friendly. Download today to clean up your Android home screen!
