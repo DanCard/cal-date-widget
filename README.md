@@ -3,6 +3,11 @@
 An Android app with three home screen widgets: a self-resizing date widget, a
 daily calendar view, and a weekly calendar view.
 
+## Download
+
+* **Google Play Store:** [Get Cal Date Widget on Google Play](https://play.google.com/store/apps/details?id=ai.dcar.caldatewidget)
+* **Testing Program:** [Join Google Play Testing](https://play.google.com/apps/testing/ai.dcar.caldatewidget)
+
 ## Widgets
 
 *   **Date widget:** Shows the current date. Text auto-scales to fit the
