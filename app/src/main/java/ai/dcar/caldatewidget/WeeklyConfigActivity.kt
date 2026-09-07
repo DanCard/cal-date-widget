@@ -59,8 +59,4 @@ class WeeklyConfigActivity : BaseWidgetConfigActivity() {
         }
         spinner.setSelection(spinnerIndex)
     }
-
-    override fun onRefreshClicked() {
-        android.widget.Toast.makeText(this, getString(R.string.toast_widget_refreshing), android.widget.Toast.LENGTH_SHORT).show()
-    }
 }

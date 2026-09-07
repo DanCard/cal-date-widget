@@ -6,11 +6,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Typeface
+import android.accounts.AccountManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -149,6 +151,8 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
         }
 
         btnRefresh.setOnClickListener {
+            Toast.makeText(this, getString(R.string.toast_widget_refreshing), Toast.LENGTH_SHORT).show()
+            requestCalendarSync()
             val appWidgetManager = AppWidgetManager.getInstance(this)
             updateWidget(appWidgetManager, appWidgetId)
 
@@ -164,6 +168,21 @@ abstract class BaseWidgetConfigActivity : AppCompatActivity() {
     }
 
     protected open fun onRefreshClicked() {}
+
+    /**
+     * Requests an immediate sync of the calendar provider so the widget refresh
+     * reflects server-side changes (e.g., events deleted on another device) rather
+     * than whatever the provider last synced.
+     */
+    private fun requestCalendarSync() {
+        val authority = "com.android.calendar"
+        val extras = Bundle().apply {
+            putBoolean(android.content.ContentResolver.SYNC_EXTRAS_MANUAL, true)
+            putBoolean(android.content.ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
+        }
+        // Null account requests a sync for every account providing this authority.
+        android.content.ContentResolver.requestSync(null, authority, extras)
+    }
 
     override fun onResume() {
         super.onResume()
