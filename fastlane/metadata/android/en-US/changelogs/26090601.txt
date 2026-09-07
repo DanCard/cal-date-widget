@@ -1,0 +1,3 @@
+Request calendar sync on config refresh button before re-rendering widget to ensure server-side changes are immediately reflected.
+
+100% private: works offline, no ads, no trackers, no internet permission.
