@@ -213,6 +213,33 @@ object WeeklyDisplayLogic {
      * @param lineHeight Height of a single line of text in pixels
      * @return Maximum number of lines for this event
      */
+    /**
+     * Max lines for a multi-line event when a column is in compressed (fallback) mode —
+     * i.e. the font-fit search found no scale that satisfies its readability line limits.
+     *
+     * Historically this was a hard 3, which ellipsized titles ("DT…") even in columns with
+     * hundreds of pixels of empty space below. Instead, hand out the lines that actually fit:
+     * one-line events (declined/tentative under compression) take one row each; the rest is
+     * split equitably among multi-line events. Bounded to [minLines, maxLines] so a column
+     * never gets fewer lines than the old fixed cap, and never more than the uncompressed
+     * 10-line ceiling.
+     *
+     * @param lineHeight height of one text row including inter-event spacing
+     */
+    fun getCompressedMaxLines(
+        availableHeight: Float,
+        lineHeight: Float,
+        oneLineEventCount: Int,
+        multiLineEventCount: Int,
+        minLines: Int = 3,
+        maxLines: Int = 10
+    ): Int {
+        if (multiLineEventCount <= 0 || lineHeight <= 0f) return minLines
+        val remainingHeight = availableHeight - oneLineEventCount * lineHeight
+        val perEvent = (remainingHeight / (multiLineEventCount * lineHeight)).toInt()
+        return perEvent.coerceIn(minLines, maxLines)
+    }
+
     fun getMaxLinesForCurrentDayEvent(
         isPastEvent: Boolean,
         isClipping: Boolean,

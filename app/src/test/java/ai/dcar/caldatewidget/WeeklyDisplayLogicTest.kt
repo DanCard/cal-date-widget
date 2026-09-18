@@ -912,6 +912,51 @@ class WeeklyDisplayLogicTest {
         }
     }
 
+    // ===== getCompressedMaxLines =====
+
+    @Test
+    fun `getCompressedMaxLines uses free height instead of a hard 3-line cap`() {
+        // Emulator Thu 24 case: one event, ~700px free, ~40px rows -> plenty of room.
+        val lines = WeeklyDisplayLogic.getCompressedMaxLines(
+            availableHeight = 700f, lineHeight = 40f, oneLineEventCount = 0, multiLineEventCount = 1
+        )
+        assertEquals(10, lines) // capped at the uncompressed ceiling
+    }
+
+    @Test
+    fun `getCompressedMaxLines splits rows equitably among multi-line events`() {
+        // 400px / 40px = 10 rows shared by 2 events -> 5 each.
+        val lines = WeeklyDisplayLogic.getCompressedMaxLines(
+            availableHeight = 400f, lineHeight = 40f, oneLineEventCount = 0, multiLineEventCount = 2
+        )
+        assertEquals(5, lines)
+    }
+
+    @Test
+    fun `getCompressedMaxLines reserves one row per one-line event first`() {
+        // 10 rows total, 4 one-line (declined) events take 4 -> 6 left for 2 wrapping events.
+        val lines = WeeklyDisplayLogic.getCompressedMaxLines(
+            availableHeight = 400f, lineHeight = 40f, oneLineEventCount = 4, multiLineEventCount = 2
+        )
+        assertEquals(3, lines)
+    }
+
+    @Test
+    fun `getCompressedMaxLines never drops below the legacy 3-line floor`() {
+        // Tight column: 5 events in 6 rows would be 1 line each; keep the old 3 as the floor
+        // so compressed columns never render less than they did before.
+        val lines = WeeklyDisplayLogic.getCompressedMaxLines(
+            availableHeight = 240f, lineHeight = 40f, oneLineEventCount = 0, multiLineEventCount = 5
+        )
+        assertEquals(3, lines)
+    }
+
+    @Test
+    fun `getCompressedMaxLines is safe with no multi-line events or zero line height`() {
+        assertEquals(3, WeeklyDisplayLogic.getCompressedMaxLines(700f, 40f, oneLineEventCount = 2, multiLineEventCount = 0))
+        assertEquals(3, WeeklyDisplayLogic.getCompressedMaxLines(700f, 0f, oneLineEventCount = 0, multiLineEventCount = 1))
+    }
+
     @Test
     fun `getColumnWeights with today at week start matches pure forward decay`() {
         // No shift happens when today is the week-start day; the profile is the

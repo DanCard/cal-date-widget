@@ -28,7 +28,8 @@ object WidgetRenderingHelper {
         val availableHeight: Float,
         val settingsHash: Int,
         val isToday: Boolean,
-        val currentTimeWindow: Long // Bucket time to ~1 minute to invalidate past/future status
+        val currentTimeWindow: Long, // Bucket time to ~1 minute to invalidate past/future status
+        val minNormalScale: Float
     )
 
     // LRU Cache: Store result (optimalScale, compressDeclined)
@@ -36,6 +37,13 @@ object WidgetRenderingHelper {
     private val fontScaleCache = LruCache<FontScaleCacheKey, Pair<Float, Boolean>>(100)
 
     const val BASE_TEXT_SIZE = 48f
+
+    // Floor for the font-fit search on a normal (non-past, non-declined) event.
+    const val NORMAL_MIN_SCALE = 0.7f
+    // Lower floor used only for columns so narrow that the start-time prefix ("10:00 ")
+    // cannot fit on one line at NORMAL_MIN_SCALE. Without it the time itself wraps
+    // ("10:0" / "0"), which is worse than smaller text. Same size as PAST_EVENT_MIN_SCALE.
+    const val NARROW_COLUMN_MIN_SCALE = 0.55f
 
     // Past events on today's column get a tiny, room-independent size. The cap keeps them
     // small even when the column has plenty of room (high optimal scale); the low floor lets
@@ -63,7 +71,8 @@ object WidgetRenderingHelper {
         hasFutureEvents: Boolean,
         compressDeclined: Boolean,
         pastEventScaleFactor: Float,
-        useTimeScaleForPast: Boolean = true
+        useTimeScaleForPast: Boolean = true,
+        minNormalScale: Float = NORMAL_MIN_SCALE
     ): EventLayoutDecision {
         val isLessInteresting = isLessInteresting(event)
         var scale = when {
@@ -77,7 +86,7 @@ object WidgetRenderingHelper {
         val minScale = when {
             isPastTodayEvent -> PAST_EVENT_MIN_SCALE
             isLessInteresting -> 0.5f
-            else -> 0.7f
+            else -> minNormalScale
         }
         if (scale < minScale) scale = minScale
 
@@ -122,11 +131,7 @@ object WidgetRenderingHelper {
             .replace("\u2026", "")
             .replace("...", "")
         if (includeStart && !event.isAllDay) {
-            val timeString = if (settings.showAmPm) {
-                timeFormat.format(Date(event.startTime))
-            } else {
-                SimpleDateFormat("h:mm", Locale.getDefault()).format(Date(event.startTime))
-            }
+            val timeString = formatStartTime(event, settings, timeFormat)
             val spannable = SpannableString("$timeString $safeTitle")
 
             spannable.setSpan(
@@ -175,6 +180,40 @@ object WidgetRenderingHelper {
         return safeTitle
     }
 
+    fun formatStartTime(
+        event: CalendarEvent,
+        settings: PrefsManager.WidgetSettings,
+        timeFormat: java.text.DateFormat
+    ): String {
+        return if (settings.showAmPm) {
+            timeFormat.format(Date(event.startTime))
+        } else {
+            SimpleDateFormat("h:mm", Locale.getDefault()).format(Date(event.startTime))
+        }
+    }
+
+    /**
+     * Font-scale floor for a column. Normally [NORMAL_MIN_SCALE]; drops to
+     * [NARROW_COLUMN_MIN_SCALE] only when the widest start-time prefix among the column's
+     * timed events would not fit [textWidth] on a single line at the normal floor.
+     * Columns wide enough for the time are unaffected.
+     */
+    fun minNormalScaleForColumn(
+        dayEvents: List<CalendarEvent>,
+        textWidth: Int,
+        basePaint: android.text.TextPaint,
+        settings: PrefsManager.WidgetSettings,
+        timeFormat: java.text.DateFormat
+    ): Float {
+        if (textWidth <= 0) return NORMAL_MIN_SCALE
+        val timed = dayEvents.filter { !it.isAllDay }
+        if (timed.isEmpty()) return NORMAL_MIN_SCALE
+        val probe = android.text.TextPaint(basePaint)
+        probe.textSize = BASE_TEXT_SIZE * NORMAL_MIN_SCALE
+        val widestTime = timed.maxOf { probe.measureText(formatStartTime(it, settings, timeFormat) + " ") }
+        return if (widestTime > textWidth) NARROW_COLUMN_MIN_SCALE else NORMAL_MIN_SCALE
+    }
+
     fun calculateOptimalFontScale(
         dayEvents: List<CalendarEvent>,
         textWidth: Int,
@@ -185,7 +224,8 @@ object WidgetRenderingHelper {
         currentTimeMillis: Long,
         todayIndex: Int,
         currentDayIndex: Int,
-        pastEventScaleFactor: Float
+        pastEventScaleFactor: Float,
+        minNormalScale: Float = NORMAL_MIN_SCALE
     ): Pair<Float, Boolean> {
         if (dayEvents.isEmpty() || textWidth <= 0 || availableHeight <= 0f) {
             return Pair(0.5f, false)
@@ -205,7 +245,8 @@ object WidgetRenderingHelper {
             availableHeight,
             settingsHash,
             isToday,
-            timeWindow
+            timeWindow,
+            minNormalScale
         )
 
         fontScaleCache.get(cacheKey)?.let {
@@ -216,7 +257,7 @@ object WidgetRenderingHelper {
         // Cache Miss - Calculate
         // Function to run binary search
         fun findScale(compressDeclined: Boolean): Float {
-            var minScale = 0.7f
+            var minScale = minNormalScale
             var maxScale = 1.5f
             var optimalScale = -1.0f // Sentinel
 
@@ -233,7 +274,8 @@ object WidgetRenderingHelper {
                     todayIndex,
                     currentDayIndex,
                     compressDeclined,
-                    pastEventScaleFactor
+                    pastEventScaleFactor,
+                    minNormalScale = minNormalScale
                 )
 
                 if (totalHeight <= availableHeight) {
@@ -251,7 +293,7 @@ object WidgetRenderingHelper {
             Pair(normalScale, false)
         } else {
             val compressedScale = findScale(true)
-            if (compressedScale != -1.0f) Pair(compressedScale, true) else Pair(0.7f, true)
+            if (compressedScale != -1.0f) Pair(compressedScale, true) else Pair(minNormalScale, true)
         }
 
         // Save to Cache
@@ -270,7 +312,8 @@ object WidgetRenderingHelper {
         todayIndex: Int,
         currentDayIndex: Int,
         compressDeclined: Boolean,
-        pastEventScaleFactor: Float
+        pastEventScaleFactor: Float,
+        minNormalScale: Float = NORMAL_MIN_SCALE
     ): Float {
         val isTodayColumn = currentDayIndex == todayIndex
         val hasFutureEvents = dayEvents.any { it.endTime >= currentTimeMillis }
@@ -284,7 +327,8 @@ object WidgetRenderingHelper {
                 isPastTodayEvent = isPastTodayEvent,
                 hasFutureEvents = hasFutureEvents,
                 compressDeclined = compressDeclined,
-                pastEventScaleFactor = pastEventScaleFactor
+                pastEventScaleFactor = pastEventScaleFactor,
+                minNormalScale = minNormalScale
             )
 
             val measurePaint = android.text.TextPaint(basePaint)

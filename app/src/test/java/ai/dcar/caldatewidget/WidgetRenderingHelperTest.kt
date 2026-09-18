@@ -188,6 +188,89 @@ class WidgetRenderingHelperTest {
         assertEquals(true, result.second)
     }
 
+    // ===== narrow-column font floor =====
+
+    @Test
+    fun `minNormalScaleForColumn keeps normal floor when the time fits on one line`() {
+        val event = createEvent("DTU Executive Team leadership weekly sync")
+        val floor = WidgetRenderingHelper.minNormalScaleForColumn(
+            listOf(event), textWidth = 200, basePaint = basePaint, settings = settings, timeFormat = timeFormat
+        )
+        assertEquals(WidgetRenderingHelper.NORMAL_MIN_SCALE, floor, 0.0001f)
+    }
+
+    @Test
+    fun `minNormalScaleForColumn drops the floor when the time cannot fit at 0_7`() {
+        // Emulator Thu 24: 81px column -> 71px of text width; "10:00 " at 33.6px is wider.
+        // Robolectric's text metrics are approximate, so probe the real threshold.
+        val event = createEvent("DTU Executive Team leadership weekly sync")
+        val probe = TextPaint(basePaint)
+        probe.textSize = WidgetRenderingHelper.BASE_TEXT_SIZE * WidgetRenderingHelper.NORMAL_MIN_SCALE
+        val timeWidth = probe.measureText(WidgetRenderingHelper.formatStartTime(event, settings, timeFormat) + " ")
+        val tooNarrow = (timeWidth - 1f).toInt().coerceAtLeast(1)
+
+        val floor = WidgetRenderingHelper.minNormalScaleForColumn(
+            listOf(event), textWidth = tooNarrow, basePaint = basePaint, settings = settings, timeFormat = timeFormat
+        )
+        assertEquals(WidgetRenderingHelper.NARROW_COLUMN_MIN_SCALE, floor, 0.0001f)
+    }
+
+    @Test
+    fun `minNormalScaleForColumn ignores all-day events which carry no time prefix`() {
+        val allDay = createEvent("All day thing").copy(isAllDay = true)
+        val floor = WidgetRenderingHelper.minNormalScaleForColumn(
+            listOf(allDay), textWidth = 1, basePaint = basePaint, settings = settings, timeFormat = timeFormat
+        )
+        assertEquals(WidgetRenderingHelper.NORMAL_MIN_SCALE, floor, 0.0001f)
+    }
+
+    @Test
+    fun `decideEventLayout honours a lowered normal floor for normal events only`() {
+        val event = createEvent("Meeting")
+        val decision = WidgetRenderingHelper.decideEventLayout(
+            event = event,
+            optimalScale = 0.55f,
+            isPastTodayEvent = false,
+            hasFutureEvents = true,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f,
+            minNormalScale = WidgetRenderingHelper.NARROW_COLUMN_MIN_SCALE
+        )
+        assertEquals(0.55f, decision.eventScale, 0.0001f)
+
+        // Default floor still clamps back up to 0.7.
+        val defaultDecision = WidgetRenderingHelper.decideEventLayout(
+            event = event,
+            optimalScale = 0.55f,
+            isPastTodayEvent = false,
+            hasFutureEvents = true,
+            compressDeclined = false,
+            pastEventScaleFactor = 0.8f
+        )
+        assertEquals(WidgetRenderingHelper.NORMAL_MIN_SCALE, defaultDecision.eventScale, 0.0001f)
+    }
+
+    @Test
+    fun `calculateOptimalFontScale fallback uses the lowered floor not 0_7`() {
+        // Force the fitter to give up: many long-titled events in a tiny space.
+        val events = List(8) { createEvent("Very long meeting title number $it that wraps a lot") }
+        val result = WidgetRenderingHelper.calculateOptimalFontScale(
+            dayEvents = events,
+            textWidth = 60,
+            availableHeight = 50f,
+            basePaint = basePaint,
+            settings = settings,
+            timeFormat = timeFormat,
+            currentTimeMillis = 0,
+            todayIndex = 0,
+            currentDayIndex = 3,
+            pastEventScaleFactor = 0.8f,
+            minNormalScale = WidgetRenderingHelper.NARROW_COLUMN_MIN_SCALE
+        )
+        assertTrue(result.second)
+        assertEquals(WidgetRenderingHelper.NARROW_COLUMN_MIN_SCALE, result.first, 0.0001f)
+    }
+
     @Test
     fun `isLessInteresting returns true for invited, tentative, and declined events`() {
         val invitedEvent = createEvent("Invited", selfStatus = CalendarContract.Attendees.ATTENDEE_STATUS_INVITED)

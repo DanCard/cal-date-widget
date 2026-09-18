@@ -80,6 +80,11 @@ The weekly widget renders a 7-day calendar view as a single bitmap on Canvas:
   - Formula: `(availableHeight - pastEventsHeight) / (futureCount * lineHeight)`
 - **Clipping on other days:** Equitable distribution across all events
 
+**Font Fit & Compressed Mode (WidgetRenderingHelper.calculateOptimalFontScale):**
+- Binary-searches a per-column font scale in `[minNormalScale, 1.5]`. A candidate scale is rejected if any event would wrap past a title-length-based line limit (3–8 lines), so narrow columns can fail at every scale.
+- **Floor:** normally `NORMAL_MIN_SCALE = 0.7`. `minNormalScaleForColumn()` lowers it to `NARROW_COLUMN_MIN_SCALE = 0.55` only when the start-time prefix ("10:00 ") can't fit the column on one line at 0.7 — prevents "10:0 / 0" wraps.
+- **Compressed mode** (no scale satisfied the line limits): declined/tentative events get 1 line; other events get `WeeklyDisplayLogic.getCompressedMaxLines()` — rows that actually fit the column height, split equitably, bounded `[3, 10]`. Previously a hard 3, which ellipsized titles over empty space.
+
 **Critical Implementation Detail:**
 - `StaticLayout.setEllipsize(TextUtils.TruncateAt.END)` is REQUIRED for maxLines to work
 - Without ellipsize, maxLines is ignored and text renders beyond limit

@@ -85,6 +85,10 @@ object WidgetColumnRenderer {
             val availableHeight = height - CONTENT_TOP
 
             if (textWidth > 0) {
+                // Narrow columns get a lower font floor so the start time never wraps mid-string.
+                val minNormalScale = WidgetRenderingHelper.minNormalScaleForColumn(
+                    dayEvents, textWidth, paints.textPaint, settings, timeFormat
+                )
                 val (optimalFontScale, compressDeclined) = WidgetRenderingHelper.calculateOptimalFontScale(
                     dayEvents = dayEvents,
                     textWidth = textWidth,
@@ -95,11 +99,15 @@ object WidgetColumnRenderer {
                     currentTimeMillis = now,
                     todayIndex = todayIndex,
                     currentDayIndex = i,
-                    pastEventScaleFactor = config.pastEventScaleFactor
+                    pastEventScaleFactor = config.pastEventScaleFactor,
+                    minNormalScale = minNormalScale
                 )
+                if (compressDeclined || minNormalScale < WidgetRenderingHelper.NORMAL_MIN_SCALE) {
+                    Log.d(TAG, "Col $i: fit fallback scale=$optimalFontScale compressed=$compressDeclined minScale=$minNormalScale textWidth=$textWidth")
+                }
 
                 renderColumnEvents(
-                    canvas, dayEvents, optimalFontScale, compressDeclined,
+                    canvas, dayEvents, optimalFontScale, compressDeclined, minNormalScale,
                     paints, settings, timeFormat, currentX, colWidth, textWidth, height,
                     todayIndex, i, now, config, topOffset
                 )
@@ -114,6 +122,7 @@ object WidgetColumnRenderer {
         dayEvents: List<CalendarEvent>,
         optimalFontScale: Float,
         compressDeclined: Boolean,
+        minNormalScale: Float,
         paints: WidgetRenderingHelper.PaintBundle,
         settings: PrefsManager.WidgetSettings,
         timeFormat: java.text.DateFormat,
@@ -131,6 +140,32 @@ object WidgetColumnRenderer {
         val isTodayColumn = dayIndex == todayIndex
         val hasFutureEvents = dayEvents.any { it.endTime >= now }
         val verboseDebug = Log.isLoggable(TAG, Log.VERBOSE)
+        val availableHeight = height - CONTENT_TOP
+
+        // Compressed-mode line budget: how many rows the column can actually hold, split
+        // equitably among the events that are allowed to wrap (see getCompressedMaxLines).
+        val compressedMaxLines: Int = if (config.useCompressDeclinedMaxLines && compressDeclined) {
+            val decisions = dayEvents.map { event ->
+                WidgetRenderingHelper.decideEventLayout(
+                    event = event,
+                    optimalScale = optimalFontScale,
+                    isPastTodayEvent = isTodayColumn && event.endTime < now,
+                    hasFutureEvents = hasFutureEvents,
+                    compressDeclined = true,
+                    pastEventScaleFactor = config.pastEventScaleFactor,
+                    useTimeScaleForPast = config.useTimeScaleForPast,
+                    minNormalScale = minNormalScale
+                )
+            }
+            val oneLineCount = decisions.count { it.forceOneLine }
+            val multiLineCount = decisions.size - oneLineCount
+            // Row height at the column's normal event size, plus the inter-event spacing that
+            // renderColumnEvents adds after every event.
+            val probe = android.text.TextPaint(paints.textPaint)
+            probe.textSize = WidgetRenderingHelper.BASE_TEXT_SIZE * optimalFontScale
+            val rowHeight = probe.fontSpacing + WidgetRenderingHelper.eventSpacing(probe.textSize, isTodayColumn)
+            WeeklyDisplayLogic.getCompressedMaxLines(availableHeight, rowHeight, oneLineCount, multiLineCount)
+        } else 0
 
         for (event in dayEvents) {
             canvas.save()
@@ -146,7 +181,8 @@ object WidgetColumnRenderer {
                 hasFutureEvents = hasFutureEvents,
                 compressDeclined = compressDeclined,
                 pastEventScaleFactor = config.pastEventScaleFactor,
-                useTimeScaleForPast = config.useTimeScaleForPast
+                useTimeScaleForPast = config.useTimeScaleForPast,
+                minNormalScale = minNormalScale
             )
 
             if (verboseDebug) {
@@ -160,7 +196,7 @@ object WidgetColumnRenderer {
 
             val dynamicMaxLines = when {
                 decision.forceOneLine -> 1
-                config.useCompressDeclinedMaxLines && compressDeclined -> 3
+                config.useCompressDeclinedMaxLines && compressDeclined -> compressedMaxLines
                 else -> 0
             }
 
