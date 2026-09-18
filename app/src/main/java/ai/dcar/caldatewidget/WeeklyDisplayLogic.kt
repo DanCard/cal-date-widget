@@ -160,20 +160,16 @@ object WeeklyDisplayLogic {
     fun getColumnWeights(todayIndex: Int, daysCount: Int, todayHasEvents: Boolean = true): FloatArray {
         val weights = FloatArray(daysCount)
         for (i in 0 until daysCount) {
-            if (i < todayIndex) {
-                // Past
-                weights[i] = 0.6f
-            } else if (i == todayIndex) {
+            if (i == todayIndex) {
                 // Today: emphasis spike only when there are events to emphasize.
                 weights[i] = if (todayHasEvents) 2.0f else 1.0f
             } else {
-                // Future
-                // "Make future columns bigger than past columns" -> > 0.6
-                // "Make columns further away from current day smaller" -> decay
-                val dist = i - todayIndex
-                // immediate future (dist=1) -> 1.5
-                // decay by 0.15
-
+                // Every other column is a future day. Columns before today's index display
+                // the same weekday of *next* week (see getEffectiveDayMillis), so their distance
+                // from today is measured on the shifted date, not the column position. There is
+                // no "past" weight: nothing displayed has already happened.
+                // immediate future (dist=1) -> 1.5, decaying by 0.15 per day, floored at 0.7.
+                val dist = if (i < todayIndex) i + 7 - todayIndex else i - todayIndex
                 var w = 1.5f - (dist - 1) * 0.15f
                 if (w < 0.7f) w = 0.7f
                 weights[i] = w

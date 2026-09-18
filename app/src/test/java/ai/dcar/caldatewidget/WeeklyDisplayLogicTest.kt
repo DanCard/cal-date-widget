@@ -881,6 +881,47 @@ class WeeklyDisplayLogicTest {
     }
 
     @Test
+    fun `getColumnWeights shifted columns are weighted by next-week distance not as past`() {
+        // Friday with a Monday week start: columns 0-3 display Mon-Thu of NEXT week
+        // (getEffectiveDayMillis shifts them +7), i.e. distances 3,4,5,6 from today.
+        val weights = WeeklyDisplayLogic.getColumnWeights(todayIndex = 4, daysCount = 7)
+        assertEquals(2.0f, weights[4], 0.001f)   // Fri (today)
+        assertEquals(1.5f, weights[5], 0.001f)   // Sat  dist=1
+        assertEquals(1.35f, weights[6], 0.001f)  // Sun  dist=2
+        assertEquals(1.2f, weights[0], 0.001f)   // Mon+7 dist=3
+        assertEquals(1.05f, weights[1], 0.001f)  // Tue+7 dist=4
+        assertEquals(0.9f, weights[2], 0.001f)   // Wed+7 dist=5
+        assertEquals(0.75f, weights[3], 0.001f)  // Thu+7 dist=6
+    }
+
+    @Test
+    fun `getColumnWeights decays continuously from tomorrow around the wrap`() {
+        // The weight sequence ordered by displayed date must be strictly decreasing
+        // from tomorrow onward — no cliff at the week-wrap boundary.
+        for (todayIndex in 0 until 7) {
+            val weights = WeeklyDisplayLogic.getColumnWeights(todayIndex, 7)
+            val byDistance = (1..6).map { d -> weights[(todayIndex + d) % 7] }
+            for (k in 1 until byDistance.size) {
+                assertTrue(
+                    "todayIndex=$todayIndex dist=${k + 1} should be <= dist=$k",
+                    byDistance[k] <= byDistance[k - 1]
+                )
+            }
+            // Nothing narrower than the far-future floor.
+            byDistance.forEach { assertTrue(it >= 0.7f) }
+        }
+    }
+
+    @Test
+    fun `getColumnWeights with today at week start matches pure forward decay`() {
+        // No shift happens when today is the week-start day; the profile is the
+        // classic 2.0, 1.5, 1.35, 1.2, 1.05, 0.9, 0.75.
+        val weights = WeeklyDisplayLogic.getColumnWeights(todayIndex = 0, daysCount = 7)
+        val expected = floatArrayOf(2.0f, 1.5f, 1.35f, 1.2f, 1.05f, 0.9f, 0.75f)
+        for (i in 0 until 7) assertEquals("col $i", expected[i], weights[i], 0.001f)
+    }
+
+    @Test
     fun `getHeaderTextSize today clamps to 80 max on very wide columns`() {
         assertEquals(80f, WeeklyDisplayLogic.getHeaderTextSize(500f, isToday = true), 0.01f)
     }

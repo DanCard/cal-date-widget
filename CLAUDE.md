@@ -51,8 +51,7 @@ The weekly widget renders a 7-day calendar view as a single bitmap on Canvas:
 
 **Column Sizing:**
 - **Today's column:** 2.0x width weight, larger text scale (default 1.5x from settings)
-- **"Past" day columns (i < todayIndex):** 0.6x width. These columns now show the *same weekday of next week* (not the stale past day), so the narrow width acts as visual de-prioritization for the further-out info rather than signaling "ended."
-- **Future days:** 1.5x to 0.7x width (declining), 1.10x text scale
+- **All other columns are future days** and are weighted purely by distance from today: 1.5x for tomorrow, decaying 0.15/day, floored at 0.7x. Columns with i < todayIndex display the *same weekday of next week* (not the stale past day), so their distance is measured on the shifted date (`i + 7 - todayIndex`). There is no "past" weight — nothing displayed has already happened.
 
 **Past-Day Shift (Per-Column Next-Week Render):**
 - `WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndex)` returns `startMillis + (i+7)*day` when `i < todayIndex`, else `startMillis + i*day`.
@@ -196,7 +195,7 @@ to offload calendar IO off the main thread.
 **Solution:** `WeeklyDisplayLogic.getEffectiveDayMillis()` shifts past-day columns forward by 7 days. Fetch window changed from `startMillis` to `todayMillis` (still 7 days, since all displayed days fall within `[today, today+6]`). Header format unified to `"EEE d"` across all columns so next-week dates are unambiguous.
 
 **Key Behavior:**
-- Past columns keep 0.6× width (visual de-prioritization, not "staleness" signal).
+- Shifted columns are weighted by their next-week distance from today (Sep 2026; previously a flat 0.6× "past" weight that starved late-week views — e.g. on a Friday, Mon–Thu of next week shared 33% of the width).
 - Past-event dimming logic auto-disables for shifted columns (gated on `event.endTime < now`).
 - When today is the week-start day, no shifting happens (behavior identical to pre-change).
 
@@ -219,7 +218,7 @@ if (!isClipping) {
 ```
 
 **Column Weights:**
-Edit `WeeklyDisplayLogic.getColumnWeights()` to change past/today/future width ratios.
+Edit `WeeklyDisplayLogic.getColumnWeights()` to change the today spike or the future distance-decay curve.
 
 ### Adding New Settings
 
