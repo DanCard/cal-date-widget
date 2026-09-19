@@ -1,0 +1,5 @@
+- Improved weekly layout: columns showing next week are now weighted fairly based on distance from today.
+- Better title readability: narrow columns now adaptively use available vertical height without premature truncation.
+- Stability and performance improvements.
+
+100% private: works offline, no ads, no trackers, no internet permission.
