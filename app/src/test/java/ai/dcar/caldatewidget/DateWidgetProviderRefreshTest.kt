@@ -38,4 +38,34 @@ class DateWidgetProviderRefreshTest {
 
         assertEquals("UPDATED", textView.text.toString())
     }
+
+    @Test
+    fun `two column wide widget on Fold 4 cover display renders horizontal date layout without newline`() {
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        val shadowAppWidgetManager = shadowOf(appWidgetManager)
+        val widgetId = shadowAppWidgetManager.createWidget(DateWidgetProvider::class.java, R.layout.widget_date)
+
+        val options = android.os.Bundle().apply {
+            putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 195)
+            putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 93)
+            putInt("semAppWidgetRowSpan", 1)
+            putInt("semAppWidgetColumnSpan", 3)
+        }
+        appWidgetManager.updateAppWidgetOptions(widgetId, options)
+
+        val prefsManager = PrefsManager(context)
+        prefsManager.saveSettings(
+            widgetId,
+            PrefsManager.WidgetSettings(dateFormat = "EEE d")
+        )
+
+        val provider = DateWidgetProvider()
+        provider.onAppWidgetOptionsChanged(context, appWidgetManager, widgetId, options)
+
+        val widgetView = shadowAppWidgetManager.getViewFor(widgetId)
+        val textView = widgetView.findViewById<TextView>(R.id.widget_date_text)
+
+        org.junit.Assert.assertFalse(textView.text.toString().contains("\n"))
+        org.junit.Assert.assertTrue(textView.text.toString().contains(" "))
+    }
 }
