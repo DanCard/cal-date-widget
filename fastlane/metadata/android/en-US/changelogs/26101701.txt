@@ -1,0 +1,5 @@
+- Improved date widget layout: wide widgets and cover displays (such as Fold cover screen) now maintain a clean single-line format without unwanted vertical text wrapping.
+- Auto-stacking preserved for multi-row square and tall widgets.
+- Stability and performance improvements.
+
+100% private: works offline, no ads, no trackers, no internet permission.
