@@ -50,18 +50,18 @@ object DailyDisplayLogic {
     }
 
     /**
-     * Determines if the widget should auto-advance to the next day.
+     * Determines if today's conditions (cutoff reached, all non-declined events ended)
+     * are satisfied for auto-advancing.
      *
-     * Two conditions must BOTH hold to advance:
+     * Two conditions must BOTH hold:
      *  - The local time is at or past the cutoff hour (default 3 PM). This prevents jumping
      *    to "tomorrow" earlier in the day — keeping today's view in place even when all of
      *    today's events have already ended.
-     *  - Every remaining non-declined event has ended. (For an empty day this is vacuously
-     *    true, so an event-less day advances exactly at the cutoff.)
+     *  - Every remaining non-declined event on today has ended.
      *
      * Declined events are always ignored for this decision.
      */
-    fun shouldAutoAdvance(
+    fun canAutoAdvanceToday(
         todayEvents: List<CalendarEvent>,
         nowMillis: Long,
         cutoffMinuteOfDay: Int = PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
@@ -77,12 +77,50 @@ object DailyDisplayLogic {
         return validEvents.all { it.endTime < nowMillis }
     }
 
+    /**
+     * Determines if the widget should auto-advance to the next day.
+     *
+     * Three conditions must ALL hold to advance:
+     *  - The local time is at or past the cutoff hour (default 3 PM).
+     *  - Every remaining non-declined event on today has ended.
+     *  - Auto-advancing does not result in an empty calendar: there must be at least one
+     *    upcoming non-declined event in the days that would be displayed.
+     *
+     * Declined events are always ignored for this decision.
+     */
+    fun shouldAutoAdvance(
+        todayEvents: List<CalendarEvent>,
+        upcomingEvents: List<CalendarEvent>,
+        nowMillis: Long,
+        cutoffMinuteOfDay: Int = PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
+    ): Boolean {
+        val hasUpcomingEvents = upcomingEvents.any { !it.isDeclined }
+        return shouldAutoAdvance(
+            todayEvents = todayEvents,
+            nowMillis = nowMillis,
+            cutoffMinuteOfDay = cutoffMinuteOfDay,
+            hasUpcomingEvents = hasUpcomingEvents
+        )
+    }
+
+    fun shouldAutoAdvance(
+        todayEvents: List<CalendarEvent>,
+        nowMillis: Long,
+        cutoffMinuteOfDay: Int = PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY,
+        hasUpcomingEvents: Boolean = false
+    ): Boolean {
+        if (!hasUpcomingEvents) {
+            return false
+        }
+        return canAutoAdvanceToday(todayEvents, nowMillis, cutoffMinuteOfDay)
+    }
+
     fun getNextAutoAdvanceCheckTime(
         todayEvents: List<CalendarEvent>,
         nowMillis: Long,
         cutoffMinuteOfDay: Int = PrefsManager.DEFAULT_DAILY_AUTO_ADVANCE_CUTOFF_MINUTE_OF_DAY
     ): Long? {
-        if (shouldAutoAdvance(todayEvents, nowMillis, cutoffMinuteOfDay)) return null
+        if (canAutoAdvanceToday(todayEvents, nowMillis, cutoffMinuteOfDay)) return null
 
         val validEvents = todayEvents.filter { !it.isDeclined }
         val nextEventEnd = validEvents

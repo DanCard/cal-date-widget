@@ -38,29 +38,40 @@ class AutoAdvanceTest {
     @Test
     fun `shouldAutoAdvance returns false when there are no events before cutoff`() {
         val todayEvents = emptyList<CalendarEvent>()
-        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(14, 59))
+        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(14, 59), hasUpcomingEvents = true)
         assertFalse("Should not advance before cutoff when there are no events", result)
     }
 
     @Test
-    fun `shouldAutoAdvance returns true when there are no events at cutoff`() {
+    fun `shouldAutoAdvance returns false at cutoff when there are no upcoming events`() {
         val todayEvents = emptyList<CalendarEvent>()
-        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(15, 0))
-        assertTrue("Should advance at cutoff when there are no events", result)
+        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(15, 0), hasUpcomingEvents = false)
+        assertFalse("Should not advance at cutoff when there are no upcoming events", result)
     }
 
     @Test
-    fun `shouldAutoAdvance uses custom cutoff for empty days`() {
+    fun `shouldAutoAdvance returns true at cutoff when there are upcoming events`() {
+        val todayEvents = emptyList<CalendarEvent>()
+        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(15, 0), hasUpcomingEvents = true)
+        assertTrue("Should advance at cutoff when there are upcoming events", result)
+    }
+
+    @Test
+    fun `shouldAutoAdvance uses custom cutoff for empty days with upcoming events`() {
         val todayEvents = emptyList<CalendarEvent>()
         val cutoff = cutoffMinuteOfDay(18, 30)
 
         assertFalse(
             "Should not advance before custom cutoff when there are no events",
-            DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(18, 29), cutoff)
+            DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(18, 29), cutoff, hasUpcomingEvents = true)
         )
         assertTrue(
-            "Should advance at custom cutoff when there are no events",
-            DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(18, 30), cutoff)
+            "Should advance at custom cutoff when there are upcoming events",
+            DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(18, 30), cutoff, hasUpcomingEvents = true)
+        )
+        assertFalse(
+            "Should not advance at custom cutoff when there are no upcoming events",
+            DailyDisplayLogic.shouldAutoAdvance(todayEvents, timeMillis(18, 30), cutoff, hasUpcomingEvents = false)
         )
     }
 
@@ -71,8 +82,8 @@ class AutoAdvanceTest {
             createEvent("Past Event", now - 1000),
             createEvent("Future Event", now + 1000)
         )
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
-        assertFalse("Should not advance if future events exist", result)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, hasUpcomingEvents = true)
+        assertFalse("Should not advance if future events exist on today", result)
     }
 
     @Test
@@ -82,7 +93,7 @@ class AutoAdvanceTest {
             createEvent("Past Event 1", now - 1000),
             createEvent("Past Event 2", now - 500)
         )
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, hasUpcomingEvents = true)
         assertFalse("Should not advance before the cutoff even when all events have ended", result)
     }
 
@@ -90,32 +101,74 @@ class AutoAdvanceTest {
     fun `shouldAutoAdvance returns false at 1pm when last event ended at noon`() {
         val now = timeMillis(13, 0)
         val events = listOf(createEvent("Lunch", endMillis = timeMillis(12, 0)))
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, cutoffMinuteOfDay(18, 30))
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, cutoffMinuteOfDay(18, 30), hasUpcomingEvents = true)
         assertFalse("Should not advance before the cutoff even though the last event ended", result)
     }
 
     @Test
-    fun `shouldAutoAdvance returns true when all events are in the past after cutoff`() {
+    fun `shouldAutoAdvance returns true when all events are in the past after cutoff and upcoming events exist`() {
         val now = timeMillis(15, 0)
         val events = listOf(
             createEvent("Past Event 1", now - 1000),
             createEvent("Past Event 2", now - 500)
         )
 
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
-        assertTrue("Should advance after cutoff when all events are past", result)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, hasUpcomingEvents = true)
+        assertTrue("Should advance after cutoff when all events are past and upcoming events exist", result)
     }
 
     @Test
-    fun `shouldAutoAdvance always ignores declined events`() {
+    fun `shouldAutoAdvance returns false when all events are in the past after cutoff but no upcoming events`() {
+        val now = timeMillis(15, 0)
+        val events = listOf(
+            createEvent("Past Event 1", now - 1000),
+            createEvent("Past Event 2", now - 500)
+        )
+
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, hasUpcomingEvents = false)
+        assertFalse("Should not advance if advancing results in an empty calendar", result)
+    }
+
+    @Test
+    fun `shouldAutoAdvance with upcoming events list returns true when upcoming has non-declined events`() {
+        val now = timeMillis(15, 0)
+        val todayEvents = listOf(createEvent("Past Event", now - 1000))
+        val upcomingEvents = listOf(createEvent("Tomorrow Event", now + 86400000L))
+
+        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, upcomingEvents, now)
+        assertTrue("Should advance when coming days have non-declined events", result)
+    }
+
+    @Test
+    fun `shouldAutoAdvance with upcoming events list returns false when upcoming is empty`() {
+        val now = timeMillis(15, 0)
+        val todayEvents = listOf(createEvent("Past Event", now - 1000))
+        val upcomingEvents = emptyList<CalendarEvent>()
+
+        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, upcomingEvents, now)
+        assertFalse("Should not advance when coming days are empty", result)
+    }
+
+    @Test
+    fun `shouldAutoAdvance with upcoming events list returns false when upcoming only has declined events`() {
+        val now = timeMillis(15, 0)
+        val todayEvents = listOf(createEvent("Past Event", now - 1000))
+        val upcomingEvents = listOf(createEvent("Declined Meeting", now + 86400000L, isDeclined = true))
+
+        val result = DailyDisplayLogic.shouldAutoAdvance(todayEvents, upcomingEvents, now)
+        assertFalse("Should not advance when coming days only have declined events", result)
+    }
+
+    @Test
+    fun `shouldAutoAdvance always ignores declined events on today`() {
         val now = timeMillis(15, 30)
         val events = listOf(
             createEvent("Past Event", now - 1000),
             createEvent("Future Declined Event", now + 1000, isDeclined = true)
         )
 
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
-        assertTrue("Should advance if only remaining future event is declined and cutoff passed", result)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, hasUpcomingEvents = true)
+        assertTrue("Should advance if only remaining future event on today is declined and cutoff passed", result)
     }
 
     @Test
@@ -125,19 +178,43 @@ class AutoAdvanceTest {
             createEvent("Past Declined Event", now - 1000, isDeclined = true)
         )
 
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, hasUpcomingEvents = true)
         assertFalse("Should not advance before cutoff if only declined events exist", result)
     }
 
     @Test
-    fun `shouldAutoAdvance returns true when only declined events exist after cutoff`() {
+    fun `shouldAutoAdvance returns true when only declined events exist on today after cutoff and upcoming events exist`() {
         val now = timeMillis(15, 0)
         val events = listOf(
             createEvent("Past Declined Event", now - 1000, isDeclined = true)
         )
 
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
-        assertTrue("Should advance after cutoff if only declined events exist", result)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, hasUpcomingEvents = true)
+        assertTrue("Should advance after cutoff if only declined events exist on today and upcoming events exist", result)
+    }
+
+    @Test
+    fun `canAutoAdvanceToday returns true after cutoff when all events ended`() {
+        val now = timeMillis(15, 0)
+        val events = listOf(createEvent("Past Event", now - 1000))
+
+        assertTrue(DailyDisplayLogic.canAutoAdvanceToday(events, now))
+    }
+
+    @Test
+    fun `canAutoAdvanceToday returns false before cutoff`() {
+        val now = timeMillis(14, 59)
+        val events = listOf(createEvent("Past Event", now - 1000))
+
+        assertFalse(DailyDisplayLogic.canAutoAdvanceToday(events, now))
+    }
+
+    @Test
+    fun `canAutoAdvanceToday returns false when event in progress`() {
+        val now = timeMillis(15, 0)
+        val events = listOf(createEvent("Ongoing Event", now + 1000))
+
+        assertFalse(DailyDisplayLogic.canAutoAdvanceToday(events, now))
     }
 
     @Test
@@ -202,7 +279,7 @@ class AutoAdvanceTest {
         val now = timeMillis(15, 0)
         val events = listOf(createEvent("Afternoon Meeting", endMillis = timeMillis(15, 30)))
 
-        val result = DailyDisplayLogic.shouldAutoAdvance(events, now)
+        val result = DailyDisplayLogic.shouldAutoAdvance(events, now, hasUpcomingEvents = true)
 
         assertFalse("Should not advance at the cutoff while an event is still running", result)
     }

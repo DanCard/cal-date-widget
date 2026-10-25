@@ -58,38 +58,60 @@ object DailyWidgetRenderer {
 
             val todayMillis = WidgetColumnRenderer.startOfDayMillis()
             val cols = calculateNumberOfDays(context, size.widthPx)
+            val dm = context.resources.displayMetrics
+            val heightDp = size.heightPx / dm.density
+            val grid = DailyDisplayLogic.computeGridLayout(cols, heightDp, settings.twoLineModeEnabled)
 
             val startCalendar = Calendar.getInstance()
-            var didAutoAdvance = false
+            val todayStart = WidgetColumnRenderer.calculateStartDate(startCalendar)
+            val todayEnd = todayStart + WidgetColumnRenderer.DAY_MILLIS
 
             val repo = CalendarRepository(context)
             val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
             val selection = selectedIds.ifEmpty { null }
 
-            val checkStart = WidgetColumnRenderer.calculateStartDate(startCalendar)
-            val todayEnd = checkStart + WidgetColumnRenderer.DAY_MILLIS
-            val todayEvents = repo.getEvents(checkStart, 1, selection).filter {
-                WeeklyDisplayLogic.shouldDisplayEventOnDay(it, checkStart, todayEnd)
+            val todayEvents = repo.getEvents(todayStart, 1, selection).filter {
+                WeeklyDisplayLogic.shouldDisplayEventOnDay(it, todayStart, todayEnd)
             }
             val autoAdvanceNow = System.currentTimeMillis()
 
-            if (DailyDisplayLogic.shouldAutoAdvance(
+            var didAutoAdvance = false
+            var startMillis = todayStart
+            var events: List<CalendarEvent>
+
+            if (DailyDisplayLogic.canAutoAdvanceToday(
                     todayEvents,
                     autoAdvanceNow,
                     settings.dailyAutoAdvanceCutoffMinuteOfDay
                 )
             ) {
-                startCalendar.add(Calendar.DAY_OF_YEAR, 1)
-                didAutoAdvance = true
-                Log.d(TAG, "All events for today are in the past. Auto-advancing to tomorrow.")
+                val tomorrowStart = todayStart + WidgetColumnRenderer.DAY_MILLIS
+                val advancedEvents = WidgetColumnRenderer.fetchAndFilterEvents(
+                    context, settings, tomorrowStart, grid.days
+                )
+                if (DailyDisplayLogic.shouldAutoAdvance(
+                        todayEvents,
+                        advancedEvents,
+                        autoAdvanceNow,
+                        settings.dailyAutoAdvanceCutoffMinuteOfDay
+                    )
+                ) {
+                    startCalendar.add(Calendar.DAY_OF_YEAR, 1)
+                    didAutoAdvance = true
+                    startMillis = tomorrowStart
+                    events = advancedEvents
+                    Log.d(TAG, "All events for today are in the past and coming days have events. Auto-advancing to tomorrow.")
+                } else {
+                    events = WidgetColumnRenderer.fetchAndFilterEvents(
+                        context, settings, todayStart, grid.days
+                    )
+                    Log.d(TAG, "Not auto-advancing because advancing results in an empty calendar.")
+                }
+            } else {
+                events = WidgetColumnRenderer.fetchAndFilterEvents(
+                    context, settings, todayStart, grid.days
+                )
             }
-
-            val startMillis = WidgetColumnRenderer.calculateStartDate(startCalendar)
-            val dm = context.resources.displayMetrics
-            val heightDp = size.heightPx / dm.density
-            val grid = DailyDisplayLogic.computeGridLayout(cols, heightDp, settings.twoLineModeEnabled)
-
-            val events = WidgetColumnRenderer.fetchAndFilterEvents(context, settings, startMillis, grid.days)
 
             val globalDayMillisList = (0 until grid.days).map { startMillis + it * WidgetColumnRenderer.DAY_MILLIS }
 
