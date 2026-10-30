@@ -38,7 +38,7 @@ object DailyAutoAdvanceScheduler {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }.timeInMillis
-        val todayEnd = todayStart + (24L * 60 * 60 * 1000)
+        val todayEnd = WeeklyDisplayLogic.addDays(todayStart, 1)
 
         val todayEvents = repo.getEvents(todayStart, 1, selection).filter {
             WeeklyDisplayLogic.shouldDisplayEventOnDay(it, todayStart, todayEnd)

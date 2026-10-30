@@ -60,7 +60,7 @@ object WidgetColumnRenderer {
         Log.d(TAG, "Total Row Weight: $totalWeight, Weights: ${weights.joinToString()}")
 
         val eventsByDay = dayMillisList.map { dayMillis ->
-            val dayEnd = dayMillis + DAY_MILLIS
+            val dayEnd = WeeklyDisplayLogic.addDays(dayMillis, 1)
             events.filter { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
         }
 
@@ -246,10 +246,7 @@ object WidgetColumnRenderer {
         val adjusted = weights.copyOf()
         for (i in dayMillisList.indices) {
             val dayMillis = dayMillisList[i]
-            // +DAY_MILLIS is safe here: this is event-membership filtering (does this day have
-            // any events?), not day-counting. Even across a DST transition the boundary is close
-            // enough for the "has events" check.
-            val dayEnd = dayMillis + DAY_MILLIS
+            val dayEnd = WeeklyDisplayLogic.addDays(dayMillis, 1)
             val hasEvents = events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
             if (!hasEvents) {
                 adjusted[i] *= EMPTY_COLUMN_WEIGHT_FACTOR
@@ -281,7 +278,7 @@ object WidgetColumnRenderer {
         for (i in 0 until 7) {
             val anyWeekHasEvents = (0 until weeks).any { w ->
                 val dayMillis = allDayMillis[w * 7 + i]
-                val dayEnd = dayMillis + DAY_MILLIS
+                val dayEnd = WeeklyDisplayLogic.addDays(dayMillis, 1)
                 events.any { WeeklyDisplayLogic.shouldDisplayEventOnDay(it, dayMillis, dayEnd) }
             }
             if (!anyWeekHasEvents) {

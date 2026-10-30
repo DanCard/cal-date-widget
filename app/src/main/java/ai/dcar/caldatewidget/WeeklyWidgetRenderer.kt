@@ -46,7 +46,7 @@ object WeeklyWidgetRenderer {
                 val w = globalIdx / 7
                 val i = globalIdx % 7
                 val baseEffective = WeeklyDisplayLogic.getEffectiveDayMillis(startMillis, i, todayIndexInWeek)
-                baseEffective + (w * 7 * WidgetColumnRenderer.DAY_MILLIS)
+                WeeklyDisplayLogic.addDays(baseEffective, w * 7)
             }
 
             val allEvents = WidgetColumnRenderer.fetchAndFilterEvents(context, settings, startMillis, totalDays + 7)
@@ -64,7 +64,7 @@ object WeeklyWidgetRenderer {
             // empty neighbors (~0.21), so "no events" paradoxically reads as the widest column.
             val todayHasEvents = allEvents.any {
                 WeeklyDisplayLogic.shouldDisplayEventOnDay(
-                    it, todayMillis, todayMillis + WidgetColumnRenderer.DAY_MILLIS
+                    it, todayMillis, WeeklyDisplayLogic.addDays(todayMillis, 1)
                 )
             }
             val sharedBaseWeights = WeeklyDisplayLogic.getColumnWeights(todayIndexInWeek, 7, todayHasEvents)

@@ -95,7 +95,19 @@ object WeeklyDisplayLogic {
 
     fun getEffectiveDayMillis(startMillis: Long, columnIndex: Int, todayIndex: Int): Long {
         val daysOffset = if (columnIndex < todayIndex) columnIndex + 7 else columnIndex
-        return startMillis + daysOffset * 24L * 60 * 60 * 1000
+        return addDays(startMillis, daysOffset)
+    }
+
+    /**
+     * Adds calendar days in the default timezone. Never use `+ n * DAY_MILLIS` for day
+     * stepping: DST days are 23h/25h, so on the fall-back Sunday midnight + 24h lands at
+     * 23:00 the same day and the next column renders a duplicate header ("Sun 1" twice).
+     */
+    fun addDays(millis: Long, days: Int): Long {
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = millis
+        cal.add(Calendar.DAY_OF_YEAR, days)
+        return cal.timeInMillis
     }
 
     /**

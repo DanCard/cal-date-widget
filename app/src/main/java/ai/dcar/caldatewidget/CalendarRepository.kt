@@ -32,7 +32,7 @@ class CalendarRepository(private val context: Context) {
         if (visibleCalendarIds.isEmpty()) return events
 
         // End of the range
-        val endMillis = startMillis + (numDays.toLong() * 24 * 60 * 60 * 1000)
+        val endMillis = WeeklyDisplayLogic.addDays(startMillis, numDays)
         val queryStartMillis = startMillis - (24L * 60 * 60 * 1000)
         val queryEndMillis = endMillis + (24L * 60 * 60 * 1000)
 

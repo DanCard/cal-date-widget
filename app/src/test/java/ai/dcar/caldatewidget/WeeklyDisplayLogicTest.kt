@@ -783,6 +783,28 @@ class WeeklyDisplayLogicTest {
     private val dayMs = 24L * 60 * 60 * 1000
 
     @Test
+    fun `getEffectiveDayMillis yields distinct local midnights across DST fall-back`() {
+        // Regression: on Thu Oct 29 2026 (Fri-start week) the Fold4 showed "Sun 1" twice because
+        // Sun Nov 1 is 25h long and midnight + 24h landed on Sun 23:00.
+        val originalTz = TimeZone.getDefault()
+        try {
+            val tz = TimeZone.getTimeZone("America/Los_Angeles")
+            TimeZone.setDefault(tz)
+            val cal = GregorianCalendar(tz, Locale.US).apply { clear(); set(2026, Calendar.OCTOBER, 30) }
+            val start = cal.timeInMillis
+            val days = (0..6).map {
+                val c = Calendar.getInstance(tz)
+                c.timeInMillis = WeeklyDisplayLogic.getEffectiveDayMillis(start, it, 0)
+                assertEquals("col $it at midnight", 0, c.get(Calendar.HOUR_OF_DAY))
+                c.get(Calendar.DAY_OF_MONTH)
+            }
+            assertEquals(listOf(30, 31, 1, 2, 3, 4, 5), days)
+        } finally {
+            TimeZone.setDefault(originalTz)
+        }
+    }
+
+    @Test
     fun `getEffectiveDayMillis returns unchanged offsets when today is week start`() {
         val start = 1_700_000_000_000L
         val todayIndex = 0

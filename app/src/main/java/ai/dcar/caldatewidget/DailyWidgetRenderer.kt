@@ -64,7 +64,7 @@ object DailyWidgetRenderer {
 
             val startCalendar = Calendar.getInstance()
             val todayStart = WidgetColumnRenderer.calculateStartDate(startCalendar)
-            val todayEnd = todayStart + WidgetColumnRenderer.DAY_MILLIS
+            val todayEnd = WeeklyDisplayLogic.addDays(todayStart, 1)
 
             val repo = CalendarRepository(context)
             val selectedIds = settings.selectedCalendarIds.ifEmpty { repo.getDefaultCalendarIds() }
@@ -85,7 +85,7 @@ object DailyWidgetRenderer {
                     settings.dailyAutoAdvanceCutoffMinuteOfDay
                 )
             ) {
-                val tomorrowStart = todayStart + WidgetColumnRenderer.DAY_MILLIS
+                val tomorrowStart = WeeklyDisplayLogic.addDays(todayStart, 1)
                 val advancedEvents = WidgetColumnRenderer.fetchAndFilterEvents(
                     context, settings, tomorrowStart, grid.days
                 )
@@ -113,7 +113,7 @@ object DailyWidgetRenderer {
                 )
             }
 
-            val globalDayMillisList = (0 until grid.days).map { startMillis + it * WidgetColumnRenderer.DAY_MILLIS }
+            val globalDayMillisList = (0 until grid.days).map { WeeklyDisplayLogic.addDays(startMillis, it) }
 
             val bandHeight = size.heightPx / grid.rows
             val config = WidgetColumnRenderer.ColumnRenderConfig(
