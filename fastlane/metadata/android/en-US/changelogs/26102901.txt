@@ -1,0 +1,5 @@
+- Fixed weekly widget showing the same day twice (e.g. "Sun 1, Sun 1") around the daylight saving time change; days after the change now show the correct date and events.
+- Daily widget no longer auto-advances to tomorrow when the coming days have no events.
+- Stability and performance improvements.
+
+100% private: works offline, no ads, no trackers, no internet permission.

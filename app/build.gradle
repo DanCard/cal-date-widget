@@ -21,8 +21,8 @@ android {
         applicationId "ai.dcar.caldatewidget"
         minSdk 26
         targetSdk 36
-        versionCode 26101701
-        versionName "26101701"
+        versionCode 26102901
+        versionName "26102901"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
