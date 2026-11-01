@@ -1,0 +1,4 @@
+- Fixed widget displaying with incorrect dimensions when rotating or folding/unfolding; the widget now automatically adjusts cleanly to landscape and portrait orientations.
+- Stability and performance improvements.
+
+100% private: works offline, no ads, no trackers, no internet permission.
