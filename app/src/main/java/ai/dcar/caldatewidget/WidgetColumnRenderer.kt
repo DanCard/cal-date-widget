@@ -7,7 +7,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Bundle
 import android.util.Log
+import android.util.SizeF
 import android.util.TypedValue
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
@@ -348,54 +350,73 @@ object WidgetColumnRenderer {
         return filtered
     }
 
+    /**
+     * The widget's size on the layout currently on screen. Used when only one bitmap can be
+     * supplied; see [reportedSizesDp] for the sizes of every layout the launcher knows about.
+     */
     internal fun calculateWidgetSize(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int
     ): WidgetSize {
         val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
-        val dm = context.resources.displayMetrics
+        val config = context.resources.configuration
+        val reported = reportedSizesDp(options)
 
-        var widthDp = 250f
-        var heightDp = 110f
-        var usedAppWidgetSizes = false
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-            @Suppress("DEPRECATION")
-            val sizes = options.getParcelableArrayList<android.util.SizeF>("appWidgetSizes")
-            if (!sizes.isNullOrEmpty()) {
-                val portraitSize = sizes[0]
-                widthDp = portraitSize.width
-                heightDp = portraitSize.height
-                usedAppWidgetSizes = true
-                Log.d(TAG, "Widget $appWidgetId: Using appWidgetSizes[0] = ${widthDp}x${heightDp}dp")
+        val size = if (reported.isNotEmpty()) {
+            selectSizeForScreen(reported, config.screenWidthDp, config.screenHeightDp)
+        } else {
+            // By AppWidgetManager convention the min width and max height describe portrait,
+            // while the max width and min height describe landscape.
+            val minWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250)
+            val minHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110)
+            val maxWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, minWidthDp)
+            val maxHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, minHeightDp)
+            if (config.screenWidthDp > config.screenHeightDp) {
+                SizeF(maxWidthDp.toFloat(), minHeightDp.toFloat())
+            } else {
+                SizeF(minWidthDp.toFloat(), maxHeightDp.toFloat())
             }
         }
 
-        if (!usedAppWidgetSizes) {
-            val minWidthDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250)
-            val minHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110)
-            val maxHeightDp = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, minHeightDp)
-            widthDp = minWidthDp.toFloat()
-            heightDp = maxHeightDp.toFloat()
-            Log.d(TAG, "Widget $appWidgetId: Fallback to min/max = ${widthDp}x${heightDp}dp")
+        val widgetSize = toWidgetSize(context, size)
+        Log.d(TAG, "Widget $appWidgetId: reported=$reported selected=$size -> $widgetSize")
+        return widgetSize
+    }
+
+    /**
+     * Every size the launcher reports for this widget, one per device profile (portrait and
+     * landscape, plus cover and inner screens on foldables). Empty below Android 12 or if the
+     * launcher doesn't report any.
+     */
+    internal fun reportedSizesDp(options: Bundle): List<SizeF> {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S) return emptyList()
+        @Suppress("DEPRECATION")
+        val sizes = options.getParcelableArrayList<SizeF>(AppWidgetManager.OPTION_APPWIDGET_SIZES)
+        return sizes.orEmpty().filter { it.width > 0f && it.height > 0f }.distinct()
+    }
+
+    /**
+     * Picks the reported size most likely to be on screen now. Entries that can't fit the screen
+     * belong to another layout (e.g. a foldable's other display). Of the rest, a widget is at its
+     * widest in landscape and at its tallest in portrait.
+     */
+    internal fun selectSizeForScreen(sizes: List<SizeF>, screenWidthDp: Int, screenHeightDp: Int): SizeF {
+        val candidates = sizes.filter { it.width <= screenWidthDp && it.height <= screenHeightDp }
+            .ifEmpty { sizes }
+        return if (screenWidthDp > screenHeightDp) {
+            candidates.maxBy { it.width }
+        } else {
+            candidates.maxBy { it.height }
         }
+    }
 
-        val widthPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            widthDp,
-            dm
-        ).toInt().coerceAtLeast(1)
-
-        val heightPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            heightDp,
-            dm
-        ).toInt().coerceAtLeast(1)
-
-        Log.d(TAG, "Widget $appWidgetId: Final size = ${widthPx}x${heightPx}px")
-
-        return WidgetSize(widthPx, heightPx)
+    internal fun toWidgetSize(context: Context, sizeDp: SizeF): WidgetSize {
+        val dm = context.resources.displayMetrics
+        return WidgetSize(
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizeDp.width, dm).toInt().coerceAtLeast(1),
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizeDp.height, dm).toInt().coerceAtLeast(1)
+        )
     }
 
     internal fun calculateStartDate(calendar: Calendar): Long {

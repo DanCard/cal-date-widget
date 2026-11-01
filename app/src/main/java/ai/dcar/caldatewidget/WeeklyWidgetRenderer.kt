@@ -1,6 +1,5 @@
 package ai.dcar.caldatewidget
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -13,8 +12,7 @@ object WeeklyWidgetRenderer {
 
     private const val TAG = "CalendarImageGenerator"
 
-    fun draw(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int): Bitmap {
-        val size = WidgetColumnRenderer.calculateWidgetSize(context, appWidgetManager, appWidgetId)
+    fun draw(context: Context, appWidgetId: Int, size: WidgetColumnRenderer.WidgetSize): Bitmap {
         try {
             Log.d(TAG, "Starting drawWeeklyCalendar for ID: $appWidgetId")
             val prefsManager = PrefsManager(context)

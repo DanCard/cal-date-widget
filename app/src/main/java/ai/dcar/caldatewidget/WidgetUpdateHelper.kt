@@ -5,16 +5,64 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
 
 object WidgetUpdateHelper {
 
+    private const val TAG = "WidgetUpdateHelper"
+
+    // RemoteViews rejects a size map with more entries than this.
+    private const val MAX_SIZED_VIEWS = 16
+
     fun updateWeeklyWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+        pushViews(context, appWidgetManager, appWidgetId) { size ->
+            buildWeeklyViews(context, appWidgetId, size)
+        }
+    }
+
+    fun updateDailyWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+        pushViews(context, appWidgetManager, appWidgetId) { size ->
+            buildDailyViews(context, appWidgetId, size)
+        }
+        DailyAutoAdvanceScheduler.scheduleNextRefresh(context, appWidgetId)
+    }
+
+    /**
+     * Supplies one view per size the launcher reports, so the host can show the right bitmap for
+     * the current layout and swap instantly on rotate or fold, without waking this app.
+     */
+    private fun pushViews(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        buildViews: (WidgetColumnRenderer.WidgetSize) -> RemoteViews
+    ) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            val sizes = WidgetColumnRenderer.reportedSizesDp(appWidgetManager.getAppWidgetOptions(appWidgetId))
+                .take(MAX_SIZED_VIEWS)
+            if (sizes.size > 1) {
+                try {
+                    val mapping = sizes.associateWith { buildViews(WidgetColumnRenderer.toWidgetSize(context, it)) }
+                    appWidgetManager.updateAppWidget(appWidgetId, RemoteViews(mapping))
+                    return
+                } catch (e: RuntimeException) {
+                    // The system caps a widget's total bitmap memory, and several large bitmaps
+                    // can exceed it. One bitmap for the current layout still fits.
+                    Log.w(TAG, "Widget $appWidgetId: per-size update failed, using a single size", e)
+                }
+            }
+        }
+        val size = WidgetColumnRenderer.calculateWidgetSize(context, appWidgetManager, appWidgetId)
+        appWidgetManager.updateAppWidget(appWidgetId, buildViews(size))
+    }
+
+    private fun buildWeeklyViews(context: Context, appWidgetId: Int, size: WidgetColumnRenderer.WidgetSize): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_weekly)
 
         // Draw Bitmap (Heavy Operation)
-        val bitmap = CalendarImageGenerator.drawWeeklyCalendar(context, appWidgetManager, appWidgetId)
+        val bitmap = CalendarImageGenerator.drawWeeklyCalendar(context, appWidgetId, size)
         views.setImageViewBitmap(R.id.weekly_canvas, bitmap)
 
         val hasPermission = ContextCompat.checkSelfPermission(
@@ -49,14 +97,14 @@ object WidgetUpdateHelper {
         }
         views.setOnClickPendingIntent(R.id.weekly_canvas, pendingIntent)
 
-        appWidgetManager.updateAppWidget(appWidgetId, views)
+        return views
     }
 
-    fun updateDailyWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+    private fun buildDailyViews(context: Context, appWidgetId: Int, size: WidgetColumnRenderer.WidgetSize): RemoteViews {
         val views = RemoteViews(context.packageName, R.layout.widget_daily)
 
         // Draw Bitmap (Heavy Operation)
-        val bitmap = CalendarImageGenerator.drawDailyCalendar(context, appWidgetManager, appWidgetId)
+        val bitmap = CalendarImageGenerator.drawDailyCalendar(context, appWidgetId, size)
         views.setImageViewBitmap(R.id.daily_canvas, bitmap)
 
         val hasPermission = ContextCompat.checkSelfPermission(
@@ -91,7 +139,6 @@ object WidgetUpdateHelper {
         }
         views.setOnClickPendingIntent(R.id.daily_canvas, pendingIntent)
 
-        appWidgetManager.updateAppWidget(appWidgetId, views)
-        DailyAutoAdvanceScheduler.scheduleNextRefresh(context, appWidgetId)
+        return views
     }
 }
